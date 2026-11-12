@@ -5,6 +5,13 @@
 > macOS signing/notarization remains the detailed qualification lane below.
 > Cross-references: [milestones](01-mvp-milestones.md) · [process model](../03-runtime/07-process-model.md) · [security](../05-security/01-security.md)
 
+> **This fork (`guanwenbo/PI-Desktop-Self`) does not use the lanes below.** There
+> is no Apple Developer ID here: every tag is signed with the pinned self-signed
+> identity and published by `scripts/release-self-signed.sh`. See
+> [release-self-signed-macos.md](../../release-self-signed-macos.md). The
+> Developer ID + notarization lane described below belongs to upstream
+> `vastsa/PI-Desktop`.
+
 ## 1. Build lanes
 
 | Lane | Command | Signing | Use |

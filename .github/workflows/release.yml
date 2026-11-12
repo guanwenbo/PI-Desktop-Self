@@ -24,9 +24,14 @@
 
 name: Release
 
+# This fork has no Apple Developer ID, so the tag lane below is disabled: its
+# macOS job requires Developer ID signing and notarization credentials this fork
+# cannot provide, and unsigned macOS artifacts are rejected by every installed
+# build. Releases are cut locally with `scripts/release-self-signed.sh` — see
+# docs/release-self-signed-macos.md.
 on:
-  push:
-    tags: ['v*.*.*']
+  # push:
+  #   tags: ['v*.*.*']
   workflow_dispatch:
     inputs:
       sign_macos:
