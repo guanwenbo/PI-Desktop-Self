@@ -1,6 +1,6 @@
 {
   "name": "@pi-desktop/desktop",
-  "version": "0.21.0",
+  "version": "0.23.0",
   "desktopName": "pi-desktop.desktop",
   "private": true,
   "description": "PI-Desktop Electron application",
@@ -89,8 +89,8 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "vastsa",
-        "repo": "PI-Desktop"
+        "owner": "guanwenbo",
+        "repo": "PI-Desktop-Self"
       }
     ],
     "extraMetadata": {
