@@ -1,0 +1,46 @@
+Cargo.lock
+  h_b98c004121ae66 592
+Cargo.toml
+  h_b98c004121ae66 8
+apps/desktop/package.json
+  h_b98c004121ae66 3,92-93
+apps/pi-host/package.json
+  h_b98c004121ae66 3
+docs/package.json
+  h_b98c004121ae66 3
+package.json
+  h_b98c004121ae66 4
+packages/agent-host/package.json
+  h_b98c004121ae66 3
+packages/agent-runtime/package.json
+  h_b98c004121ae66 3
+packages/computer-use/package.json
+  h_b98c004121ae66 3
+packages/host-runtime/package.json
+  h_b98c004121ae66 3
+packages/i18n/package.json
+  h_b98c004121ae66 3
+packages/plugin-devkit/package.json
+  h_b98c004121ae66 3
+packages/plugin-sdk/package.json
+  h_b98c004121ae66 3
+packages/racp/package.json
+  h_b98c004121ae66 3
+packages/shared/package.json
+  h_b98c004121ae66 3
+packages/shared/src/protocol.ts
+  h_b98c004121ae66 5
+packages/voice-runtime/package.json
+  h_b98c004121ae66 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "be95b063736bc8e0b5b5a43609f172bd1225d380",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
