@@ -118,22 +118,34 @@ downloads; the DMG is what people install manually the first time.
 
 ## Installing on another machine
 
+One command downloads, verifies and installs:
+
 ```bash
-# 1. Download the DMG from the tag's release page.
-
-# 2. Verify it was signed by this fork before installing anything.
-./scripts/verify-self-signed-release.sh PI-Desktop-<version>-arm64.dmg
-
-# 3. Install (no quarantine attribute, so Gatekeeper does not block the
-#    unsigned-from-Apple bundle).
-hdiutil attach PI-Desktop-<version>-arm64.dmg -nobrowse
-ditto "/Volumes/PI-Desktop/PI-Desktop.app" /Applications/PI-Desktop.app
-hdiutil detach "/Volumes/PI-Desktop"
-xattr -dr com.apple.quarantine /Applications/PI-Desktop.app
+./scripts/install-self-signed.sh 0.24.0
 ```
 
-The first install is always manual: no already-installed app is signed with
-this certificate yet, so there is nothing for Squirrel to match against.
+It refuses to install anything not signed with the pinned certificate, backs
+up an existing `/Applications/PI-Desktop.app` before replacing it, clears the
+quarantine attribute, and prints the installed version. Useful flags:
+`--launch` opens the app afterwards, `--dir <path>` installs elsewhere,
+`--file <artifact>` uses a local `.dmg`/`.zip`/`.app`, `--no-install` stops
+after verification.
+
+A machine with no clone can run the same script standalone — it fetches the
+pinned identity from the repository:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/guanwenbo/PI-Desktop-Self/main/scripts/install-self-signed.sh \
+  | bash -s -- 0.24.0
+```
+
+The first install is always *initiated* by hand: no build of this fork is
+running on that machine yet, so nothing exists that could self-update. From
+the second release onward, updates arrive in-app with no script at all.
+
+Data is unaffected by any of this — sessions, projects and encrypted secrets
+live in `~/.pi-desktop`, and the bundle identifier is unchanged, so the
+database and the Keychain entry stay the same.
 
 ## Updating after that
 
