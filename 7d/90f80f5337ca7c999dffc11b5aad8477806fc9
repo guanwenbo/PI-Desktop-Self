@@ -1,0 +1,16 @@
+docs/release-self-signed-macos.md
+  h_b98c004121ae66 121-122,124-132,134-135,137-139,142-148
+scripts/install-self-signed.sh
+  h_b98c004121ae66 1-159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "7d90f80f5337ca7c999dffc11b5aad8477806fc9",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
