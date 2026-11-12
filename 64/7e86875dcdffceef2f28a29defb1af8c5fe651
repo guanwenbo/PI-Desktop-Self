@@ -1,0 +1,24 @@
+.github/workflows/release.yml
+  h_b98c004121ae66 27-31,33-34
+docs/release-self-signed-macos.md
+  h_b98c004121ae66 1-164
+docs/spec/06-delivery/06-release-runbook.md
+  h_b98c004121ae66 8-14
+scripts/release-self-signed.sh
+  h_b98c004121ae66 1-134
+scripts/self-signed-identity.conf
+  h_b98c004121ae66 1-16
+scripts/verify-self-signed-release.sh
+  h_b98c004121ae66 1-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "647e86875dcdffceef2f28a29defb1af8c5fe651",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
