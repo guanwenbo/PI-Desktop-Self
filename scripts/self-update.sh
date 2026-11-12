@@ -50,8 +50,17 @@ command -v pnpm >/dev/null || die "pnpm not found"
 log "installing dependencies"
 pnpm install --frozen-lockfile
 
-log "building unsigned macOS bundle"
-CSC_IDENTITY_AUTO_DISCOVERY=false pnpm --filter @pi-desktop/desktop run dist:mac
+SIGNING_IDENTITY="${SELF_UPDATE_SIGNING_IDENTITY:-PI-Desktop Self Signed}"
+if security find-identity -v -p codesigning 2>/dev/null | grep -qF "$SIGNING_IDENTITY"; then
+  log "signing with $SIGNING_IDENTITY"
+  export CSC_NAME="$SIGNING_IDENTITY"
+else
+  log "WARNING: no '$SIGNING_IDENTITY' identity; building unsigned, and in-app updates will not install"
+  export CSC_IDENTITY_AUTO_DISCOVERY=false
+fi
+
+log "building macOS bundle"
+pnpm --filter @pi-desktop/desktop run dist:mac
 
 APP_SRC="$REPO_ROOT/apps/desktop/release/mac-arm64/$APP_NAME.app"
 [[ -d "$APP_SRC" ]] || die "build output missing at $APP_SRC"
