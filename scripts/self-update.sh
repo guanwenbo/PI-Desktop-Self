@@ -50,7 +50,9 @@ command -v pnpm >/dev/null || die "pnpm not found"
 log "installing dependencies"
 pnpm install --frozen-lockfile
 
-SIGNING_IDENTITY="${SELF_UPDATE_SIGNING_IDENTITY:-PI-Desktop Self Signed}"
+# shellcheck source=scripts/self-signed-identity.conf
+source "$REPO_ROOT/scripts/self-signed-identity.conf"
+SIGNING_IDENTITY="${SELF_UPDATE_SIGNING_IDENTITY:-$IDENTITY}"
 if security find-identity -v -p codesigning 2>/dev/null | grep -qF "$SIGNING_IDENTITY"; then
   log "signing with $SIGNING_IDENTITY"
   export CSC_NAME="$SIGNING_IDENTITY"
