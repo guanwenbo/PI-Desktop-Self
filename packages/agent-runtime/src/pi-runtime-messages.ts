@@ -1,7 +1,7 @@
 import type { Message } from "@earendil-works/pi-ai";
 import { hostedSearchReplayProjection } from "@earendil-works/pi-ai/utils/hosted-search";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
-import { omitOversizedImages } from "./image-admission.js";
+import { omitUndeliverableImages } from "./image-admission.js";
 
 export type CompactionSummaryMessage = {
   role: "compactionSummary";
@@ -148,7 +148,7 @@ export function convertToLlm(messages: AgentMessage[]): Message[] {
   }
   // Every provider request passes through here, including restored history
   // that already holds an image the provider would reject (issue #1913).
-  return omitOversizedImages(converted);
+  return omitUndeliverableImages(converted);
 }
 
 function asProviderMessage(message: unknown): Message {

@@ -200,7 +200,11 @@ export async function hydrateAttachmentHistory(
     try {
       const bytes = await readFileAtRecordedSize(item.canonicalPath!, item.size);
       if (!bytes) continue;
-      if (imageExceedsInlineDimensions(probeImageDimensions(bytes))) continue;
+      // An unreadable header (HEIC, a renamed file, truncated bytes) is a
+      // guaranteed provider 400 replayed on every turn, same as an oversized
+      // image (#1913): keep the path fallback for both.
+      const dimensions = probeImageDimensions(bytes);
+      if (!dimensions || imageExceedsInlineDimensions(dimensions)) continue;
       remainingBytes -= item.size;
       item.attachment = {
         ...item.attachment,

@@ -1,7 +1,7 @@
 import type { Message } from "@earendil-works/pi-ai";
 import type { UiMessage } from "@pi-desktop/shared";
 import { describe, expect, it } from "vitest";
-import { omitOversizedImages } from "./image-admission.js";
+import { omitUndeliverableImages } from "./image-admission.js";
 import { convertToLlm } from "./pi-runtime-messages.js";
 import { toolResultFromUi } from "./runtime.js";
 
@@ -16,10 +16,15 @@ function pngBase64(width: number, height: number): string {
 
 const TALL = pngBase64(780, 14182);
 const NORMAL = pngBase64(1688, 1514);
+/** HEIC-style header: a real container format, but not one a provider accepts. */
+const HEIC = Buffer.from("000000186674797068656963000000006d69663168656963", "hex")
+  .toString("base64");
 const NOTICE =
   "[Image omitted: 780x14182 px exceeds the 8000 px longest-edge limit for model input.]";
+const FORMAT_NOTICE =
+  "[Image omitted: not a readable PNG/JPEG/GIF/WebP image; model input accepts those formats only.]";
 
-describe("omitOversizedImages", () => {
+describe("omitUndeliverableImages", () => {
   it("replaces an oversized image in a user prompt and keeps its position", () => {
     const messages: Message[] = [{
       role: "user",
@@ -30,7 +35,7 @@ describe("omitOversizedImages", () => {
       ],
       timestamp: 1,
     }];
-    const [user] = omitOversizedImages(messages);
+    const [user] = omitUndeliverableImages(messages);
     expect(user?.content).toEqual([
       { type: "text", text: "before" },
       { type: "text", text: NOTICE },
@@ -40,19 +45,34 @@ describe("omitOversizedImages", () => {
     expect((messages[0]?.content as Array<{ type: string }>)[1]?.type).toBe("image");
   });
 
+  it("replaces an image whose bytes no accepted format probe can read", () => {
+    const messages: Message[] = [{
+      role: "user",
+      content: [
+        { type: "text", text: "shot" },
+        { type: "image", data: HEIC, mimeType: "image/jpeg" },
+        { type: "image", data: NORMAL, mimeType: "image/png" },
+      ],
+      timestamp: 1,
+    }];
+    const [user] = omitUndeliverableImages(messages);
+    expect(user?.content).toEqual([
+      { type: "text", text: "shot" },
+      { type: "text", text: FORMAT_NOTICE },
+      { type: "image", data: NORMAL, mimeType: "image/png" },
+    ]);
+  });
+
   it("returns the same array when every image is admissible", () => {
     const messages: Message[] = [
       { role: "user", content: "plain text", timestamp: 1 },
       {
         role: "user",
-        content: [
-          { type: "image", data: NORMAL, mimeType: "image/png" },
-          { type: "image", data: "not-an-image", mimeType: "image/png" },
-        ],
+        content: [{ type: "image", data: NORMAL, mimeType: "image/png" }],
         timestamp: 2,
       },
     ];
-    expect(omitOversizedImages(messages)).toBe(messages);
+    expect(omitUndeliverableImages(messages)).toBe(messages);
   });
 
   it("heals a restored session whose Read result holds an oversized image", () => {

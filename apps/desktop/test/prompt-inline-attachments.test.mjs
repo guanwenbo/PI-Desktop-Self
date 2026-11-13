@@ -63,6 +63,29 @@ test("an image past the pixel limit takes the path fallback instead of inline by
   assert.ok(appendPromptFallbackPaths("look at this", [prepared]).includes(prepared.fallbackPath));
 });
 
+test("an image whose bytes are not an accepted format takes the path fallback", async (t) => {
+  const { data, path } = await fixture(t);
+  // HEIC bytes with a .jpg name and MIME: the declared type is metadata, and
+  // a provider would 400 this on every replayed turn (#1913's failure class).
+  await writeFile(
+    path,
+    Buffer.from("000000186674797068656963000000006d69663168656963", "hex"),
+  );
+  const attachment = { path, name: "pasted-a.png", kind: "image", mimeType: "image/jpeg" };
+  const [prepared] = await preparePromptAttachments(
+    data,
+    sessionId,
+    undefined,
+    [attachment],
+    true,
+    "look at this",
+  );
+  assert.equal(prepared.message.kind, "image");
+  assert.match(prepared.message.ref, /^attachments\//);
+  assert.equal(prepared.inlineData, undefined);
+  assert.ok(appendPromptFallbackPaths("look at this", [prepared]).includes(prepared.fallbackPath));
+});
+
 test("an image the prompt does not name inline keeps the trailing position", async (t) => {
   const { data, path } = await fixture(t);
   const attachment = { path, name: "pasted-a.png", kind: "image", mimeType: "image/png" };

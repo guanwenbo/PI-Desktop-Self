@@ -231,7 +231,13 @@ image-byte budget: the sidecar considers persisted attachments newest-first and
 preserves every eligible image when the total fits. If the budget is exceeded,
 older images use the existing safe `@path` fallback. An image rejected for a
 longest edge above 8000 px does not consume that budget, so an older image
-that still fits stays inlined. Unknown/custom models
+that still fits stays inlined. Admission probes the bytes, never the declared
+MIME type: a payload no accepted-format header probe can read (HEIC, AVIF, a
+renamed file, truncated data) is undeliverable — every provider rejects it
+with a non-retriable 400 that would replay on every turn — so it takes the
+same safe fallback at intake and restore, and the last-view admission pass
+replaces any such block that still reaches a request (older sessions, plugin
+or MCP tool results) with a text notice instead of the image. Unknown/custom models
 without an explicit image override, non-vision models, oversized images, and
 unavailable refs also use the safe fallback. Main uses streamed hashing and file
 copying for oversized images. The durable user message stores `content` plus

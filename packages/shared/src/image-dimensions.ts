@@ -153,8 +153,7 @@ export function probeBase64ImageDimensions(data: string): ImageDimensions | unde
 
 /**
  * Whether known dimensions exceed what a provider request admits. Unknown
- * dimensions are not a rejection: the byte bound and the provider still
- * judge an image this probe cannot read.
+ * dimensions alone are not a pixel rejection: the byte bound still applies.
  */
 export function imageExceedsInlineDimensions(
   dimensions: ImageDimensions | undefined,
@@ -165,7 +164,26 @@ export function imageExceedsInlineDimensions(
   );
 }
 
+/**
+ * Whether the bytes are one of the formats a provider image input accepts.
+ * The probe resolves dimensions from the header of every admitted format
+ * (PNG, JPEG, GIF, WebP), so an undefined result means the payload is a
+ * format the provider rejects outright (HEIC, AVIF, BMP, TIFF, an extension
+ * rename) or bytes too damaged to read — either way a guaranteed 400 that
+ * would replay on every later turn (#1913's failure class).
+ */
+export function isUnrecognizedInlineImage(
+  dimensions: ImageDimensions | undefined,
+): boolean {
+  return dimensions === undefined;
+}
+
 /** Text that takes an omitted image's place so the model knows it existed. */
 export function omittedImageNotice(dimensions: ImageDimensions): string {
   return `[Image omitted: ${dimensions.width}x${dimensions.height} px exceeds the ${MAX_INLINE_IMAGE_EDGE_PX} px longest-edge limit for model input.]`;
+}
+
+/** The notice for an image whose bytes no accepted format probe could read. */
+export function omittedUnrecognizedImageNotice(): string {
+  return "[Image omitted: not a readable PNG/JPEG/GIF/WebP image; model input accepts those formats only.]";
 }
