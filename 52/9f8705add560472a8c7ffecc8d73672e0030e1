@@ -1,0 +1,26 @@
+docs/spec/03-runtime/08-error-codes.md
+  h_b98c004121ae66 542-555
+packages/agent-runtime/src/agent-errors.test.ts
+  h_b98c004121ae66 6,1245-1267
+packages/agent-runtime/src/agent-errors.ts
+  h_b98c004121ae66 128-148
+packages/agent-runtime/src/sidecar.ts
+  h_b98c004121ae66 12,692-699
+packages/host-runtime/src/runtime-service.test.ts
+  h_b98c004121ae66 71-72,85,407-472
+packages/host-runtime/src/runtime-service.ts
+  h_b98c004121ae66 10,373-382,395-442
+packages/host-runtime/src/turn-events.ts
+  h_b98c004121ae66 220-222
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "529f8705add560472a8c7ffecc8d73672e0030e1",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
