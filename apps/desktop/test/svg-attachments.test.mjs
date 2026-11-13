@@ -226,10 +226,11 @@ test("history non-vision images and non-user messages preserve existing behavior
 
 test("existing non-SVG image metadata is not narrowed to a new provider allowlist", async (t) => {
   const { data } = await fixture(t);
-  // These fixtures test classification/transport, not image decoding.
+  // Classification/transport follow the real bytes, not the declared MIME or
+  // extension: every declared image/* type still carries a valid image inline.
   for (const extension of ["png", "jpeg", "gif", "webp", "avif", "bmp", "heic", "tiff"]) {
     const mimeType = `image/${extension}`;
-    const bytes = Buffer.from(`transport fixture: ${extension}`);
+    const bytes = Buffer.concat([png, Buffer.from(`transport fixture: ${extension}`)]);
     const [saved] = await saveComposerPasteFiles(data, sessionId, [{ name: `fixture.${extension}`, mimeType, data: bytes }]);
     assert.equal(saved.kind, "image");
     const [prepared] = await preparePromptAttachments(data, sessionId, undefined, [saved], true, "");
@@ -237,4 +238,17 @@ test("existing non-SVG image metadata is not narrowed to a new provider allowlis
     assert.equal(prepared.message.mimeType, mimeType);
     assert.deepEqual(Buffer.from(prepared.inlineData, "base64"), bytes);
   }
+});
+
+test("bytes no accepted image probe can read take the path fallback, whatever the declared MIME", async (t) => {
+  const { data } = await fixture(t);
+  // A guaranteed provider 400 must not enter history: an undeliverable image
+  // replays on every later turn and the session can never continue.
+  const bytes = Buffer.from("transport fixture: not an image");
+  const [saved] = await saveComposerPasteFiles(data, sessionId, [{ name: "fixture.png", mimeType: "image/png", data: bytes }]);
+  assert.equal(saved.kind, "image");
+  const [prepared] = await preparePromptAttachments(data, sessionId, undefined, [saved], true, "");
+  assert.equal(prepared.message.kind, "image");
+  assert.equal(prepared.inlineData, undefined);
+  assert.ok(appendPromptFallbackPaths("", [prepared]).includes(prepared.fallbackPath));
 });

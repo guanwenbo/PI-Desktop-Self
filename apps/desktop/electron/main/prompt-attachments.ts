@@ -278,7 +278,11 @@ export async function preparePromptAttachments(
       : undefined;
     // A provider rejects an image past its pixel limit even when the bytes are
     // small; it takes the `@path` fallback instead of poisoning history (#1913).
-    const bytes = read && !imageExceedsInlineDimensions(probeImageDimensions(read))
+    // Bytes no accepted format probe can read (HEIC, a renamed file) fail the
+    // same way, so they take the fallback too — the declared MIME is only
+    // user-supplied metadata.
+    const dimensions = read ? probeImageDimensions(read) : undefined;
+    const bytes = read && dimensions && !imageExceedsInlineDimensions(dimensions)
       ? read
       : undefined;
     const inline = bytes !== undefined;

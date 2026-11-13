@@ -14,6 +14,24 @@ async function withTempDir(run: (path: string) => Promise<void>): Promise<void> 
   }
 }
 
+/**
+ * A probeable PNG: real signature and IHDR header, zero padding after it.
+ * The dimension probe reads only the header, so padding never matters.
+ */
+function pngBytes(length: number, width = 800, height = 600): Buffer {
+  const bytes = Buffer.alloc(Math.max(33, length));
+  Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13]).copy(bytes);
+  bytes.write("IHDR", 12, "latin1");
+  bytes.writeUInt32BE(width, 16);
+  bytes.writeUInt32BE(height, 20);
+  return bytes;
+}
+
+/** HEIC-style container: a real format, but not one a provider image input accepts. */
+function heicBytes(): Buffer {
+  return Buffer.from("000000186674797068656963000000006d69663168656963", "hex");
+}
+
 function userMessage(
   id: string,
   attachments: NonNullable<UiMessage["attachments"]>,
@@ -30,8 +48,9 @@ function userMessage(
 describe("hydrateAttachmentHistory", () => {
   it("inlines image attachments when supportsVision is true and within per-image byte limits", async () => {
     await withTempDir(async (tmp) => {
+      const png = pngBytes(64);
       const imgPath = resolve(tmp, "sample.png");
-      await writeFile(imgPath, "fake-png-bytes");
+      await writeFile(imgPath, png);
       const history = [
         userMessage("msg-1", [
           {
@@ -39,7 +58,7 @@ describe("hydrateAttachmentHistory", () => {
             ref: imgPath,
             kind: "image",
             mimeType: "image/png",
-            size: 14,
+            size: png.length,
           },
         ]),
       ];
@@ -49,23 +68,17 @@ describe("hydrateAttachmentHistory", () => {
         supportsVision: true,
       });
 
-      expect(hydrated[0]?.attachments?.[0]?.data).toBe(
-        Buffer.from("fake-png-bytes").toString("base64"),
-      );
+      expect(hydrated[0]?.attachments?.[0]?.data).toBe(png.toString("base64"));
     });
   });
 
   it("does not let a pixel-limit rejection consume the history byte budget", async () => {
     await withTempDir(async (tmp) => {
-      const olderBytes = Buffer.from("fake-png-bytes");
+      const olderBytes = pngBytes(33);
       const olderPath = resolve(tmp, "older.png");
       await writeFile(olderPath, olderBytes);
       const newerPath = resolve(tmp, "page.png");
-      const header = Buffer.alloc(33);
-      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13]).copy(header);
-      header.write("IHDR", 12, "latin1");
-      header.writeUInt32BE(780, 16);
-      header.writeUInt32BE(14182, 20);
+      const header = pngBytes(33, 780, 14182);
       await writeFile(newerPath, header);
       const history = [
         userMessage("older", [
@@ -104,12 +117,7 @@ describe("hydrateAttachmentHistory", () => {
   it("keeps the path fallback for an image past the pixel limit (#1913)", async () => {
     await withTempDir(async (tmp) => {
       const imgPath = resolve(tmp, "page.png");
-      const header = Buffer.alloc(33);
-      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13]).copy(header);
-      header.write("IHDR", 12, "latin1");
-      header.writeUInt32BE(780, 16);
-      header.writeUInt32BE(14182, 20);
-      await writeFile(imgPath, header);
+      await writeFile(imgPath, pngBytes(33, 780, 14182));
       const history = [
         userMessage("msg-1", [
           { name: "page.png", ref: imgPath, kind: "image", mimeType: "image/png", size: 33 },
@@ -126,12 +134,35 @@ describe("hydrateAttachmentHistory", () => {
     });
   });
 
+  it("keeps the path fallback for an image no accepted format probe can read", async () => {
+    await withTempDir(async (tmp) => {
+      const heic = heicBytes();
+      const imgPath = resolve(tmp, "photo.jpg");
+      await writeFile(imgPath, heic);
+      const history = [
+        userMessage("msg-1", [
+          // The declared MIME claims JPEG; the bytes say otherwise. Inlining
+          // this would 400 the provider request on every later turn.
+          { name: "photo.jpg", ref: imgPath, kind: "image", mimeType: "image/jpeg", size: heic.length },
+        ]),
+      ];
+
+      const hydrated = await hydrateAttachmentHistory(history, {
+        projectPath: tmp,
+        supportsVision: true,
+      });
+
+      expect(hydrated[0]?.attachments?.[0]?.data).toBeUndefined();
+      expect(hydrated[0]?.content).toContain(imgPath);
+    });
+  });
+
   it("preserves historical image turns beyond ten messages when within the default byte budget", async () => {
     await withTempDir(async (tmp) => {
       const history: UiMessage[] = [];
-      const payloads: string[] = [];
+      const payloads: Buffer[] = [];
       for (let i = 1; i <= 12; i++) {
-        const payload = `image-${i}`;
+        const payload = pngBytes(33 + i);
         const imgPath = resolve(tmp, `sample-${i}.png`);
         await writeFile(imgPath, payload);
         payloads.push(payload);
@@ -154,9 +185,7 @@ describe("hydrateAttachmentHistory", () => {
       });
 
       for (let i = 0; i < payloads.length; i++) {
-        expect(hydrated[i]?.attachments?.[0]?.data).toBe(
-          Buffer.from(payloads[i]!).toString("base64"),
-        );
+        expect(hydrated[i]?.attachments?.[0]?.data).toBe(payloads[i]!.toString("base64"));
       }
     });
   });
@@ -166,7 +195,7 @@ describe("hydrateAttachmentHistory", () => {
       const attachments: NonNullable<UiMessage["attachments"]> = [];
       for (let i = 1; i <= 5; i++) {
         const imgPath = resolve(tmp, `burst-${i}.png`);
-        await writeFile(imgPath, "x".repeat(100));
+        await writeFile(imgPath, pngBytes(100));
         attachments.push({
           name: `burst-${i}.png`,
           ref: imgPath,
@@ -189,8 +218,8 @@ describe("hydrateAttachmentHistory", () => {
         undefined,
         undefined,
         undefined,
-        Buffer.from("x".repeat(100)).toString("base64"),
-        Buffer.from("x".repeat(100)).toString("base64"),
+        pngBytes(100).toString("base64"),
+        pngBytes(100).toString("base64"),
       ]);
       for (let i = 1; i <= 3; i++) {
         expect(result?.content).toContain(`burst-${i}.png`);
@@ -202,7 +231,7 @@ describe("hydrateAttachmentHistory", () => {
   it("treats a zero history byte budget as no images inlined", async () => {
     await withTempDir(async (tmp) => {
       const imgPath = resolve(tmp, "sample.png");
-      await writeFile(imgPath, "image");
+      await writeFile(imgPath, pngBytes(33));
       const history = [
         userMessage("msg-1", [
           {
@@ -210,7 +239,7 @@ describe("hydrateAttachmentHistory", () => {
             ref: imgPath,
             kind: "image",
             mimeType: "image/png",
-            size: 5,
+            size: 33,
           },
         ]),
       ];
