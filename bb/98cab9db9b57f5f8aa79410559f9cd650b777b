@@ -1,0 +1,38 @@
+apps/desktop/src/components/settings/ModelSelectionPanes.tsx
+  h_b98c004121ae66 780-802
+apps/desktop/test/provider-model-list-refresh.test.mjs
+  h_b98c004121ae66 126-131,157-158
+docs/spec/03-runtime/13-model-catalog-and-selection.md
+  h_b98c004121ae66 403-406
+docs/spec/04-ux/06-settings-ia.md
+  h_b98c004121ae66 646-650
+packages/i18n/src/locales/de/index.ts
+  h_b98c004121ae66 1987-1988
+packages/i18n/src/locales/en/index.ts
+  h_b98c004121ae66 2007-2008
+packages/i18n/src/locales/es/index.ts
+  h_b98c004121ae66 1987-1988
+packages/i18n/src/locales/fr/index.ts
+  h_b98c004121ae66 1987-1988
+packages/i18n/src/locales/ko/index.ts
+  h_b98c004121ae66 2003-2004
+packages/i18n/src/locales/pt-BR/index.ts
+  h_b98c004121ae66 1957-1958
+packages/i18n/src/locales/tr/index.ts
+  h_b98c004121ae66 1997-1998
+packages/i18n/src/locales/zh-CN/index.ts
+  h_b98c004121ae66 1982-1983
+packages/i18n/src/locales/zh-TW/index.ts
+  h_b98c004121ae66 1982-1983
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "bb98cab9db9b57f5f8aa79410559f9cd650b777b",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
