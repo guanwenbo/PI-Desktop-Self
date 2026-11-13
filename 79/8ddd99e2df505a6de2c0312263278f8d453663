@@ -1,0 +1,32 @@
+apps/desktop/electron/main/prompt-attachments.ts
+  h_b98c004121ae66 281-285
+apps/desktop/test/prompt-inline-attachments.test.mjs
+  h_b98c004121ae66 66-88
+apps/desktop/test/svg-attachments.test.mjs
+  h_b98c004121ae66 229-230,233,242-254
+docs/spec/03-runtime/01-ipc-protocol.md
+  h_b98c004121ae66 234-240
+packages/agent-runtime/src/attachment-history.test.ts
+  h_b98c004121ae66 17-34,51,53,61,71,77,81,120,137-159,163,165,188,198,221-222,234,242
+packages/agent-runtime/src/attachment-history.ts
+  h_b98c004121ae66 203-207
+packages/agent-runtime/src/image-admission.test.ts
+  h_b98c004121ae66 4,19-21,24-25,27,38,48-65,71,75
+packages/agent-runtime/src/image-admission.ts
+  h_b98c004121ae66 2,7-12,17,19,30-35,37,43-45,47
+packages/agent-runtime/src/pi-runtime-messages.ts
+  h_b98c004121ae66 4,151
+packages/shared/src/image-dimensions.ts
+  h_b98c004121ae66 156,167-180,185-189
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "798ddd99e2df505a6de2c0312263278f8d453663",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
