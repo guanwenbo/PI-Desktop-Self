@@ -123,6 +123,12 @@ test("refresh hides unlisted chat choices and preserves editable configured bind
     { [row.id]: discovery.models },
     [runtime.enrichProvider(row)],
   ), 1_000_000, "context usage follows the selected account binding");
+  // A pinned window can be handed back to the catalog: the Advanced ladder
+  // offers the Auto chip only where a published window exists to follow.
+  const autoChips = (markup) =>
+    (markup.match(/aria-label="settings\.contextWindowCatalogReset"/g) ?? []).length;
+  assert.equal(autoChips(initialHtml), 2,
+    "both pinned chosen models publish a window, so both offer the catalog reset");
   served = ["gpt-6-sol", "new-model"];
   row.models.push(bindingForCustomModel("new-model"));
   const html = await refresh();
@@ -148,6 +154,8 @@ test("refresh hides unlisted chat choices and preserves editable configured bind
     "— · —",
     "an unknown configured model is labeled unknown until its limits are published or overridden",
   );
+  assert.equal(autoChips(html), 2,
+    "an unknown configured model has no published window to return to");
   // Offline/manual fallbacks must still expose configured entries for editing.
   discovery = { ...discovery, source: "fallback", models: [] };
   assert.deepEqual(ids(render(), "provider-models-row-id"), [

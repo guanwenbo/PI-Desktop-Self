@@ -9,7 +9,7 @@ import type { ModelAuth } from "@earendil-works/pi-ai";
 import { ParentHostProxy } from "./parent-host-proxy.js";
 import { visionFromModelConfig } from "./model-capabilities.js";
 import { hydrateAttachmentHistory } from "./attachment-history.js";
-import { classifyAgentError } from "./agent-errors.js";
+import { classifyAgentError, redactedCauseChainForLog } from "./agent-errors.js";
 import { readLocalRequestErrorDetails } from "./local-request-errors.js";
 import {
   DesktopAgentRuntime,
@@ -689,6 +689,14 @@ readNdjsonLines(process.stdin, async (line) => {
     // Restore validation can fail before a runtime/stream exists. Preserve its
     // safe provenance in the existing RPC error data instead of flattening it.
     const local = readLocalRequestErrorDetails(err) ? classifyAgentError(err) : undefined;
+    if (local) {
+      // The UI contract carries only the phase and a safe cause name, which
+      // leaves a permanently failing turn undiagnosable. The redacted cause
+      // chain stays on this process's own stderr, never in the RPC payload.
+      process.stderr.write(
+        `[agent-sidecar] local request failure (phase=${String(local.details?.phase ?? "unknown")}): ${redactedCauseChainForLog(err)}\n`,
+      );
+    }
     respond(msg.id, undefined, {
       code: err.rpcCode ?? -32000,
       message: local?.message ?? (err instanceof Error ? err.message : String(err)),

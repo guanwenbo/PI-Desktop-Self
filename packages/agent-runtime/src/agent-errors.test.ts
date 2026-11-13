@@ -3,6 +3,7 @@ import { isContextOverflow, type AssistantMessage } from "@earendil-works/pi-ai"
 import {
   classifyAgentError,
   describeNetworkFailure,
+  redactedCauseChainForLog,
 } from "./agent-errors.js";
 import { classifyProviderError } from "./provider-retry.js";
 
@@ -1239,5 +1240,28 @@ describe("classifyAgentError", () => {
       retriable: true,
       details: { origin: "host" },
     });
+  });
+});
+
+describe("redactedCauseChainForLog", () => {
+  it("renders the wrapped chain with credentials stripped, bounded and cycle-safe", () => {
+    const inner = new TypeError("read /Users/alice/private/api_key=test-secret failed");
+    const outer = Object.assign(new Error("Local request preparation failed", { cause: inner }), {
+      name: "LocalRequestError",
+      code: "LOCAL_REQUEST_ERROR",
+      phase: "request-preparation",
+    });
+    inner.cause = outer; // a cycle must not hang the walk
+    const text = redactedCauseChainForLog(outer);
+    expect(text).toContain("LocalRequestError");
+    expect(text).toContain("TypeError");
+    expect(text).not.toContain("test-secret");
+    expect(text).toContain("[REDACTED]");
+    expect(text.length).toBeLessThan(800);
+  });
+
+  it("never throws on non-error input", () => {
+    expect(redactedCauseChainForLog(undefined)).toBe("unknown");
+    expect(redactedCauseChainForLog("boom")).toBe("unknown");
   });
 });

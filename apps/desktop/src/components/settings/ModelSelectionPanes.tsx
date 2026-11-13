@@ -777,6 +777,29 @@ export function ModelSelectionPanes({
                               </TooltipButton>
                             );
                           })}
+                          {/* A pinned window otherwise can never return to
+                              following the catalog (#pin irreversible): the
+                              "Auto" chip restores the published value and the
+                              catalog source in one click. */}
+                          {binding.contextWindowSource === "user" &&
+                          publishedContextWindow !== undefined ? (
+                            <TooltipButton
+                              type="button"
+                              className="provider-thinking-chip"
+                              ariaLabel={t("settings.contextWindowCatalogReset")}
+                              tooltip={t("settings.contextWindowCatalogResetHint", {
+                                value: formatTokenCount(publishedContextWindow),
+                              })}
+                              onClick={() =>
+                                updateBinding(binding.id, {
+                                  contextWindow: publishedContextWindow,
+                                  contextWindowSource: "catalog",
+                                })
+                              }
+                            >
+                              {t("settings.contextWindowCatalogReset")}
+                            </TooltipButton>
+                          ) : null}
                         </div>
                         <Input
                           type="number"

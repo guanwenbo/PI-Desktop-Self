@@ -1984,6 +1984,8 @@ sklm: {
     "documentInput": "PDF",
     "thinkingManualOverrideHint": "Pas dans le catalogue ; activer si pris en charge.",
     "contextWindowCatalogHint": "Suit models.dev ; une modification fixe votre valeur.",
+    "contextWindowCatalogReset": "Auto",
+    "contextWindowCatalogResetHint": "Suivre à nouveau models.dev (actuellement {value}).",
     "availableForSubagents": "Disponible pour la délégation de l'IA",
     "availableForSubagentsHint": "Autoriser l'IA à utiliser ce modèle lors de la délégation de tâches à des sous-agents",
     "nativeWebSearch": "Recherche web native",

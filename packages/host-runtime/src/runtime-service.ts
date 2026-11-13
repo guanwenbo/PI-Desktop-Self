@@ -7,6 +7,7 @@ import {
   isRpcTimeoutError,
   type AgentEventEnvelope,
   type AgentStatus,
+  type AppError,
   type AskToolResolution,
   type Risk,
   type UiMessage,
@@ -369,6 +370,16 @@ export class RuntimeService implements RuntimePort {
           : {}),
       });
     } catch (error) {
+      // A rejection here means the turn never reached the provider: the
+      // runtime failed to build from the stored history, or the prompt was
+      // refused before streaming. No assistant error row can arrive through
+      // the event pipeline in that case, so persist one directly — otherwise
+      // the transcript shows a user prompt with no outcome, and every retry
+      // reports a turn that apparently never answered.
+      await this.appendPreRuntimeFailure(sessionId, turnId, error, {
+        providerId: launch.providerId,
+        modelId: launch.modelId,
+      });
       await this.finishTurn(sessionId, "error", errorCodeOf(error), { turnId });
       throw error;
     }
@@ -379,6 +390,54 @@ export class RuntimeService implements RuntimePort {
       modelId: launch.modelId,
     });
     return { turnId };
+  }
+
+  /**
+   * Persist the assistant error row a pre-runtime rejection otherwise skips.
+   * Best-effort by design: the original rejection, not this append, decides
+   * the turn's outcome. The row carries only what the RPC boundary already
+   * exposed to the caller, and a failed turn restores as context-free history
+   * because `historyToEntries` skips rows with an `error`.
+   */
+  private async appendPreRuntimeFailure(
+    sessionId: string,
+    turnId: string,
+    error: unknown,
+    origin: { providerId: string; modelId: string },
+  ): Promise<void> {
+    const host = this.options.getHost();
+    if (!host) return;
+    const data = (error as { data?: { retriable?: unknown; details?: unknown } } | null)
+      ?.data;
+    const raw = error instanceof Error ? error.message : String(error);
+    const appError: AppError = {
+      code: errorCodeOf(error) ?? ErrorCodes.INTERNAL,
+      message: raw.length > 500 ? `${raw.slice(0, 500)}…` : raw,
+      ...(typeof data?.retriable === "boolean" ? { retriable: data.retriable } : {}),
+      ...(data?.details !== undefined ? { details: data.details } : {}),
+    };
+    const message: UiMessage = {
+      id: randomUUID(),
+      role: "assistant",
+      content: "",
+      createdAt: new Date(this.now()).toISOString(),
+      status: "error",
+      isError: true,
+      error: appError,
+      providerId: origin.providerId,
+      modelId: origin.modelId,
+    };
+    try {
+      await host.call("session.appendMessage", { sessionId, message, turnId });
+      this.emit({ sessionId, turnId, ts: this.now(), event: { type: "message_start", message } });
+      this.emit({ sessionId, turnId, ts: this.now(), event: { type: "message_end", message } });
+    } catch (appendError) {
+      this.options.log("warn", "pre-runtime failure row could not be persisted", {
+        sessionId,
+        turnId,
+        error: String(appendError),
+      });
+    }
   }
 
   async steer(request: TurnSteerRequest): Promise<{ accepted: boolean }> {

@@ -400,7 +400,10 @@ to `maxTokens`.
 - `user` — the value was entered in that limit's Advanced control or preset
   ladder and is never replaced by the catalog, including explicit 128,000 and
   8,192 values that equal the generic seeds. Setting a context window cannot
-  change the output-cap source.
+  change the output-cap source. A pin is reversible: the Advanced ladder's
+  Auto action writes the currently published value back with `catalog`
+  provenance, which is indistinguishable from a binding that never left the
+  catalog.
 
 Bindings written before either marker preserve their stored window and output
 cap, including 128,000 and 8,192, because old records cannot distinguish generic
