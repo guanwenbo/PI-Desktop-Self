@@ -2000,6 +2000,8 @@ sklm: {
     documentInput: "PDF",
     thinkingManualOverrideHint: "카탈로그에 없음. 지원되는 경우 활성화하세요.",
     contextWindowCatalogHint: "models.dev를 따릅니다. 수정하면 내 값으로 고정됩니다.",
+    contextWindowCatalogReset: "자동",
+    contextWindowCatalogResetHint: "models.dev를 다시 따릅니다(현재 {value}).",
     availableForSubagents: "AI 위임에 사용 가능",
     availableForSubagentsHint: "서브에이전트에 작업을 위임할 때 AI가 이 모델을 사용하도록 허용",
     nativeWebSearch: "네이티브 웹 검색",

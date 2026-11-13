@@ -643,7 +643,11 @@ a usage tab.
     (`settings.contextWindowCatalogHint`), and the first edit — the preset
     ladder or the numeric input — pins the value to the user, which removes the
     hint. A value the user pinned is never replaced by a catalog refresh; an
-    unpublished model shows no hint because there is nothing to follow.
+    unpublished model shows no hint because there is nothing to follow. While
+    a pin is in force and the model has a published window, the preset ladder
+    offers an **Auto** chip (`settings.contextWindowCatalogReset`, tooltip
+    `settings.contextWindowCatalogResetHint`) that restores the published
+    value and the catalog source in one click, so a pin stays reversible.
   - each model option and configuration row shows a compact text/vision
     capability state. Settings compares the checkbox with the published model
     record, while the Composer badge and runtime use the effective binding:

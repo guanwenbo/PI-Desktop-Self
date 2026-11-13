@@ -1954,6 +1954,8 @@ export const ptBR = {
     documentInput: "PDF",
     thinkingManualOverrideHint: "Substitui a configuração padrão de raciocínio deste modelo.",
     contextWindowCatalogHint: "Segue models.dev; editar fixa o seu valor.",
+    contextWindowCatalogReset: "Auto",
+    contextWindowCatalogResetHint: "Voltar a seguir o models.dev (atualmente {value}).",
     availableForSubagents: "Disponível para subagentes",
     availableForSubagentsHint: "Permite que a IA use este modelo ao delegar tarefas a subagentes",
     nativeWebSearch: "Pesquisa nativa na web",

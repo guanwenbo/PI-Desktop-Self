@@ -1994,6 +1994,8 @@ sklm: {
     documentInput: "PDF",
     thinkingManualOverrideHint: "Katalogda yok; destekleniyorsa açın.",
     contextWindowCatalogHint: "models.dev'i takip eder; düzenlerseniz değeriniz sabitlenir.",
+    contextWindowCatalogReset: "Otomatik",
+    contextWindowCatalogResetHint: "models.dev'i yeniden takip et (şu anda {value}).",
     availableForSubagents: "AI devri için kullanılabilir",
     availableForSubagentsHint: "Görevler alt ajanlara devredilirken AI’nin bu modeli kullanmasına izin ver",
     nativeWebSearch: "Yerel web araması",

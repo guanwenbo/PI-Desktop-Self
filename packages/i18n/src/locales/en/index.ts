@@ -2004,6 +2004,8 @@ sklm: {
     documentInput: "PDF",
     thinkingManualOverrideHint: "Not in catalog; enable if supported.",
     contextWindowCatalogHint: "Follows models.dev; editing pins your value.",
+    contextWindowCatalogReset: "Auto",
+    contextWindowCatalogResetHint: "Follow models.dev again (currently {value}).",
     availableForSubagents: "Available for AI delegation",
     availableForSubagentsHint: "Allow AI to use this model when delegating tasks to subagents",
     nativeWebSearch: "Native web search",

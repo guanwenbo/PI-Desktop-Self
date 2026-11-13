@@ -1979,6 +1979,8 @@ sklm: {
     documentInput: "PDF",
     thinkingManualOverrideHint: "目錄未標註，可手動開啟",
     contextWindowCatalogHint: "跟隨 models.dev；手動修改後會固定為你的值",
+    contextWindowCatalogReset: "自動",
+    contextWindowCatalogResetHint: "恢復跟隨 models.dev（目前 {value}）",
     availableForSubagents: "可供 AI 自動排程",
     availableForSubagentsHint: "允許 AI 在委派子任務時自動選用此模型",
     nativeWebSearch: "原生網路搜尋",
