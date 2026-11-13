@@ -48,11 +48,13 @@ describe("stored hosted-search replay boundary", () => {
     expect(restoreHostedSearchReplay(search)).toMatchObject(search.replay!);
   });
 
-  it("classifies a malformed stored replay container before array operations", () => {
+  it("degrades a malformed stored replay container instead of failing every turn", () => {
     const invalid: HostedSearch = JSON.parse('{"status":"completed","rounds":[],"replay":{}}');
-    expect(() => restoreHostedSearchReplay(invalid)).toThrow(
-      expect.objectContaining({ code: "LOCAL_REQUEST_ERROR", phase: "context-validation" }),
-    );
+    const { result, warnings } = withCapturedWarnings(() => restoreHostedSearchReplay(invalid));
+    // 容器损坏与单块失败同一待遇：恢复在每轮 prompt 前运行，抛错会让会话
+    // 永久无法续聊，而回放只是该消息上下文的一部分。
+    expect(result).toEqual([]);
+    expect(warnings).toHaveLength(1);
   });
 
   it("drops the whole replay rather than failing a turn on an unreplayable block", () => {
