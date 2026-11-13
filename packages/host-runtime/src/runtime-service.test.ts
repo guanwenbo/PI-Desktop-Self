@@ -68,6 +68,8 @@ class FakeSidecar implements RuntimeSidecarLink {
   exit: ((info: { intentional: boolean; code: number | null; signal: NodeJS.Signals | null }) => void) | null = null;
   roots = new Map<string, string | undefined>();
   rejectPrompt = false;
+  /** Specific rejection `agent.prompt` answers with; overrides `rejectPrompt`. */
+  promptError: Error | null = null;
   running = false;
   /** Error `agent.compact` answers with; `null` accepts the compaction. */
   compactError: Error | null = null;
@@ -80,6 +82,7 @@ class FakeSidecar implements RuntimeSidecarLink {
     switch (method) {
       case "agent.prompt":
       case "agent.executeApprovedPlan":
+        if (this.promptError) throw this.promptError;
         if (this.rejectPrompt) throw Object.assign(new Error("model not configured"), { data: { errorCode: "MODEL_NOT_CONFIGURED" } });
         this.running = true;
         return { accepted: true, turnId: params.turnId } as T;
@@ -399,6 +402,72 @@ describe("RuntimeService prompt lifecycle", () => {
     expect(end?.params).toMatchObject({ turnId: "turn-1", status: "error", errorCode: "MODEL_NOT_CONFIGURED" });
     expect(ended[0]).toMatchObject({ reason: "error", errorCode: "MODEL_NOT_CONFIGURED" });
     expect(service.isBusy("s1")).toBe(false);
+  });
+
+  it("persists a visible assistant error row when the runtime rejects the prompt before streaming", async () => {
+    const { host, sidecar, service, events } = build();
+    sidecar.rejectPrompt = true;
+    await expect(
+      service.prompt({ sessionId: "s1", content: "hello", effectivePermissionMode: "ask", principal: owner }),
+    ).rejects.toThrow("model not configured");
+    // A pre-stream rejection used to leave only the user row: nothing in the
+    // transcript, nothing after reload, the turn's error_code the only trace.
+    const rows = host.messages.get("s1") ?? [];
+    const failure = rows.find((row) => row.role === "assistant");
+    expect(failure).toMatchObject({
+      role: "assistant",
+      status: "error",
+      isError: true,
+      providerId: "p1",
+      modelId: "m1",
+      error: { code: "MODEL_NOT_CONFIGURED", message: "model not configured" },
+    });
+    // The live transcript hears about the row, not just the reload path.
+    expect(events.some((envelope) =>
+      envelope.event.type === "message_end" &&
+      envelope.event.message.id === failure?.id
+    )).toBe(true);
+  });
+
+  it("keeps the safe local provenance on the persisted pre-runtime failure row", async () => {
+    const { host, sidecar, service } = build();
+    sidecar.promptError = Object.assign(new Error("Local request preparation failed"), {
+      data: {
+        errorCode: "INTERNAL",
+        retriable: false,
+        details: { origin: "local", phase: "request-preparation", causeName: "Error" },
+      },
+    });
+    await expect(
+      service.prompt({ sessionId: "s1", content: "hello", effectivePermissionMode: "ask", principal: owner }),
+    ).rejects.toThrow("Local request preparation failed");
+    const failure = (host.messages.get("s1") ?? []).find((row) => row.role === "assistant");
+    expect(failure?.error).toMatchObject({
+      code: "INTERNAL",
+      retriable: false,
+      details: { origin: "local", phase: "request-preparation", causeName: "Error" },
+    });
+  });
+
+  it("still closes the turn when the failure row itself cannot be persisted", async () => {
+    const { host, sidecar, service } = build();
+    sidecar.rejectPrompt = true;
+    // The user row lands, then every later append fails: the original
+    // rejection must still decide the outcome, not the diagnostic append.
+    const original = host.call.bind(host);
+    let appended = 0;
+    host.call = async (method: string, params: Record<string, unknown> = {}) => {
+      if (method === "session.appendMessage") {
+        appended += 1;
+        if (appended > 1) throw new Error("disk full");
+      }
+      return original(method, params);
+    };
+    await expect(
+      service.prompt({ sessionId: "s1", content: "hello", effectivePermissionMode: "ask", principal: owner }),
+    ).rejects.toThrow("model not configured");
+    expect(host.calls.find((call) => call.method === "session.endTurn")?.params)
+      .toMatchObject({ status: "error", errorCode: "MODEL_NOT_CONFIGURED" });
   });
 
   it("never starts a runtime turn when the user row could not be appended", async () => {

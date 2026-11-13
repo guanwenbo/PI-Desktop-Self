@@ -217,6 +217,9 @@ export class TurnEventPipeline {
           code: event.error.code,
           message: event.error.message,
           retriable: event.error.retriable,
+          // Safe structured diagnostics (origin/phase/causeName for local
+          // failures): the fixed message text alone is undiagnosable.
+          details: event.error.details,
         });
         if (this.options.ownership.isStaleTerminalEvent(envelope)) return;
         void finish(event.error.code === "TURN_ABORTED" ? "aborted" : "error", event.error.code);

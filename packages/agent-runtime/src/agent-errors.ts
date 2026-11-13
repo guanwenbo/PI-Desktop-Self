@@ -126,6 +126,27 @@ function redactSensitiveErrorText(message: string): string {
 }
 
 /**
+ * Local-log rendering of a wrapped failure chain. The UI contract never
+ * carries cause messages (spec 03-runtime/08-error-codes), but a turn that
+ * failed with only a phase and a constructor name is undiagnosable. The
+ * redacted chain stays on the process's own stderr, next to the transcript
+ * that already holds the same content; credentials are stripped first.
+ */
+export function redactedCauseChainForLog(error: unknown): string {
+  const parts: string[] = [];
+  let current: unknown = error;
+  const seen = new Set<object>();
+  for (let depth = 0; depth < 4 && current; depth += 1) {
+    if (!(current instanceof Error) || seen.has(current)) break;
+    seen.add(current);
+    const text = redactSensitiveErrorText(current.message || "");
+    parts.push(`${current.name}${text ? `: ${text.slice(0, 300)}` : ""}`);
+    current = current.cause;
+  }
+  return parts.join(" <- ") || "unknown";
+}
+
+/**
  * Probe the HTTP status across SDK error shapes: `status`/`statusCode`
  * fields (walking the `cause` chain), then a leading "<status>:", an
  * OpenAI SDK "Error code: NNN" prefix, a "(status)" / "status code NNN"
