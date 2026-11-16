@@ -19967,6 +19967,32 @@ host-created files. The full app's file-preview viewer is covered separately.
   and `plugin-composer-suggestion.test.mjs`; the rendered journey remains a
   manual/Electron check when this surface changes.
 
+#### E2E-1176: A rejected thinking signature is repaired in place and stays repaired
+
+- **Preconditions**: An Agent session on an Anthropic Messages provider has at
+  least one completed turn whose stored history carries a signed `thinking`
+  block. A loopback gateway answers 400 "Invalid `signature` in `thinking`
+  block. The block is bound to a different conversation." for any request that
+  still contains that signature, and succeeds otherwise.
+- **Steps:** 1) Send a new prompt. 2) Observe the turn. 3) Send a second
+  prompt in the same session. 4) Open `logs/app/session.log`.
+- **Expected**: The first prompt completes without a visible error: the
+  rejected request is resent once with the thinking blocks of completed turns
+  removed (text, tool calls and tool results stay; the turn in flight keeps its
+  own thinking), consuming no transient retry budget or backoff. The second
+  prompt succeeds on its first request, because the session keeps sending its
+  history that way. The transcript still shows the stored thinking text.
+  `session.log` holds one `session.thinking_signature.repaired` info entry with
+  the number of removed blocks, the API, provider, model and request message
+  count. A 400 that names anything else is not repaired, and a repaired request
+  that fails the same way surfaces the original error.
+- **Specs linked**: `03-runtime/02-agent-runtime.md`,
+  `03-runtime/08-error-codes.md`.
+- **Acceptance**: C (chat & stream), H (diagnostics), Quality.
+- **Milestone**: M5
+- **Status**: Unit/contract-covered by `thinking-signature-repair.test.ts` and
+  `runtime.test.ts` ("thinking signature rejection"); no Electron journey.
+
 ### E2E-REMOTE-FILE-MANAGER: Scoped remote plugin reads
 
 Run `node scripts/e2e-remote-file-manager.mjs` to validate the shipped copy in

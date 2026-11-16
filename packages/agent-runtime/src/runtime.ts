@@ -318,6 +318,7 @@ import {
   streamIdleTimeoutMs,
   withStreamIdleTimeout,
 } from "./provider-retry.js";
+import { withoutCompletedTurnThinking } from "./thinking-signature-repair.js";
 
 import {
   ContextEstimateCalibration,
@@ -1113,7 +1114,7 @@ export type AgentRuntimeOptions = {
 };
 
 export type AgentRuntimeDiagnostic = {
-  kind: "compaction_failure" | "compaction_shape";
+  kind: "compaction_failure" | "compaction_shape" | "thinking_signature_repair";
   sessionId: string;
   turnId?: string;
   requestId: string;
@@ -1955,6 +1956,8 @@ export class DesktopAgentRuntime {
    * `networkCategory: "unknown"` (issue #234).
    */
   private providerFetchFailure?: ProviderFetchFailure;
+  /** Set once a provider rejected a replayed thinking signature in this session. */
+  private thinkingHistoryRepaired = false;
   /**
    * Consecutive-failure policy for the shared undici pool. Rebuilding the pool
    * is a process-wide action, so the evidence stays per session and the pool is
@@ -2289,7 +2292,11 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
         const retryStream = createProviderRetryStream(
           m,
           requestContext,
-          attemptOptions,
+          // After a signature rejection the whole session sends its history
+          // without the thinking blocks of completed turns.
+          this.thinkingHistoryRepaired
+            ? withoutCompletedTurnThinking(attemptOptions)
+            : attemptOptions,
           (retryOptions) => {
             // Each network attempt owns its idle clock and abort signal.
             // Deliberate backoff must not look like a stalled provider stream.
@@ -2313,6 +2320,8 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           },
           {
             claim: (error, phase) => this.claimProviderRetry(error, phase),
+            thinkingRepaired: () => this.thinkingHistoryRepaired,
+            onThinkingRepair: ({ removed }) => this.repairThinkingHistory(m, removed),
             headers: () => this.providerRetryHeaders,
             status: () => this.providerResponseStatus,
             failure: () => this.providerFetchFailure,
@@ -7541,6 +7550,32 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       error: aborted
         ? { code: "TURN_ABORTED", message: "Context compaction was stopped" }
         : { code: "CONTEXT_COMPACTION_FAILED", message },
+    });
+  }
+
+  /**
+   * A provider rejected a replayed thinking signature and the history was resent
+   * without the thinking blocks of completed turns. The stored signatures stay
+   * invalid, so every later request of this session sends the history that way
+   * instead of failing once more. The diagnostic records what was dropped so a
+   * recurring rejection can be traced to its trigger.
+   */
+  private repairThinkingHistory(model: Model<Api>, removedBlocks: number): void {
+    this.thinkingHistoryRepaired = true;
+    this.onDiagnostic({
+      kind: "thinking_signature_repair",
+      sessionId: this.sessionId,
+      ...(this.turnId ? { turnId: this.turnId } : {}),
+      requestId: randomUUID(),
+      data: {
+        removedBlocks,
+        api: model.api,
+        provider: model.provider,
+        model: model.id,
+        ...(this.providerRequestMessages !== undefined
+          ? { requestMessages: this.providerRequestMessages }
+          : {}),
+      },
     });
   }
 

@@ -271,25 +271,31 @@ export function createSidecarRuntime({
         requestId?: unknown;
         data?: unknown;
       };
+      const logged =
+        diagnostic.kind === "compaction_failure"
+          ? { level: "warn" as const, message: "context compaction failed", event: "session.compaction.failed" }
+          : diagnostic.kind === "compaction_shape"
+            ? { level: "info" as const, message: "context compaction request shape", event: "session.compaction.request_shape" }
+            : diagnostic.kind === "thinking_signature_repair"
+              ? {
+                  level: "info" as const,
+                  message: "thinking signature rejected, history resent without completed-turn thinking",
+                  event: "session.thinking_signature.repaired",
+                }
+              : undefined;
       if (
-        (diagnostic.kind === "compaction_failure" || diagnostic.kind === "compaction_shape") &&
+        logged &&
         typeof diagnostic.sessionId === "string" &&
         typeof diagnostic.requestId === "string" &&
         diagnostic.data && typeof diagnostic.data === "object"
       ) {
-        const isFailure = diagnostic.kind === "compaction_failure";
-        logger.app(
-          "session",
-          isFailure ? "warn" : "info",
-          isFailure ? "context compaction failed" : "context compaction request shape",
-          {
-            sessionId: diagnostic.sessionId,
-            ...(typeof diagnostic.turnId === "string" ? { turnId: diagnostic.turnId } : {}),
-            requestId: diagnostic.requestId,
-            event: isFailure ? "session.compaction.failed" : "session.compaction.request_shape",
-            data: diagnostic.data,
-          },
-        );
+        logger.app("session", logged.level, logged.message, {
+          sessionId: diagnostic.sessionId,
+          ...(typeof diagnostic.turnId === "string" ? { turnId: diagnostic.turnId } : {}),
+          requestId: diagnostic.requestId,
+          event: logged.event,
+          data: diagnostic.data,
+        });
       }
       return;
     }

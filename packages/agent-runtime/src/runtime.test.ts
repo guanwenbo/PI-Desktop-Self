@@ -14732,3 +14732,83 @@ describe("background Bash job waits in the production runtime", () => {
     }
   });
 });
+
+describe("thinking signature rejection", () => {
+  const rejection =
+    "400 ValidationException: ***.***.content.0: Invalid `signature` in `thinking` block. " +
+    "The block is bound to a different conversation.";
+
+  /** What pi-ai would send for a session whose earlier turn carries a signed thinking block. */
+  function signedHistory() {
+    return {
+      messages: [
+        { role: "user", content: "first" },
+        {
+          role: "assistant",
+          content: [
+            { type: "thinking", thinking: "plan", signature: "stale-signature" },
+            { type: "text", text: "answer" },
+          ],
+        },
+        { role: "user", content: "next" },
+      ],
+    };
+  }
+
+  it("repairs the rejected turn once and keeps later turns of the session working", async () => {
+    const runtime = createRuntime();
+    const diagnostics: Array<{ kind: string; data: Record<string, unknown> }> = [];
+    (runtime as any).onDiagnostic = (diagnostic: never) => diagnostics.push(diagnostic);
+    // One entry per provider request: did it still carry the signed block?
+    const sentSigned: boolean[] = [];
+    (runtime as any).models = {
+      streamSimple: (
+        model: unknown,
+        _context: unknown,
+        options: { onPayload?: (payload: unknown, model: unknown) => Promise<unknown> },
+      ) => {
+        const stream = createAssistantMessageEventStream();
+        void (async () => {
+          const body = signedHistory();
+          const payload = (await options.onPayload?.(body, model)) ?? body;
+          const signed = JSON.stringify(payload).includes("stale-signature");
+          sentSigned.push(signed);
+          if (signed) {
+            const failed = {
+              ...assistantMessage({ content: [], stopReason: "error" }),
+              errorMessage: rejection,
+            } as unknown as AssistantMessage;
+            stream.push({ type: "error", reason: "error", error: failed });
+            stream.end(failed);
+            return;
+          }
+          const message = assistantMessage({
+            content: [{ type: "text", text: "ok" }],
+          }) as unknown as AssistantMessage;
+          stream.push({ type: "start", partial: message });
+          stream.push({ type: "done", reason: "stop", message });
+          stream.end(message);
+        })();
+        return stream;
+      },
+    };
+    try {
+      await runtime.prompt("first turn", "user-1", "turn-1");
+      // The rejected request is resent once, without the signed history.
+      expect(sentSigned).toEqual([true, false]);
+      expect(runtime.getStatus().agentActivity).not.toMatchObject({ phase: "retrying" });
+
+      await runtime.prompt("second turn", "user-2", "turn-2");
+      // The session no longer replays the stale signature, so no request fails first.
+      expect(sentSigned).toEqual([true, false, false]);
+
+      expect(diagnostics).toHaveLength(1);
+      expect(diagnostics[0]).toMatchObject({
+        kind: "thinking_signature_repair",
+        data: { removedBlocks: 1, api: expect.any(String), model: expect.any(String) },
+      });
+    } finally {
+      await runtime.dispose();
+    }
+  });
+});

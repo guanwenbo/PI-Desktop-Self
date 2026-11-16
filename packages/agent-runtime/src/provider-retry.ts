@@ -20,6 +20,10 @@ import {
   type ProviderFetchFailure,
   withProviderFetchFailure,
 } from "./provider-transport-recovery.js";
+import {
+  isThinkingSignatureRejection,
+  withoutCompletedTurnThinking,
+} from "./thinking-signature-repair.js";
 /** Maximum number of retries after the first rate-limited request. */
 export const PROVIDER_RATE_LIMIT_MAX_RETRIES = PROVIDER_RETRY_MAX_RETRIES;
 export const PROVIDER_RATE_LIMIT_INITIAL_DELAY_MS = 2_000;
@@ -234,6 +238,13 @@ export type ProviderRetryController = {
   }) => void;
   /** Test hook; production uses the abortable timer below. */
   sleep?: (ms: number, signal?: AbortSignal) => Promise<void>;
+  /**
+   * Whether this session already sends its history without the thinking blocks
+   * of completed turns, which makes a second repair pointless.
+   */
+  thinkingRepaired?: () => boolean;
+  /** A rejected thinking signature is being repaired; `removed` blocks were dropped. */
+  onThinkingRepair?: (input: { error: ClassifiedAgentError; removed: number }) => void;
 };
 
 /**
@@ -524,14 +535,23 @@ export function createProviderRetryStream(
     // Repairing never consumes the shared transient budget, and a second
     // failure of the same kind surfaces untouched.
     let limitRepairTried = false;
+    // The same applies to a rejected thinking signature: the history is resent
+    // once without the thinking blocks of completed turns.
+    let thinkingRepairTried = false;
+    let repairedRejection: ClassifiedAgentError | undefined;
     let outputCeiling: number | undefined;
     for (;;) {
       if (options.signal?.aborted) throw requestAbortedError();
-      const requestOptions = !limitRepairTried
+      const limitOptions = !limitRepairTried
         ? options
         : outputCeiling !== undefined
           ? withClampedOutputLimit(options, outputCeiling)
           : withoutDerivedOutputLimit(options);
+      const requestOptions = thinkingRepairTried
+        ? withoutCompletedTurnThinking(limitOptions, (removed) =>
+            controller.onThinkingRepair?.({ error: repairedRejection!, removed }),
+          )
+        : limitOptions;
       const inner = createStream({
         ...requestOptions,
         maxRetries: 0,
@@ -541,6 +561,7 @@ export function createProviderRetryStream(
         | { error: ClassifiedAgentError; attempt: number }
         | undefined;
       let opaqueLimitRejection: ClassifiedAgentError | undefined;
+      let thinkingRejection: ClassifiedAgentError | undefined;
 
       for await (const event of inner) {
         if (event.type === "start") sawStart = true;
@@ -567,6 +588,17 @@ export function createProviderRetryStream(
             opaqueLimitRejection = error;
             break;
           }
+          // A replayed thinking signature the provider no longer accepts stays
+          // in the stored history, so re-sending the same request cannot
+          // succeed. Repair it once, ahead of the shared transient budget.
+          if (
+            !thinkingRepairTried &&
+            !controller.thinkingRepaired?.() &&
+            isThinkingSignatureRejection(error)
+          ) {
+            thinkingRejection = error;
+            break;
+          }
           const attempt = error.details?.origin === "local"
             ? undefined : controller.claim(error, "request");
           if (attempt !== undefined) {
@@ -589,6 +621,14 @@ export function createProviderRetryStream(
         await inner.result();
         if (options.signal?.aborted) throw requestAbortedError();
         limitRepairTried = true;
+        continue;
+      }
+
+      if (thinkingRejection) {
+        await inner.result();
+        if (options.signal?.aborted) throw requestAbortedError();
+        thinkingRepairTried = true;
+        repairedRejection = thinkingRejection;
         continue;
       }
 
