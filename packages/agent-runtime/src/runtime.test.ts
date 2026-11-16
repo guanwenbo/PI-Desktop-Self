@@ -14796,7 +14796,8 @@ describe("thinking signature rejection", () => {
       await runtime.prompt("first turn", "user-1", "turn-1");
       // The rejected request is resent once, without the signed history.
       expect(sentSigned).toEqual([true, false]);
-      expect(runtime.getStatus().agentActivity).not.toMatchObject({ phase: "retrying" });
+      // The repair is silent: it is not surfaced as a provider retry.
+      expect(runtime.getStatus().activity).not.toMatchObject({ phase: "retrying" });
 
       await runtime.prompt("second turn", "user-2", "turn-2");
       // The session no longer replays the stale signature, so no request fails first.
