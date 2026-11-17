@@ -1,0 +1,18 @@
+packages/agent-runtime/src/repeat-tool-reminder.test.ts
+  h_b98c004121ae66 1-56
+packages/agent-runtime/src/repeat-tool-reminder.ts
+  h_b98c004121ae66 1-71
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "43f152f839ae2cfd5d8113ea4d897f7d05961c68",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
