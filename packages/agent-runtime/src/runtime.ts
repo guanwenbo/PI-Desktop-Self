@@ -21,6 +21,7 @@ import { readLocalRequestErrorDetails } from "./local-request-errors.js";
 import { isValidToolCall, recoverMalformedToolCalls } from "./tool-call-recovery.js";
 import { RepeatToolReminder } from "./repeat-tool-reminder.js";
 import { pruneToolResultMessages, TOOL_RESULT_PRUNE_TRIGGER_RATIO } from "./tool-result-pruner.js";
+import { spillToolResultText } from "./tool-result-spill.js";
 import { textToolCallDiagnostic } from "./text-tool-call.js";
 import { computerUseDescription, computerUseParameters } from "./computer-use/tool.js";
 import { imageGenerationDescription, imageGenerationParameters } from "./image-generation/tool.js";
@@ -4003,6 +4004,12 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           text = JSON.stringify(rawContent, null, 2);
         }
         if (!result.ok) this.failedHostToolCalls.add(toolCallId);
+        if (toolName.startsWith("plugin_")) {
+          // Plugin and MCP results never pass host-core's output budgets;
+          // spill oversized ones to the session scratch so the full text
+          // stays retrievable instead of filling the context (dsh spill).
+          text = spillToolResultText({ scratchDir: this.scratchDir, toolName, toolCallId, text });
+        }
         // A visualization fragment gets one cheap static check in its Write
         // result, so a broken card is fixed in one Edit instead of left blank.
         if (
