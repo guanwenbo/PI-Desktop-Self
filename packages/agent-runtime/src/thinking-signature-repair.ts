@@ -29,26 +29,11 @@ function isThinkingBlock(block: unknown): boolean {
 }
 
 /**
- * A user message that opens a turn. Tool results are also sent as `user`
- * messages, but they continue the turn the assistant is still working on.
- */
-function opensTurn(message: PayloadMessage): boolean {
-  if (message.role !== "user") return false;
-  const { content } = message;
-  if (!Array.isArray(content)) return true;
-  return !content.every(
-    (block) =>
-      typeof block === "object" &&
-      block !== null &&
-      (block as { type?: unknown }).type === "tool_result",
-  );
-}
-
-/**
- * Drop the thinking blocks of every completed turn from an Anthropic Messages
- * payload. The turn in flight keeps its blocks: with thinking enabled the
- * provider requires an assistant message that carries a tool call to start
- * with its own thinking block.
+ * Drop every thinking block from an Anthropic Messages payload, including the
+ * blocks of the turn in flight. The gateway also rejects a signature produced
+ * seconds earlier in the same turn, so keeping any signed block leaves the
+ * repaired request open to the same rejection. The gateway accepts an
+ * assistant tool call without a leading thinking block.
  *
  * Text, tool calls and tool results stay, so the model keeps the visible
  * history; this is the same request pi-ai builds when the session switches to
@@ -56,7 +41,7 @@ function opensTurn(message: PayloadMessage): boolean {
  * assistant message left empty is removed, as pi-ai does for an empty message.
  * Payloads of other API styles have no such blocks and pass through unchanged.
  */
-export function stripCompletedTurnThinking(payload: unknown): {
+export function stripThinking(payload: unknown): {
   payload: unknown;
   removed: number;
 } {
@@ -64,20 +49,10 @@ export function stripCompletedTurnThinking(payload: unknown): {
   const { messages } = payload as { messages?: unknown };
   if (!Array.isArray(messages)) return { payload, removed: 0 };
 
-  let currentTurnStart = 0;
-  messages.forEach((message: PayloadMessage, index) => {
-    if (message && opensTurn(message)) currentTurnStart = index;
-  });
-
   let removed = 0;
   const next: unknown[] = [];
-  messages.forEach((message: PayloadMessage, index) => {
-    if (
-      index >= currentTurnStart ||
-      !message ||
-      message.role !== "assistant" ||
-      !Array.isArray(message.content)
-    ) {
+  messages.forEach((message: PayloadMessage) => {
+    if (!message || message.role !== "assistant" || !Array.isArray(message.content)) {
       next.push(message);
       return;
     }
@@ -91,11 +66,11 @@ export function stripCompletedTurnThinking(payload: unknown): {
 }
 
 /**
- * Request options that send the history without the thinking blocks of
- * completed turns. Any caller `onPayload` hook still runs first. `onStripped`
- * fires for a payload that actually lost blocks.
+ * Request options that send the history without thinking blocks. Any caller
+ * `onPayload` hook still runs first. `onStripped` fires for a payload that
+ * actually lost blocks.
  */
-export function withoutCompletedTurnThinking(
+export function withoutThinking(
   options: SimpleStreamOptions,
   onStripped?: (removed: number) => void,
 ): SimpleStreamOptions {
@@ -103,7 +78,7 @@ export function withoutCompletedTurnThinking(
     ...options,
     onPayload: async (payload, model) => {
       const rewritten = (await options.onPayload?.(payload, model)) ?? payload;
-      const stripped = stripCompletedTurnThinking(rewritten);
+      const stripped = stripThinking(rewritten);
       if (stripped.removed > 0) onStripped?.(stripped.removed);
       return stripped.payload;
     },

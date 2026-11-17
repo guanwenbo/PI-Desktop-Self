@@ -14738,7 +14738,10 @@ describe("thinking signature rejection", () => {
     "400 ValidationException: ***.***.content.0: Invalid `signature` in `thinking` block. " +
     "The block is bound to a different conversation.";
 
-  /** What pi-ai would send for a session whose earlier turn carries a signed thinking block. */
+  /**
+   * What pi-ai would send mid tool loop: an earlier turn and the turn in flight
+   * both carry a signed thinking block.
+   */
   function signedHistory() {
     return {
       messages: [
@@ -14751,10 +14754,20 @@ describe("thinking signature rejection", () => {
           ],
         },
         { role: "user", content: "next" },
+        {
+          role: "assistant",
+          content: [
+            { type: "thinking", thinking: "look", signature: "live-signature" },
+            { type: "tool_use", id: "t1", name: "Read", input: {} },
+          ],
+        },
+        { role: "user", content: [{ type: "tool_result", tool_use_id: "t1", content: "ok" }] },
       ],
     };
   }
 
+  // The gateway rejects any replayed signature, including one the turn in
+  // flight wrote seconds earlier, so the repair must drop every signed block.
   it("repairs the rejected turn once and keeps later turns of the session working", async () => {
     const runtime = createRuntime();
     const diagnostics: Array<{ kind: string; data: Record<string, unknown> }> = [];
@@ -14771,7 +14784,7 @@ describe("thinking signature rejection", () => {
         void (async () => {
           const body = signedHistory();
           const payload = (await options.onPayload?.(body, model)) ?? body;
-          const signed = JSON.stringify(payload).includes("stale-signature");
+          const signed = /-signature"/.test(JSON.stringify(payload));
           sentSigned.push(signed);
           if (signed) {
             const failed = {
@@ -14806,7 +14819,7 @@ describe("thinking signature rejection", () => {
       expect(diagnostics).toHaveLength(1);
       expect(diagnostics[0]).toMatchObject({
         kind: "thinking_signature_repair",
-        data: { removedBlocks: 1, api: expect.any(String), model: expect.any(String) },
+        data: { removedBlocks: 2, api: expect.any(String), model: expect.any(String) },
       });
     } finally {
       await runtime.dispose();

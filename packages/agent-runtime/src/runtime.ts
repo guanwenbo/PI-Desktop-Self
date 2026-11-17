@@ -318,7 +318,7 @@ import {
   streamIdleTimeoutMs,
   withStreamIdleTimeout,
 } from "./provider-retry.js";
-import { withoutCompletedTurnThinking } from "./thinking-signature-repair.js";
+import { withoutThinking } from "./thinking-signature-repair.js";
 
 import {
   ContextEstimateCalibration,
@@ -2293,9 +2293,9 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           m,
           requestContext,
           // After a signature rejection the whole session sends its history
-          // without the thinking blocks of completed turns.
+          // without thinking blocks, including those the model writes later.
           this.thinkingHistoryRepaired
-            ? withoutCompletedTurnThinking(attemptOptions)
+            ? withoutThinking(attemptOptions)
             : attemptOptions,
           (retryOptions) => {
             // Each network attempt owns its idle clock and abort signal.
@@ -7555,9 +7555,9 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
 
   /**
    * A provider rejected a replayed thinking signature and the history was resent
-   * without the thinking blocks of completed turns. The stored signatures stay
-   * invalid, so every later request of this session sends the history that way
-   * instead of failing once more. The diagnostic records what was dropped so a
+   * without thinking blocks. The gateway can reject any stored signature, even
+   * one written seconds earlier, so every later request of this session sends
+   * the history that way instead of failing once more. The diagnostic records what was dropped so a
    * recurring rejection can be traced to its trigger.
    */
   private repairThinkingHistory(model: Model<Api>, removedBlocks: number): void {

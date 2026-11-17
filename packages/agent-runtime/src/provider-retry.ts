@@ -22,7 +22,7 @@ import {
 } from "./provider-transport-recovery.js";
 import {
   isThinkingSignatureRejection,
-  withoutCompletedTurnThinking,
+  withoutThinking,
 } from "./thinking-signature-repair.js";
 /** Maximum number of retries after the first rate-limited request. */
 export const PROVIDER_RATE_LIMIT_MAX_RETRIES = PROVIDER_RETRY_MAX_RETRIES;
@@ -239,8 +239,8 @@ export type ProviderRetryController = {
   /** Test hook; production uses the abortable timer below. */
   sleep?: (ms: number, signal?: AbortSignal) => Promise<void>;
   /**
-   * Whether this session already sends its history without the thinking blocks
-   * of completed turns, which makes a second repair pointless.
+   * Whether this session already sends its history without thinking blocks,
+   * which makes a second repair pointless.
    */
   thinkingRepaired?: () => boolean;
   /** A rejected thinking signature is being repaired; `removed` blocks were dropped. */
@@ -536,7 +536,7 @@ export function createProviderRetryStream(
     // failure of the same kind surfaces untouched.
     let limitRepairTried = false;
     // The same applies to a rejected thinking signature: the history is resent
-    // once without the thinking blocks of completed turns.
+    // once without any thinking block.
     let thinkingRepairTried = false;
     let repairedRejection: ClassifiedAgentError | undefined;
     let outputCeiling: number | undefined;
@@ -548,7 +548,7 @@ export function createProviderRetryStream(
           ? withClampedOutputLimit(options, outputCeiling)
           : withoutDerivedOutputLimit(options);
       const requestOptions = thinkingRepairTried
-        ? withoutCompletedTurnThinking(limitOptions, (removed) =>
+        ? withoutThinking(limitOptions, (removed) =>
             controller.onThinkingRepair?.({ error: repairedRejection!, removed }),
           )
         : limitOptions;

@@ -19971,17 +19971,19 @@ host-created files. The full app's file-preview viewer is covered separately.
 
 - **Preconditions**: An Agent session on an Anthropic Messages provider has at
   least one completed turn whose stored history carries a signed `thinking`
-  block. A loopback gateway answers 400 "Invalid `signature` in `thinking`
-  block. The block is bound to a different conversation." for any request that
-  still contains that signature, and succeeds otherwise.
+  block, and the new prompt runs a tool loop whose own assistant message also
+  carries a signed `thinking` block. A loopback gateway answers 400 "Invalid
+  `signature` in `thinking` block. The block is bound to a different
+  conversation." for any request that still contains any signature, and
+  succeeds otherwise.
 - **Steps:** 1) Send a new prompt. 2) Observe the turn. 3) Send a second
   prompt in the same session. 4) Open `logs/app/session.log`.
 - **Expected**: The first prompt completes without a visible error: the
-  rejected request is resent once with the thinking blocks of completed turns
-  removed (text, tool calls and tool results stay; the turn in flight keeps its
-  own thinking), consuming no transient retry budget or backoff. The second
-  prompt succeeds on its first request, because the session keeps sending its
-  history that way. The transcript still shows the stored thinking text.
+  rejected request is resent once with every thinking block removed, including
+  those of the turn in flight (text, tool calls and tool results stay),
+  consuming no transient retry budget or backoff. The second prompt succeeds on
+  its first request, because the session keeps sending its history that way,
+  including thinking the model writes after the repair. The transcript still shows the stored thinking text.
   `session.log` holds one `session.thinking_signature.repaired` info entry with
   the number of removed blocks, the API, provider, model and request message
   count. A 400 that names anything else is not repaired, and a repaired request

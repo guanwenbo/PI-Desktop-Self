@@ -279,7 +279,7 @@ export function createSidecarRuntime({
             : diagnostic.kind === "thinking_signature_repair"
               ? {
                   level: "info" as const,
-                  message: "thinking signature rejected, history resent without completed-turn thinking",
+                  message: "thinking signature rejected, history resent without thinking blocks",
                   event: "session.thinking_signature.repaired",
                 }
               : undefined;
