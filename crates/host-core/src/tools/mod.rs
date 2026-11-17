@@ -665,6 +665,11 @@ pub struct ToolsExecuteParams {
     /// host-core resolves it against its registry; an unknown id is ignored.
     #[serde(default)]
     pub delegation_id: Option<String>,
+    /// Set by the agent runtime when the call originates from a delegated
+    /// subagent's tool surface. Host-owned tools that must stay user-owned
+    /// (e.g. scheduled automations) reject these calls.
+    #[serde(default)]
+    pub delegate: bool,
     #[serde(default)]
     pub expected_command_shell_id: Option<String>,
     #[serde(default)]

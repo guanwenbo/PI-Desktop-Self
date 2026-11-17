@@ -3760,6 +3760,10 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
               ...(this.delegateWorktrees.has(toolCallId)
                 ? { delegationId: this.delegateWorktrees.get(toolCallId) }
                 : {}),
+              // Every delegate tool call is marked so Host-owned tools that
+              // must stay user-owned (scheduled automations) can reject
+              // subagent callers. Parent calls never carry the flag.
+              ...(this.mutationOwners.has(toolCallId) ? { delegate: true } : {}),
             });
           // #1767: read-only host work must not keep the user-facing turn open
           // indefinitely. Other tool classes deliberately wait for the Host

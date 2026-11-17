@@ -44,6 +44,16 @@ fn invalid(message: &str) -> JsonRpcError {
 
 fn execute_inner(st: &AppState, p: &ToolsExecuteParams) -> Result<Value, JsonRpcError> {
     super::scheduled_settings::require_enabled(st)?;
+    // Scheduled automations belong to the user: a delegated subagent may see
+    // the tools, but every call from one is refused (mirrors the dsh rule
+    // that subagents cannot read or change reminders).
+    if p.delegate {
+        return Err(rpc_err(
+            1002,
+            "scheduled automations are user-owned; subagent sessions cannot list, create, update, or delete them",
+            "SUBAGENT_DENIED",
+        ));
+    }
     // The index row answers both questions this needs — does the session exist,
     // and what is its project? — so no transcript is materialized here.
     let summary = sessions::session_summary(&st.db, &p.session_id)
@@ -374,6 +384,45 @@ mod tests {
         )
         .await
         .unwrap()
+    }
+
+    #[tokio::test]
+    async fn delegate_calls_are_refused_for_all_scheduled_tools() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut st = AppState::open(dir.path()).unwrap();
+        st.handshook = true;
+        st.db
+            .set_setting("app", &json!({"defaultPermissionMode":"auto"}))
+            .unwrap();
+        let session =
+            sessions::create_session(&st.db, None, Some("agent".into()), None, None, None).unwrap();
+        let state = Arc::new(Mutex::new(st));
+        for (name, args) in [
+            ("ScheduledTaskList", json!({})),
+            (
+                "ScheduledTaskCreate",
+                json!({"title":"T","prompt":"P","cadence":"manual"}),
+            ),
+            ("ScheduledTaskUpdate", json!({"id":"x","title":"T"})),
+            ("ScheduledTaskDelete", json!({"id":"x"})),
+        ] {
+            let result = super::super::handle_request(
+                state.clone(),
+                "tools.execute",
+                json!({
+                    "sessionId":session.id,
+                    "toolCallId":uuid::Uuid::new_v4().to_string(),
+                    "toolName":name,"args":args,"mode":"agent","delegate":true
+                }),
+                mpsc::unbounded_channel().0,
+            )
+            .await
+            .unwrap();
+            assert_eq!(result["errorCode"], "SUBAGENT_DENIED", "{name}: {result}");
+        }
+        // The same calls without the delegate flag reach the normal path.
+        let listed = call(&state, &session.id, "ScheduledTaskList", json!({})).await;
+        assert_eq!(listed["ok"], true, "{listed}");
     }
 
     #[tokio::test]
