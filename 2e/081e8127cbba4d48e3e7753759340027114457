@@ -1,0 +1,16 @@
+docs/project/dsh-borrowings-design.md
+  h_b98c004121ae66 1-101
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 2025-2026,4298-4313,4338-4340,4342,9484-9485
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "2e081e8127cbba4d48e3e7753759340027114457",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}

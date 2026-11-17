@@ -1,0 +1,22 @@
+packages/agent-runtime/src/repeat-tool-reminder.test.ts
+  h_b98c004121ae66 1-56
+packages/agent-runtime/src/repeat-tool-reminder.ts
+  h_b98c004121ae66 1-71
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 22,3763-3766
+crates/host-core/src/rpc/scheduled_tools.rs
+  h_b98c004121ae66 47-56,389-427
+crates/host-core/src/tools/mod.rs
+  h_b98c004121ae66 668-672
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e26cd99508ef7163db6017abe913dd9f60edd39f",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+package.json
+  h_b98c004121ae66 91
+scripts/check-executable-entrypoints.mjs
+  h_b98c004121ae66 1-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "f8f965cb81e9cb0092c3a86abd80c95d1d4fbfec",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}

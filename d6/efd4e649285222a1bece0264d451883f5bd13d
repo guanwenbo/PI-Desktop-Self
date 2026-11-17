@@ -1,0 +1,20 @@
+crates/host-core/src/permissions.rs
+  h_b98c004121ae66 122-124
+crates/host-core/src/rpc/mod.rs
+  h_b98c004121ae66 13,4116-4117,4120,4839-4841
+crates/host-core/src/rpc/session_query_tools.rs
+  h_b98c004121ae66 1-283
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 3418-3419,3551-3554,4156-4158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "d6efd4e649285222a1bece0264d451883f5bd13d",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
