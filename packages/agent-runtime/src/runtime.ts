@@ -5027,6 +5027,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
             ]),
         "`task` is the delegate's only instruction. It cannot see this conversation, and you cannot correct it while it runs, so state the goal, the paths and facts it cannot infer, and exactly what to report back.",
         "To run delegates concurrently, emit several Task calls in one assistant message. A message that mixes Task with any other tool runs one call at a time. You may keep working or talk to the user while they run; the runtime delivers their reports when they finish. Call TaskStop only to cancel.",
+        "The orchestration vocabulary: agent = one Task; parallel = several Task calls in one message; pipeline = TaskWait for a stage's report, then start the next stage with that report quoted in its brief (or pass `resume` to continue the same agent). Fan out early and converge at the latest point where you actually need each report.",
         "To continue a previous subagent, pass its `resume` id (the `delegationId` returned by Task). Saying \"reuse\" in prose is not enough. Do not pass `model` when resuming; start a new delegation to change models.",
         `Available subagents:\n${catalog}`,
       ].join("\n\n"),
