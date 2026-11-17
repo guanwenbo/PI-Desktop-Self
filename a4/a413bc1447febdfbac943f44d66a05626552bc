@@ -1,0 +1,18 @@
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 23,7387-7398
+packages/agent-runtime/src/tool-result-pruner.test.ts
+  h_b98c004121ae66 1-105
+packages/agent-runtime/src/tool-result-pruner.ts
+  h_b98c004121ae66 1-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "a4a413bc1447febdfbac943f44d66a05626552bc",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
