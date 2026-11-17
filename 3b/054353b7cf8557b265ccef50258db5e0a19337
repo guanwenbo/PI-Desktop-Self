@@ -1,0 +1,14 @@
+docs/project/dsh-borrowings-design.md
+  h_b98c004121ae66 1-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "3b054353b7cf8557b265ccef50258db5e0a19337",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
