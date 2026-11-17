@@ -1,0 +1,18 @@
+crates/host-core/src/rpc/scheduled_tools.rs
+  h_b98c004121ae66 47-56,389-427
+crates/host-core/src/tools/mod.rs
+  h_b98c004121ae66 668-672
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 3761-3764
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e2ec5dac9cc33e4d5a2d130ba3b6abb47e285db1",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
