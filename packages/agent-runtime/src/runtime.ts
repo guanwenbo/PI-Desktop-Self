@@ -19,6 +19,7 @@ import { restoreHostedSearchReplay } from "./hosted-search-replay.js";
 import { requestExtensionUi } from "./extensions/ui-request.js";
 import { readLocalRequestErrorDetails } from "./local-request-errors.js";
 import { isValidToolCall, recoverMalformedToolCalls } from "./tool-call-recovery.js";
+import { RepeatToolReminder } from "./repeat-tool-reminder.js";
 import { textToolCallDiagnostic } from "./text-tool-call.js";
 import { computerUseDescription, computerUseParameters } from "./computer-use/tool.js";
 import { imageGenerationDescription, imageGenerationParameters } from "./image-generation/tool.js";
@@ -2019,6 +2020,8 @@ export class DesktopAgentRuntime {
   private mutationRecoveryGraces = new Set<string>();
   /** Tool-call ownership keeps concurrent delegates' mutation budgets apart. */
   private mutationOwners = new Map<string, string>();
+  /** Per-session streak tracker for the advisory loop-hygiene reminder. */
+  private readonly repeatToolReminder = new RepeatToolReminder();
   /** Why the recovery guard ended the turn, pending its visible error row. */
   private pendingMutationTermination?: {
     kind: "edit" | "patch-command";
@@ -4271,6 +4274,22 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     } };
   }
 
+  /**
+   * Advisory loop-hygiene guard (dsh repeat-tool-reminder): a streak of
+   * identical calls gets a short reminder appended to its own result. The
+   * call always runs unchanged — the reminder only advises.
+   */
+  private withRepeatToolReminder(tool: AgentTool): AgentTool {
+    return { ...tool, execute: async (id, args, signal, update) => {
+      const result = await tool.execute(id, args, signal, update);
+      const reminder = this.repeatToolReminder.observe(tool.name, args);
+      if (reminder && Array.isArray(result?.content)) {
+        return { ...result, content: [...result.content, { type: "text" as const, text: reminder }] };
+      }
+      return result;
+    } };
+  }
+
   private rebuildToolCatalog(): void {
     const catalog = new Map<string, AgentTool>();
     for (const tool of this.buildToolDefinitions()) {
@@ -4295,8 +4314,11 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       // Batch ordering wraps the mode guard: a call the guard rejects must
       // still release the calls ordered behind it in its batch.
       const steeringGuarded = this.guardSteeredTool(guarded);
+      // The reminder wraps before the batch/dynamic-mode layers: a spread
+      // copy above them would freeze Task's dynamic executionMode getter.
+      const reminded = this.withRepeatToolReminder(steeringGuarded);
       const catalogTool = withDynamicTaskExecutionMode(
-        builtin && TOOL_EXECUTION_SPECS[tool.name]?.file ? withBatchTurn(steeringGuarded, this.batchPlanner) : steeringGuarded,
+        builtin && TOOL_EXECUTION_SPECS[tool.name]?.file ? withBatchTurn(reminded, this.batchPlanner) : reminded,
         () => this.agent?.state.messages.at(-1),
       );
       if (builtin) this.builtinTools.add(catalogTool);
@@ -9426,6 +9448,8 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     this.pathInstructionClaims.clear();
     this.pendingUserMessageId = userMessageId;
     this.resetRunRecoveryState();
+    // A new user message resets the loop-hygiene streak counters.
+    this.repeatToolReminder.reset();
     this.autonomousExecution = false;
     const recovered = recoverMalformedToolCalls(this.agent.state.messages);
     if (recovered !== this.agent.state.messages) this.setAgentMessages(recovered);
