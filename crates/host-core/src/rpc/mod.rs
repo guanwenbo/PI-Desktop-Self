@@ -10,6 +10,7 @@ mod review_actions_rpc;
 mod scheduled_rpc;
 mod scheduled_settings;
 mod scheduled_tools;
+mod session_query_tools;
 mod todos;
 mod window_corner_rpc;
 mod worktree_rpc;
@@ -4112,10 +4113,11 @@ async fn handle_request(
         "tools.list" => {
             let mut definitions = tools::builtin_tool_defs();
             let st = state.lock().await;
-            if scheduled_settings::enabled(&st)? {
-                if let Some(items) = definitions.as_array_mut() {
+            if let Some(items) = definitions.as_array_mut() {
+                if scheduled_settings::enabled(&st)? {
                     items.extend(scheduled_tools::definitions());
                 }
+                items.extend(session_query_tools::definitions());
             }
             Ok(json!({ "tools": definitions }))
         }
@@ -4834,6 +4836,9 @@ async fn handle_request(
                 } else if scheduled_tools::recognizes(&p.tool_name) {
                     let st = state.lock().await;
                     scheduled_tools::execute(&st, &p)
+                } else if session_query_tools::recognizes(&p.tool_name) {
+                    let st = state.lock().await;
+                    session_query_tools::execute(&st, &p)
                 } else if let Some(remote) = remote_workspace.clone() {
                     remote_tools::execute_remote_tool(
                         &state,

@@ -3415,6 +3415,8 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           return `${commandShellToolDescription(this.commandShell, this.scratchDir)} Use Edit or Write instead of apply_patch, git apply, or patch; do not retry a failed shell patch command repeatedly.`;
         case "TodoWrite":
           return todoWriteDescription;
+        case "SessionSearch":
+          return "Search past conversations in this project (user and assistant messages, across sessions including this one). Returns matching sessions with message snippets, roles, and timestamps. Use it to recover earlier decisions, file paths, or results instead of redoing completed work.";
         case ASK_TOOL_NAME:
           return `Ask the user one or more questions. Keep each question to ${MAX_ASK_TOOL_QUESTION_CHARS} characters or fewer. Use Markdown in question text and option labels when formatting helps (for example, emphasis, inline code, or lists); the desktop card renders it safely. Plain strings and existing { label, description? } options are accepted; descriptions remain plain text and answers return the selected source label. The card always provides a custom user-input option.`;
         case "PluginScaffold":
@@ -3546,6 +3548,10 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       },
       PluginCheck: { directory: Type.String() },
       PluginPack: { directory: Type.String() },
+      SessionSearch: {
+        query: Type.String({ minLength: 1, maxLength: 500 }),
+        limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 20 })),
+      },
     };
     const exec = (toolName: string): AgentTool => {
       const run: AgentTool["execute"] = async (
@@ -4147,6 +4153,9 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     // itself; the Host refuses them in every other mode.
     if (agentLevel && this.modeState.offersAgentModeOnlyTools()) {
       tools.push(...Object.keys(scheduledToolParameters));
+      // Cross-session introspection is likewise an Agent-mode built-in; the
+      // Host answers it read-only against the project message index.
+      tools.push("SessionSearch");
       if (this.computerUseEnabled) tools.push("Computer");
     }
     const builtins = tools.map(exec);
