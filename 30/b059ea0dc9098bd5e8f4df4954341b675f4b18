@@ -1,0 +1,18 @@
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 24,4005-4010
+packages/agent-runtime/src/tool-result-spill.test.ts
+  h_b98c004121ae66 1-63
+packages/agent-runtime/src/tool-result-spill.ts
+  h_b98c004121ae66 1-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "30b059ea0dc9098bd5e8f4df4954341b675f4b18",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
