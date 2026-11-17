@@ -1,0 +1,14 @@
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 2025-2026,4298-4313,4338-4340,4342,9484-9485
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "1c0272059df80475ce5a883512feaeb07eeceae6",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
