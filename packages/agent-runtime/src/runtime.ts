@@ -20,6 +20,7 @@ import { requestExtensionUi } from "./extensions/ui-request.js";
 import { readLocalRequestErrorDetails } from "./local-request-errors.js";
 import { isValidToolCall, recoverMalformedToolCalls } from "./tool-call-recovery.js";
 import { RepeatToolReminder } from "./repeat-tool-reminder.js";
+import { pruneToolResultMessages, TOOL_RESULT_PRUNE_TRIGGER_RATIO } from "./tool-result-pruner.js";
 import { textToolCallDiagnostic } from "./text-tool-call.js";
 import { computerUseDescription, computerUseParameters } from "./computer-use/tool.js";
 import { imageGenerationDescription, imageGenerationParameters } from "./image-generation/tool.js";
@@ -7404,7 +7405,18 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     _signal?: AbortSignal,
   ): Promise<AgentLoopTurnUpdate> {
     let context = this.rebuiltAgentContext();
-    const budget = this.contextBudget(context.messages);
+    let budget = this.contextBudget(context.messages);
+    // Model-free relief before any summarization: oversized older tool
+    // results keep their head and tail while the middle collapses (dsh
+    // compaction-tool-result-pruner). Only the request projection changes —
+    // the transcript keeps the full results.
+    if (budget.tokens >= budget.hardLimit * TOOL_RESULT_PRUNE_TRIGGER_RATIO) {
+      const pruned = pruneToolResultMessages(context.messages);
+      if (pruned !== context.messages) {
+        context = { ...context, messages: pruned };
+        budget = this.contextBudget(pruned);
+      }
+    }
     const hardLimitReached = budget.tokens >= budget.hardLimit;
     if (!this.compactionEnabled) {
       this.pendingModelCompaction = false;
