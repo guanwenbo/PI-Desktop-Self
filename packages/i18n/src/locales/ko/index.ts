@@ -2291,6 +2291,9 @@ sklm: {
     indicatorLabel: "질문 상태",
     customOption: "다른 답변 입력",
     customPlaceholder: "답변을 입력하세요",
+    deferOption: "직접 판단하게 두기",
+    deferOptionHint:
+      "이 질문을 에이전트에게 넘깁니다: 에이전트가 직접 하나를 고르고 다음 답변 첫머리에 무엇을 왜 골랐는지 밝힙니다.",
     next: "다음",
     submit: "답변 제출",
     skip: "건너뛰기",
@@ -2315,6 +2318,7 @@ sklm: {
       answered: "질문 {{number}}에 답변함",
       unanswered: "질문 {{number}}에 답변하지 않음",
       skipped: "질문 {{number}} 건너뜀",
+      deferred: "질문 {{number}}을(를) 에이전트에게 넘김",
     },
   },
   /**

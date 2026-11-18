@@ -57,12 +57,17 @@ export function clearSessionAsks(queues: AskQueues, sessionId: string): AskQueue
   return next;
 }
 
-/** One question's in-progress answer, owned by the store so a remount is harmless. */
+/**
+ * One question's in-progress answer, owned by the store so a remount is
+ * harmless. `deferred` is the explicit "decide it yourself" choice: the
+ * question goes back to the model instead of being answered or skipped.
+ */
 export type AskDraftAnswer = {
   values: string[];
   customSelected: boolean;
   customText: string;
   skipped: boolean;
+  deferred: boolean;
 };
 
 /** The card's per-request draft: which question is open plus every answer. */
@@ -82,6 +87,7 @@ export function emptyAskDraft(questions: AskToolQuestion[]): AskDraft {
       customSelected: false,
       customText: "",
       skipped: false,
+      deferred: false,
     })),
   };
 }

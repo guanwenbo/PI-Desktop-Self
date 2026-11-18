@@ -2295,6 +2295,9 @@ sklm: {
     indicatorLabel: "Question status",
     customOption: "Enter another answer",
     customPlaceholder: "Type your answer",
+    deferOption: "Decide it yourself",
+    deferOptionHint:
+      "Hand this question back: the agent picks one and opens its next reply with the choice and its reason.",
     next: "Next",
     submit: "Submit answers",
     skip: "Skip",
@@ -2319,6 +2322,7 @@ sklm: {
       answered: "Question {{number}} answered",
       unanswered: "Question {{number}} not answered",
       skipped: "Question {{number}} skipped",
+      deferred: "Question {{number}} handed to the agent",
     },
   },
   /**

@@ -10,6 +10,10 @@ const flyoutSource = await readFile(
   new URL("../src/components/AskToolImpactFlyout.tsx", import.meta.url),
   "utf8",
 );
+const draftSource = await readFile(
+  new URL("../src/lib/pending-asks.ts", import.meta.url),
+  "utf8",
+);
 const styleSource = await readFile(
   new URL("../src/styles/messages.css", import.meta.url),
   "utf8",
@@ -110,7 +114,9 @@ test("declining asks who makes the call instead of dismissing the question", () 
     /void submit\(drafts, request\.questions\.map\(\(\) => null\), disposition\)/,
   );
   assert.match(cardSource, /disposition\?: AskToolDisposition/);
-  assert.match(cardSource, /\.\.\.\(disposition \? \{ disposition \} : \{\}\)/);
+  // The handoff choice rides through as the settled disposition, which is how a
+  // card that hands every question back reaches the same proceed path.
+  assert.match(cardSource, /\.\.\.\(settled \? \{ disposition: settled \} : \{\}\)/);
   assert.match(styleSource, /\.asktool-handoff-choice:hover \{/);
 });
 
@@ -141,6 +147,51 @@ test("every shipped locale carries the preview and handoff copy", async () => {
         assert.equal(seen.has(seenKey), false, `${locale}: ${seenKey} duplicates ${seen.get(seenKey)}`);
         seen.set(seenKey, locale);
       }
+    }
+  }
+});
+
+test("a question can be handed back to the agent instead of answered", () => {
+  // The option is the card's own: the model never sees it, so it needs no
+  // consequence of its own and must not borrow the preview anchor of a row.
+  assert.match(cardSource, /asktool-defer-option/);
+  assert.match(cardSource, /t\("askTool\.deferOption"\)/);
+  assert.match(cardSource, /t\("askTool\.deferOptionHint"\)/);
+  assert.match(cardSource, /onClick=\{deferCurrent\}/);
+  const deferBlock = cardSource.slice(cardSource.indexOf("asktool-defer-option"));
+  assert.doesNotMatch(deferBlock.slice(0, 900), /data-option-index/);
+  assert.match(deferBlock, /onMouseEnter=\{\(\) => setPreview\(undefined\)\}/);
+  // Choosing it replaces whatever this question held.
+  assert.match(cardSource, /const deferCurrent = \(\) => \{[\s\S]{0,260}deferred: true,/);
+  assert.match(draftSource, /deferred: boolean;/);
+  assert.match(styleSource, /\.asktool-defer-option \{/);
+});
+
+test("handing a question back resolves it as deferred, not as an answer", () => {
+  assert.match(cardSource, /deferredIndexes/);
+  assert.match(cardSource, /draft\.deferred === true \? \[draftIndex\] : \[\]/);
+  // Every question handed back is the whole prompt handed back; a partial one
+  // travels as indexes so the runtime never sees a deferral beside an answer.
+  assert.match(cardSource, /handedBack\.length === nextDrafts\.length/);
+  assert.match(
+    cardSource,
+    /\.\.\.\(settled \|\| handedBack\.length === 0 \? \{\} : \{ deferred: handedBack \}\)/,
+  );
+  assert.match(cardSource, /draft\.deferred !== true && currentValues\(draft\)\.length === 0/);
+  assert.match(cardSource, /if \(draft\.deferred === true\) return "deferred" as const;/);
+  assert.match(styleSource, /\.asktool-indicator\.deferred \{/);
+});
+
+test("every shipped locale names the handed-back option", async () => {
+  const localesDir = new URL("../../../packages/i18n/src/locales/", import.meta.url);
+  const locales = (await readdir(localesDir, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+  for (const locale of locales) {
+    const source = await readFile(new URL(`${locale}/index.ts`, localesDir), "utf8");
+    for (const key of ["deferOption", "deferOptionHint"]) {
+      const hits = source.match(new RegExp(`"?${key}"?:\\s*"[^"]+"`, "g")) ?? [];
+      assert.equal(hits.length, 1, `${locale}: askTool.${key}`);
     }
   }
 });

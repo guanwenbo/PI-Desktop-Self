@@ -203,6 +203,10 @@
   background: var(--ds-text-muted);
 }
 
+.asktool-indicator.deferred {
+  background: color-mix(in oklab, var(--ds-accent) 55%, var(--ds-text-muted));
+}
+
 .asktool-question {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -351,7 +355,7 @@
   color: var(--ds-text-muted);
   font-size: var(--text-2xs);
   font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
 
@@ -564,6 +568,14 @@
 .asktool-custom-input:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px color-mix(in oklab, var(--ds-accent) 30%, transparent);
+}
+
+/* Handing the question back is a different kind of answer: it sits apart from
+   the options it replaces, so it never reads as one more candidate choice. */
+.asktool-defer-option {
+  margin-top: 2px;
+  border: 1px dashed color-mix(in oklab, var(--ds-text-muted) 40%, transparent);
+  background: transparent;
 }
 
 .asktool-card-header-actions .btn {

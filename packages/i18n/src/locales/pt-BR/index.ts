@@ -2245,6 +2245,9 @@ export const ptBR = {
     indicatorLabel: "Status da pergunta",
     customOption: "Digitar outra resposta",
     customPlaceholder: "Digite sua resposta",
+    deferOption: "Decida você mesmo",
+    deferOptionHint:
+      "Devolve esta pergunta: o agente escolhe e abre a próxima resposta com a escolha e o motivo.",
     next: "Próximo",
     submit: "Enviar respostas",
     skip: "Ignorar",
@@ -2268,7 +2271,8 @@ export const ptBR = {
     status: {
       answered: "Pergunta {{number}} respondida",
       unanswered: "Pergunta {{number}} não respondida",
-      skipped: "Pergunta {{number}} ignorada"
+      skipped: "Pergunta {{number}} ignorada",
+      deferred: "Pergunta {{number}} devolvida ao agente"
     }
   },
   pluginPanelWidget: {

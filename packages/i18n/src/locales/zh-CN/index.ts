@@ -2270,6 +2270,8 @@ sklm: {
     indicatorLabel: "问题状态",
     customOption: "输入其他答案",
     customPlaceholder: "输入你的答案",
+    deferOption: "交给你来定",
+    deferOptionHint: "把这一题交回智能体：它自己选一个，并在下一轮开头说明选了什么、为什么。",
     next: "下一题",
     submit: "提交答案",
     skip: "跳过",
@@ -2294,6 +2296,7 @@ sklm: {
       answered: "第 {{number}} 题已回答",
       unanswered: "第 {{number}} 题未回答",
       skipped: "第 {{number}} 题已跳过",
+      deferred: "第 {{number}} 题交回 Agent 决定",
     },
   },
   /**

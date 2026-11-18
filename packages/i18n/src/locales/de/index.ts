@@ -2275,6 +2275,8 @@ sklm: {
     "indicatorLabel": "Fragestatus",
     "customOption": "Geben Sie eine andere Antwort ein",
     "customPlaceholder": "Geben Sie Ihre Antwort ein",
+    "deferOption": "Selbst entscheiden",
+    "deferOptionHint": "Diese Frage zurückgeben: die KI wählt selbst und nennt Wahl und Grund zu Beginn ihrer nächsten Antwort.",
     "next": "Weiter",
     "submit": "Antworten senden",
     "skip": "Überspringen",
@@ -2298,7 +2300,8 @@ sklm: {
     "status": {
       "answered": "Frage {{number}} beantwortet",
       "unanswered": "Frage {{number}} nicht beantwortet",
-      "skipped": "Frage {{number}} übersprungen"
+      "skipped": "Frage {{number}} übersprungen",
+      "deferred": "Frage {{number}} an die KI übergeben"
     }
   },
   /**

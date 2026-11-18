@@ -2275,6 +2275,8 @@ sklm: {
     "indicatorLabel": "Statut de la question",
     "customOption": "Entrez une autre réponse",
     "customPlaceholder": "Tapez votre réponse",
+    "deferOption": "Décide toi-même",
+    "deferOptionHint": "Rendre cette question : l'agent choisit et annonce son choix et sa raison au début de sa prochaine réponse.",
     "next": "Suivant",
     "submit": "Soumettez les réponses",
     "skip": "Ignorer",
@@ -2298,7 +2300,8 @@ sklm: {
     "status": {
       "answered": "Question {{number}} répondue",
       "unanswered": "Question {{number}} sans réponse",
-      "skipped": "Question {{number}} ignorée"
+      "skipped": "Question {{number}} ignorée",
+      "deferred": "Question {{number}} rendue à l'agent"
     }
   },
   /**

@@ -87,6 +87,7 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
   const statuses = useMemo(
     () =>
       drafts.map((draft) => {
+        if (draft.deferred === true) return "deferred" as const;
         if (draft.skipped) return "skipped" as const;
         return currentValues(draft).length > 0 ? "answered" as const : "unanswered" as const;
       }),
@@ -109,6 +110,7 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
           ...draft,
           customSelected: !draft.customSelected,
           skipped: false,
+          deferred: false,
           ...(current.multiSelect ? {} : { values: [] }),
         };
       }
@@ -119,17 +121,42 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
             ? draft.values.filter((value) => value !== option)
             : [...draft.values, option],
           skipped: false,
+          deferred: false,
         };
       }
-      return { ...draft, values: [option], customSelected: false, customText: "", skipped: false };
+      return {
+        ...draft,
+        values: [option],
+        customSelected: false,
+        customText: "",
+        skipped: false,
+        deferred: false,
+      };
     });
+  };
+
+  // Handing one question back is a choice like any other: it replaces whatever
+  // this question held, and the agent decides that question instead of asking.
+  const deferCurrent = () => {
+    cancelHide();
+    setPreview(undefined);
+    updateCurrentDraft(() => ({
+      values: [],
+      customSelected: false,
+      customText: "",
+      skipped: false,
+      deferred: true,
+    }));
   };
 
   const answers = (nextDrafts = drafts): Array<string[] | null> =>
     nextDrafts.map((draft) => {
       const values = currentValues(draft);
-      return values.length > 0 && !draft.skipped ? values : null;
+      return values.length > 0 && !draft.skipped && draft.deferred !== true ? values : null;
     });
+
+  const deferredIndexes = (nextDrafts: DraftAnswer[]): number[] =>
+    nextDrafts.flatMap((draft, draftIndex) => (draft.deferred === true ? [draftIndex] : []));
 
   const submit = async (
     nextDrafts = drafts,
@@ -138,12 +165,22 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
   ) => {
     if (resolving) return;
     setResolving(true);
+    const handedBack = deferredIndexes(nextDrafts);
+    // Handing every question back is the whole prompt handed back, which the
+    // proceed path already says; a partial handoff keeps the answers it has and
+    // marks the questions that now belong to the agent.
+    const settled =
+      disposition ??
+      (handedBack.length > 0 && handedBack.length === nextDrafts.length
+        ? "proceed"
+        : undefined);
     try {
       await resolveAsk(request.sessionId, {
         requestId: request.requestId,
         sessionId: request.sessionId,
         answers: explicitAnswers ?? answers(nextDrafts),
-        ...(disposition ? { disposition } : {}),
+        ...(settled ? { disposition: settled } : {}),
+        ...(settled || handedBack.length === 0 ? {} : { deferred: handedBack }),
       });
     } catch (error) {
       showToast(error instanceof Error ? error.message : String(error), { variant: "error" });
@@ -153,7 +190,7 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
 
   const next = () => {
     const nextDrafts = drafts.map((draft, draftIndex) =>
-      draftIndex === index && currentValues(draft).length === 0
+      draftIndex === index && draft.deferred !== true && currentValues(draft).length === 0
         ? { ...draft, skipped: true }
         : draft,
     );
@@ -167,7 +204,9 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
 
   const skip = () => {
     const nextDrafts = drafts.map((draft, draftIndex) =>
-      draftIndex === index ? { ...draft, skipped: true, values: [], customSelected: false } : draft,
+      draftIndex === index
+        ? { ...draft, skipped: true, values: [], customSelected: false, deferred: false }
+        : draft,
     );
     if (index === request.questions.length - 1) {
       updateDraft({ ...draft, answers: nextDrafts });
@@ -313,6 +352,26 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
         >
           <span className="asktool-option-mark" aria-hidden>{currentDraft.customSelected ? "✓" : ""}</span>
           <span>{t("askTool.customOption")}</span>
+        </button>
+        <button
+          type="button"
+          className={`asktool-option asktool-defer-option ${
+            currentDraft.deferred === true ? "selected" : ""
+          }`}
+          aria-pressed={current.multiSelect ? currentDraft.deferred === true : undefined}
+          aria-checked={!current.multiSelect ? currentDraft.deferred === true : undefined}
+          role={current.multiSelect ? "checkbox" : "radio"}
+          onMouseEnter={() => setPreview(undefined)}
+          onFocus={() => setPreview(undefined)}
+          onClick={deferCurrent}
+        >
+          <span className="asktool-option-mark" aria-hidden>
+            {currentDraft.deferred === true ? "✓" : ""}
+          </span>
+          <span className="asktool-option-copy">
+            <span className="asktool-option-rich-label">{t("askTool.deferOption")}</span>
+            <span className="asktool-option-description">{t("askTool.deferOptionHint")}</span>
+          </span>
         </button>
       </div>
       )}

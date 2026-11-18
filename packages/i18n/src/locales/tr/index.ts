@@ -2285,6 +2285,9 @@ sklm: {
     indicatorLabel: "Soru durumu",
     customOption: "Başka bir yanıt girin",
     customPlaceholder: "Yanıtınızı yazın",
+    deferOption: "Kendin karar ver",
+    deferOptionHint:
+      "Bu soruyu ajana bırakır: ajan kendi seçer ve bir sonraki yanıtının başında neyi neden seçtiğini söyler.",
     next: "İleri",
     submit: "Yanıtları gönder",
     skip: "Atla",
@@ -2309,6 +2312,7 @@ sklm: {
       answered: "Soru {{number}} yanıtlandı",
       unanswered: "Soru {{number}} yanıtlanmadı",
       skipped: "Soru {{number}} atlandı",
+      deferred: "{{number}}. soru ajana bırakıldı",
     },
   },
   /**
