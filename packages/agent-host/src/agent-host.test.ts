@@ -949,10 +949,47 @@ describe("AgentHost approvals and inputs", () => {
     await expect(host.respondInput(controller, { inputId: "ask_1", answers: [["a"]], context: { requestId: "r" } })).rejects.toMatchObject({
       code: "INVALID_ARGUMENT",
     });
-    await host.respondInput(controller, { inputId: "ask_1", answers: [["a", "b"], null], context: { requestId: "r" } });
-    expect(runtime.inputs).toEqual([{ requestId: "ask_1", sessionId: "s1", answers: [["a", "b"], null] }]);
+    await host.respondInput(controller, {
+      inputId: "ask_1",
+      answers: [["a", "b"], null],
+      deferred: [1],
+      context: { requestId: "r" },
+    });
+    // The decision travels with the answers: a handed-back question would
+    // otherwise reach the runtime as one more skipped answer.
+    expect(runtime.inputs).toEqual([
+      { requestId: "ask_1", sessionId: "s1", answers: [["a", "b"], null], deferred: [1] },
+    ]);
     expect(host.getTurn("rt_1").status).toBe("running");
     expect(received.at(-1)?.kind).toBe("input.resolved");
+
+    host.ingest(
+      envelope("s1", "rt_1", {
+        type: "asktool_request",
+        request: {
+          requestId: "ask_2",
+          sessionId: "s1",
+          toolCallId: "c10",
+          questions: [{ question: "Which?", options: [{ label: "a" }] }],
+        },
+      }),
+    );
+    const askedId = received
+      .filter((event) => event.kind === "input.requested")
+      .map((event) => (event.payload as { id: string }).id)
+      .find((id) => id !== "ask_1")!;
+    await host.respondInput(controller, {
+      inputId: askedId,
+      answers: [null],
+      disposition: "halt",
+      context: { requestId: "r2" },
+    });
+    expect(runtime.inputs.at(-1)).toEqual({
+      requestId: "ask_2",
+      sessionId: "s1",
+      answers: [null],
+      disposition: "halt",
+    });
   });
 });
 

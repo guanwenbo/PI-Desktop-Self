@@ -804,6 +804,12 @@ export class AgentHost {
       requestId: entry.original.requestId,
       sessionId: entry.original.sessionId,
       answers: response.answers,
+      // A decline and a per-question handoff are decisions too: dropping them
+      // here would make the runtime read them as plain skipped answers.
+      ...(response.disposition ? { disposition: response.disposition } : {}),
+      ...(response.deferred && response.deferred.length > 0
+        ? { deferred: response.deferred }
+        : {}),
     });
     state.pendingInputs.delete(response.inputId);
     const turn = state.turns.get(entry.request.turnId);

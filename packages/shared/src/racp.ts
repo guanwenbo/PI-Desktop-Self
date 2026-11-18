@@ -399,6 +399,19 @@ export const RacpInputResponseSchema = Type.Object({
   inputId: Type.String({ minLength: 1 }),
   /** `null` skips a question, matching the local `AskToolResolution`. */
   answers: Type.Array(Type.Union([Type.Array(Type.String()), Type.Null()])),
+  /**
+   * A whole-prompt decline: `proceed` hands the decision back to the agent,
+   * `halt` ends the turn. Absent on an ordinary answer, because the local
+   * contract forbids a disposition beside answers.
+   */
+  disposition: Type.Optional(
+    Type.Union([Type.Literal("proceed"), Type.Literal("halt")]),
+  ),
+  /**
+   * 0-based questions the user handed back one at a time. Such a question
+   * always answers `null`; the remaining answers stand.
+   */
+  deferred: Type.Optional(Type.Array(Type.Integer({ minimum: 0 }))),
   context: RacpRequestContextSchema,
 });
 export type RacpInputResponse = Static<typeof RacpInputResponseSchema>;

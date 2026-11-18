@@ -427,6 +427,13 @@ export function createAgentHostBridge(options: AgentHostBridgeOptions) {
         await forIpc(() => agentHost.respondInput(DESKTOP_PRINCIPAL, {
           inputId: entry.input.id,
           answers: resolution.answers,
+          // The Host-owned input path carries the card's decision, not only its
+          // answers: a decline or a handed-back question must survive here or
+          // the runtime reads it as a skipped question.
+          ...(resolution.disposition ? { disposition: resolution.disposition } : {}),
+          ...(resolution.deferred && resolution.deferred.length > 0
+            ? { deferred: resolution.deferred }
+            : {}),
           context: { requestId },
         }));
       } finally {

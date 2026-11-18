@@ -345,10 +345,16 @@ export function createRemoteBackend(options: RemoteBackendOptions): RemoteBacken
       }
       case IPC.invoke.askToolResolve: {
         const resolution = args[0] as AskToolResolution;
-        // `answers` is `Array<string[] | null>` in both the local and RACP shapes.
+        // `answers` is `Array<string[] | null>` in both the local and RACP
+        // shapes, and so is the decision the card made: a Remote Host that does
+        // not know these fields ignores them, one that does keeps the semantics.
         await client.request("input/respond", {
           inputId: parseRemoteApprovalRequestId(resolution.requestId)?.hostApprovalId ?? resolution.requestId,
           answers: resolution.answers,
+          ...(resolution.disposition ? { disposition: resolution.disposition } : {}),
+          ...(resolution.deferred && resolution.deferred.length > 0
+            ? { deferred: resolution.deferred }
+            : {}),
           context: context(),
         });
         return { ok: true };
