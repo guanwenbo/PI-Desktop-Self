@@ -1,0 +1,16 @@
+packages/shared/src/asktool.test.ts
+  h_b98c004121ae66 4,112-147
+packages/shared/src/types/agent.ts
+  h_b98c004121ae66 310-322,364-368,375,378-386,391,393,396-398
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "f192e2bd0382fd1d8be61a887fe1304be2a164c2",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
