@@ -90,6 +90,7 @@ import type {
   AskToolQuestion,
   AskToolRequest,
   AskToolResolution,
+  AskToolDisposition,
   ContextCompactionFallback,
   CommandShellOption,
   ContextCompactionReason,
@@ -1820,6 +1821,30 @@ export function isolatedWorkspaceGuidance(): string {
   ].join(" ");
 }
 
+/**
+ * What one asktool wait settled on.
+ *
+ * `answers` carries the per-question selections; `disposition` is set only
+ * when the user declined the whole prompt, and says whether the decision goes
+ * back to the agent (`proceed`) or the turn ends (`halt`).
+ */
+type AskToolOutcome = {
+  answers: Array<string[] | null>;
+  disposition?: AskToolDisposition;
+};
+
+/** Model-facing text when the user hands the decision back. */
+const ASK_TOOL_PROCEED_TEXT =
+  "The user declined to choose and handed the decision back to you. Decide it yourself now: " +
+  "open your next reply with one line naming the choice and why, then continue the task. " +
+  "Do not ask this question again.";
+
+/** Model-facing text when the user stops the turn at the question. */
+const ASK_TOOL_HALT_TEXT =
+  "The user stopped at this question and will decide themselves. Do not continue the work: " +
+  "make no further tool calls, change no files, and do not re-ask. In one or two lines, say " +
+  "what is already done and what is still open, then stop.";
+
 export class DesktopAgentRuntime {
   private agent: Agent;
   private models: Models;
@@ -2010,7 +2035,7 @@ export class DesktopAgentRuntime {
     string,
     {
       request: AskToolRequest;
-      resolve: (answers: Array<string[] | null>) => void;
+      resolve: (outcome: AskToolOutcome) => void;
     }
   >();
   /** Host failures need to reach pi-agent-core's tool error channel without
@@ -2153,6 +2178,12 @@ export class DesktopAgentRuntime {
       "Before each tool batch, briefly state its purpose. Keep the user informed during long work. The final response must state the outcome, verification, and remaining blockers. Never claim actions or checks you did not perform.",
       // File-reference formatting.
       "File references: when citing a real local file, use a Markdown link with a short label and the exact absolute path as its target, e.g. [file.ts](/workspace/src/file.ts:42). Add only a starting line (:line or :line:column) when useful; do not use ranges or GitHub #L anchors. Wrap destinations containing spaces in angle brackets. Do not wrap links in backticks or use file://, vscode://, or https:// for local files. Link only to existing files in the accessible workspace; mention unavailable or other-repository files as code text.",
+      // When asking is the right move, and — more often — when it is not.
+      [
+        "## Asking the user",
+        "`asktool` settles a fork you cannot settle from context: two or more implementations are defensible and the choice changes what gets built, or the next step is hard to undo and the user has not agreed to it. Give each option an `impact` (summary / changes / files / effects / risk / cost / reversible) so the user decides with the consequence in view, and write only the fields you are sure about — a one-line summary is enough.",
+        "Do not use it to confirm work you were already told to do, for anything you can settle from the repository, the files, or the last answer, or twice about the same fork. When the user hands the decision back, decide it yourself, state the assumption in one line, and mark it unresolved.",
+      ].join("\n"),
       // Delegation steering (ADR 0089).
       ...(this.subagents.length
         ? [
@@ -3418,7 +3449,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
         case "SessionSearch":
           return "Search past conversations in this project (user and assistant messages, across sessions including this one). Returns matching sessions with message snippets, roles, and timestamps. Use it to recover earlier decisions, file paths, or results instead of redoing completed work.";
         case ASK_TOOL_NAME:
-          return `Ask the user one or more questions. Keep each question to ${MAX_ASK_TOOL_QUESTION_CHARS} characters or fewer. Use Markdown in question text and option labels when formatting helps (for example, emphasis, inline code, or lists); the desktop card renders it safely. Plain strings and existing { label, description? } options are accepted; descriptions remain plain text and answers return the selected source label. The card always provides a custom user-input option.`;
+          return `Ask the user one or more questions. Keep each question to ${MAX_ASK_TOOL_QUESTION_CHARS} characters or fewer. Use Markdown in question text and option labels when formatting helps (for example, emphasis, inline code, or lists); the desktop card renders it safely. Plain strings and existing { label, description? } options are accepted; descriptions remain plain text and answers return the selected source label. The card always provides a custom user-input option. When the choice is a fork where the options differ in what they cost, add an \`impact\` object to each option (summary / changes / files / effects / risk / cost / reversible) so the card can show the consequence beside the option and the user decides with it in view. Write only the fields you are sure about; a one-line summary is enough, and an option without impact simply shows no preview.`;
         case "PluginScaffold":
           return "Create a PI-Desktop plugin from a template and load it for development. `directory` is workspace-relative and must be empty or new; `template` is one of panel-basic, agent-tool-basic, skill-pack, full-demo. Use this instead of hand-writing plugin files.";
         case "PluginCheck":
@@ -4089,6 +4120,46 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
                 Type.Object({
                   label: Type.String(),
                   description: Type.Optional(Type.String()),
+                  // What choosing this answer does. The card shows it beside
+                  // the option, so a fork is decided with its consequence in
+                  // view instead of on the label alone.
+                  impact: Type.Optional(
+                    Type.Object({
+                      summary: Type.Optional(
+                        Type.String({
+                          description: "One line: what choosing this does.",
+                        }),
+                      ),
+                      changes: Type.Optional(
+                        Type.Array(Type.String(), {
+                          description: "Concrete edits or actions this choice causes.",
+                        }),
+                      ),
+                      files: Type.Optional(
+                        Type.Array(Type.String(), {
+                          description: "Files or paths this choice touches.",
+                        }),
+                      ),
+                      effects: Type.Optional(
+                        Type.Array(Type.String(), {
+                          description: "Effect on behavior that already works today.",
+                        }),
+                      ),
+                      risk: Type.Optional(
+                        Type.String({ description: "Risk of taking this path." }),
+                      ),
+                      cost: Type.Optional(
+                        Type.String({
+                          description: "Rough cost in effort, tokens, or rounds.",
+                        }),
+                      ),
+                      reversible: Type.Optional(
+                        Type.Boolean({
+                          description: "False when the choice is hard to undo.",
+                        }),
+                      ),
+                    }),
+                  ),
                 }),
               ]),
             ),
@@ -4117,11 +4188,28 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           toolCallId,
           questions,
         };
-        const answers = await this.waitForAskTool(request, signal);
-        const text = formatAskToolOutput(questions, answers);
+        const outcome = await this.waitForAskTool(request, signal);
+        if (outcome.disposition === "halt") {
+          // The user stopped here. `terminate` ends the turn so no further
+          // model request is issued; pi honours it only when every finalized
+          // result in the batch sets it, so a sibling tool that already
+          // finished leaves the turn running — the text then says so plainly.
+          return {
+            content: [{ type: "text", text: ASK_TOOL_HALT_TEXT }],
+            details: { questions, answers: outcome.answers, disposition: outcome.disposition },
+            terminate: true,
+          };
+        }
+        if (outcome.disposition === "proceed") {
+          return {
+            content: [{ type: "text", text: ASK_TOOL_PROCEED_TEXT }],
+            details: { questions, answers: outcome.answers, disposition: outcome.disposition },
+          };
+        }
+        const text = formatAskToolOutput(questions, outcome.answers);
         return {
           content: [{ type: "text", text }],
-          details: { questions, answers },
+          details: { questions, answers: outcome.answers },
         };
       },
     };
@@ -6486,17 +6574,19 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
   private waitForAskTool(
     request: AskToolRequest,
     signal?: AbortSignal,
-  ): Promise<Array<string[] | null>> {
+  ): Promise<AskToolOutcome> {
     return new Promise((resolve) => {
       let settled = false;
-      const finish = (answers: Array<string[] | null>) => {
+      const finish = (outcome: AskToolOutcome) => {
         if (settled) return;
         settled = true;
         signal?.removeEventListener("abort", abort);
         this.pendingAskTools.delete(request.requestId);
-        resolve(answers);
+        resolve(outcome);
       };
-      const abort = () => finish(request.questions.map(() => null));
+      // An aborted wait is not a decision: no disposition, so the caller keeps
+      // the pre-existing "unanswered" behaviour.
+      const abort = () => finish({ answers: request.questions.map(() => null) });
       this.pendingAskTools.set(request.requestId, { request, resolve: finish });
       this.emit({ type: "asktool_request", request });
       if (signal?.aborted) abort();
@@ -6539,7 +6629,19 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       }
       return [...new Set(values)];
     });
-    pending.resolve(answers);
+    const disposition =
+      resolution.disposition === "halt" || resolution.disposition === "proceed"
+        ? resolution.disposition
+        : undefined;
+    // A disposition is the user declining the prompt, so it never travels with
+    // answers. Accepting both would make "stopped" and "answered" ambiguous.
+    if (disposition && answers.some((answer) => answer !== null)) {
+      throw Object.assign(
+        new Error("asktool disposition cannot accompany answers"),
+        { errorCode: "ASKTOOL_INVALID_ARGUMENT" },
+      );
+    }
+    pending.resolve({ answers, ...(disposition ? { disposition } : {}) });
     return { ok: true };
   }
 
@@ -6547,7 +6649,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     const pending = [...this.pendingAskTools.values()];
     this.pendingAskTools.clear();
     for (const entry of pending) {
-      entry.resolve(entry.request.questions.map(() => null));
+      entry.resolve({ answers: entry.request.questions.map(() => null) });
     }
   }
 

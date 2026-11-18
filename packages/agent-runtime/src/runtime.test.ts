@@ -3977,6 +3977,97 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
     await runtime.dispose();
   });
 
+  it("ends the turn when the user declines the prompt with halt", async () => {
+    const onEvent = vi.fn();
+    const runtime = createRuntime({ onEvent });
+    const askTool = (runtime as any).agent.state.tools.find(
+      (tool: any) => tool.name === "asktool",
+    );
+    const pending = askTool.execute("ask-call-halt", {
+      questions: [{ question: "Which way?", options: ["A", "B"] }],
+    });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    expect(
+      runtime.resolveAskTool({
+        requestId: request.requestId,
+        sessionId: "session-1",
+        answers: [null],
+        disposition: "halt",
+      }),
+    ).toEqual({ ok: true });
+    const result = await pending;
+    // `terminate` is what stops the loop from issuing another model request.
+    expect(result.terminate).toBe(true);
+    expect(result.content?.[0]?.text).toContain("stopped at this question");
+    expect(result.details).toMatchObject({ disposition: "halt", answers: [null] });
+    await runtime.dispose();
+  });
+
+  it("hands the decision back when the user declines with proceed", async () => {
+    const onEvent = vi.fn();
+    const runtime = createRuntime({ onEvent });
+    const askTool = (runtime as any).agent.state.tools.find(
+      (tool: any) => tool.name === "asktool",
+    );
+    const pending = askTool.execute("ask-call-proceed", {
+      questions: [{ question: "Which way?", options: ["A", "B"] }],
+    });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    runtime.resolveAskTool({
+      requestId: request.requestId,
+      sessionId: "session-1",
+      answers: [null],
+      disposition: "proceed",
+    });
+    const result = await pending;
+    // Proceeding is not a stop: the turn continues with the agent deciding.
+    expect(result.terminate).toBeUndefined();
+    expect(result.content?.[0]?.text).toContain("handed the decision back");
+    expect(result.details).toMatchObject({ disposition: "proceed" });
+    await runtime.dispose();
+  });
+
+  it("refuses a disposition that travels with answers", async () => {
+    const onEvent = vi.fn();
+    const runtime = createRuntime({ onEvent });
+    const askTool = (runtime as any).agent.state.tools.find(
+      (tool: any) => tool.name === "asktool",
+    );
+    const pending = askTool.execute("ask-call-mixed", {
+      questions: [{ question: "Which way?", options: ["A", "B"] }],
+    });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    expect(() =>
+      runtime.resolveAskTool({
+        requestId: request.requestId,
+        sessionId: "session-1",
+        answers: [["A"]],
+        disposition: "halt",
+      }),
+    ).toThrow(/cannot accompany answers/);
+    // The request stays pending after the rejection, so the card can retry.
+    runtime.resolveAskTool({
+      requestId: request.requestId,
+      sessionId: "session-1",
+      answers: [null],
+      disposition: "halt",
+    });
+    await pending;
+    await runtime.dispose();
+  });
+
   it("rejects asktool questions over 300 Unicode characters before opening a card", async () => {
     const onEvent = vi.fn();
     const runtime = createRuntime({ onEvent });
