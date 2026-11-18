@@ -467,6 +467,10 @@ type InputRequest = {
 type InputResponse = {
   inputId: string
   answers: Array<string[] | null>
+  /** A whole-prompt decline; never sent beside a non-null answer. */
+  disposition?: "proceed" | "halt"
+  /** 0-based questions handed back to the agent; each answers `null`. */
+  deferred?: number[]
   context: RequestContext
 }
 ```
@@ -485,7 +489,12 @@ Rules:
    `ask`.
 3. An `InputResponse` answer of `null` means the question was skipped; the
    whole array may be `null` entries when the user declined the prompt, which
-   is the local `AskToolResolution` contract.
+   is the local `AskToolResolution` contract. A decline may also carry
+   `disposition`: `proceed` hands the decision back to the agent, `halt` ends
+   the turn. `deferred` lists questions handed back one at a time; such a
+   question answers `null` and the remaining answers stand. Both fields are
+   optional, so a Host that does not know them keeps the older behaviour of a
+   plain set of answers.
 4. Approval summaries MUST be safe to display. Raw provider credentials,
    secret values, and unbounded tool results are never included.
 5. Expiry maps a legacy `PERMISSION_TIMEOUT` from an older local host, and
