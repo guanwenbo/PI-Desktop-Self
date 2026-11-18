@@ -1,0 +1,24 @@
+packages/shared/src/racp.ts
+  h_b98c004121ae66 402-414
+packages/agent-host/src/agent-host.test.ts
+  h_b98c004121ae66 952-962,965-992
+packages/agent-host/src/agent-host.ts
+  h_b98c004121ae66 807-812
+apps/desktop/electron/main/remote/remote-backend.ts
+  h_b98c004121ae66 348-350,354-357
+apps/desktop/electron/main/agent-host-bridge.ts
+  h_b98c004121ae66 430-436
+packages/shared/fixtures/racp.schema.json
+  h_b98c004121ae66 1861-1879
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "68e1d568358f8ea9934091e5510d5b864132b60e",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
