@@ -1,0 +1,30 @@
+packages/i18n/src/locales/de/index.ts
+  h_b98c004121ae66 2283-2297
+packages/i18n/src/locales/en/index.ts
+  h_b98c004121ae66 2303-2317
+packages/i18n/src/locales/es/index.ts
+  h_b98c004121ae66 2283-2297
+packages/i18n/src/locales/fr/index.ts
+  h_b98c004121ae66 2283-2297
+packages/i18n/src/locales/ko/index.ts
+  h_b98c004121ae66 2299-2313
+packages/i18n/src/locales/pt-BR/index.ts
+  h_b98c004121ae66 2253-2267
+packages/i18n/src/locales/tr/index.ts
+  h_b98c004121ae66 2293-2307
+packages/i18n/src/locales/zh-CN/index.ts
+  h_b98c004121ae66 2278-2292
+packages/i18n/src/locales/zh-TW/index.ts
+  h_b98c004121ae66 2278-2292
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "f62fdb220197d0a410f4bfa10e083b78fbccf571",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
