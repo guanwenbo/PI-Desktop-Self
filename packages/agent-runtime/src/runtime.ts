@@ -121,6 +121,7 @@ import {
   cumulativeDelta,
   DEFAULT_SUBAGENT_PERMISSION,
   askToolOptionLabel,
+  askToolOptionsMissingImpact,
   formatAskToolOutput,
   formatSessionMessage,
   hostedSearchFromMessage,
@@ -1826,11 +1827,13 @@ export function isolatedWorkspaceGuidance(): string {
  *
  * `answers` carries the per-question selections; `disposition` is set only
  * when the user declined the whole prompt, and says whether the decision goes
- * back to the agent (`proceed`) or the turn ends (`halt`).
+ * back to the agent (`proceed`) or the turn ends (`halt`). `deferred` carries
+ * the questions the user handed back one at a time, each with a `null` answer.
  */
 type AskToolOutcome = {
   answers: Array<string[] | null>;
   disposition?: AskToolDisposition;
+  deferred?: number[];
 };
 
 /** Model-facing text when the user hands the decision back. */
@@ -1844,6 +1847,33 @@ const ASK_TOOL_HALT_TEXT =
   "The user stopped at this question and will decide themselves. Do not continue the work: " +
   "make no further tool calls, change no files, and do not re-ask. In one or two lines, say " +
   "what is already done and what is still open, then stop.";
+
+/** Model-facing text when the user handed single questions back to the model. */
+const ASK_TOOL_DEFERRED_TEXT =
+  "The questions marked handed back are yours to decide: pick one option yourself, " +
+  "open your next reply with the choice and its reason, and do not ask them again.";
+
+/**
+ * Model-facing text when one or more options carry no consequence summary.
+ *
+ * The request is rejected before a card opens: an ask whose answers are bare
+ * labels leaves the user nothing to decide on, and only a failure teaches the
+ * model to fill the field.
+ */
+function askToolMissingImpactText(labels: string[]): string {
+  const shown = labels
+    .slice(0, 8)
+    .map((label) => `"${label}"`)
+    .join(", ");
+  const rest = labels.length > 8 ? `, +${labels.length - 8} more` : "";
+  return (
+    `${ASK_TOOL_NAME} rejected this request: every option needs impact.summary, ` +
+    `one line saying what choosing it does. Nothing was shown to the user. ` +
+    `Missing on ${labels.length} option${labels.length === 1 ? "" : "s"}: ${shown}${rest}. ` +
+    `Re-send the whole call with impact.summary on every option, keep the label short, ` +
+    `and put the consequence in the impact rather than in the label.`
+  );
+}
 
 export class DesktopAgentRuntime {
   private agent: Agent;
@@ -2181,8 +2211,8 @@ export class DesktopAgentRuntime {
       // When asking is the right move, and — more often — when it is not.
       [
         "## Asking the user",
-        "`asktool` settles a fork you cannot settle from context: two or more implementations are defensible and the choice changes what gets built, or the next step is hard to undo and the user has not agreed to it. Give each option an `impact` (summary / changes / files / effects / risk / cost / reversible) so the user decides with the consequence in view, and write only the fields you are sure about — a one-line summary is enough.",
-        "Do not use it to confirm work you were already told to do, for anything you can settle from the repository, the files, or the last answer, or twice about the same fork. When the user hands the decision back, decide it yourself, state the assumption in one line, and mark it unresolved.",
+        "`asktool` settles a fork you cannot settle from context: two or more implementations are defensible and the choice changes what gets built, or the next step is hard to undo and the user has not agreed to it. Every option needs `impact.summary` — one line saying what choosing it does — and a request whose options lack one is rejected before the user sees anything. Add changes / files / effects / cost / reversible only where you are sure, keep the label short, and put the consequence in the impact rather than in the label.",
+        "Do not use it to confirm work you were already told to do, for anything you can settle from the repository, the files, or the last answer, or twice about the same fork. The user may answer, skip, or hand a question back to you; a handed-back question arrives marked, and you then decide it yourself without asking again. When the user hands the whole decision back, state the assumption in one line and mark it unresolved.",
       ].join("\n"),
       // Delegation steering (ADR 0089).
       ...(this.subagents.length
@@ -4114,54 +4144,49 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
         questions: Type.Array(
           Type.Object({
             question: Type.String({ maxLength: MAX_ASK_TOOL_QUESTION_CHARS }),
+            // Every option carries its consequence: the card shows the summary
+            // beside the answer, and the runtime rejects a request whose
+            // options omit it. A bare string option cannot carry one, so the
+            // schema no longer offers that shorthand.
             options: Type.Array(
-              Type.Union([
-                Type.String(),
-                Type.Object({
-                  label: Type.String(),
-                  description: Type.Optional(Type.String()),
-                  // What choosing this answer does. The card shows it beside
-                  // the option, so a fork is decided with its consequence in
-                  // view instead of on the label alone.
-                  impact: Type.Optional(
-                    Type.Object({
-                      summary: Type.Optional(
-                        Type.String({
-                          description: "One line: what choosing this does.",
-                        }),
-                      ),
-                      changes: Type.Optional(
-                        Type.Array(Type.String(), {
-                          description: "Concrete edits or actions this choice causes.",
-                        }),
-                      ),
-                      files: Type.Optional(
-                        Type.Array(Type.String(), {
-                          description: "Files or paths this choice touches.",
-                        }),
-                      ),
-                      effects: Type.Optional(
-                        Type.Array(Type.String(), {
-                          description: "Effect on behavior that already works today.",
-                        }),
-                      ),
-                      risk: Type.Optional(
-                        Type.String({ description: "Risk of taking this path." }),
-                      ),
-                      cost: Type.Optional(
-                        Type.String({
-                          description: "Rough cost in effort, tokens, or rounds.",
-                        }),
-                      ),
-                      reversible: Type.Optional(
-                        Type.Boolean({
-                          description: "False when the choice is hard to undo.",
-                        }),
-                      ),
+              Type.Object({
+                label: Type.String(),
+                description: Type.Optional(Type.String()),
+                impact: Type.Object({
+                  summary: Type.String({
+                    description:
+                      "One line: what choosing this does. Required: the request is rejected without it.",
+                  }),
+                  changes: Type.Optional(
+                    Type.Array(Type.String(), {
+                      description: "Concrete edits or actions this choice causes.",
+                    }),
+                  ),
+                  files: Type.Optional(
+                    Type.Array(Type.String(), {
+                      description: "Files or paths this choice touches.",
+                    }),
+                  ),
+                  effects: Type.Optional(
+                    Type.Array(Type.String(), {
+                      description: "Effect on behavior that already works today.",
+                    }),
+                  ),
+                  risk: Type.Optional(
+                    Type.String({ description: "Risk of taking this path." }),
+                  ),
+                  cost: Type.Optional(
+                    Type.String({
+                      description: "Rough cost in effort, tokens, or rounds.",
+                    }),
+                  ),
+                  reversible: Type.Optional(
+                    Type.Boolean({
+                      description: "False when the choice is hard to undo.",
                     }),
                   ),
                 }),
-              ]),
+              }),
             ),
             multiSelect: Type.Optional(Type.Boolean()),
           }),
@@ -4179,6 +4204,18 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
               },
             ],
             details: { errorCode: "ASKTOOL_INVALID_ARGUMENT" },
+            isError: true,
+          };
+        }
+        // A card whose answers are bare labels is not a decision the user can
+        // make, so refuse the whole request and say exactly how to fix it.
+        const missingImpact = questions.flatMap((question) =>
+          askToolOptionsMissingImpact(question.options),
+        );
+        if (missingImpact.length > 0) {
+          return {
+            content: [{ type: "text", text: askToolMissingImpactText(missingImpact) }],
+            details: { errorCode: "ASKTOOL_MISSING_IMPACT", labels: missingImpact },
             isError: true,
           };
         }
@@ -4206,10 +4243,20 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
             details: { questions, answers: outcome.answers, disposition: outcome.disposition },
           };
         }
-        const text = formatAskToolOutput(questions, outcome.answers);
+        const deferred = outcome.deferred ?? [];
+        const text = formatAskToolOutput(questions, outcome.answers, deferred);
         return {
-          content: [{ type: "text", text }],
-          details: { questions, answers: outcome.answers },
+          content: [
+            {
+              type: "text",
+              text: deferred.length > 0 ? `${text}\n\n${ASK_TOOL_DEFERRED_TEXT}` : text,
+            },
+          ],
+          details: {
+            questions,
+            answers: outcome.answers,
+            ...(deferred.length > 0 ? { deferred } : {}),
+          },
         };
       },
     };
@@ -6629,6 +6676,32 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       }
       return [...new Set(values)];
     });
+    // A deferral is a per-question handoff: the user answered the others and
+    // left this one to the model. It therefore travels with a null answer, and
+    // a deferral on an answered question is a contradictory resolution.
+    const deferredIndexes = resolution.deferred ?? [];
+    if (!Array.isArray(deferredIndexes)) {
+      throw Object.assign(new Error("asktool deferred must be an array of question indexes"), {
+        errorCode: "ASKTOOL_INVALID_ARGUMENT",
+      });
+    }
+    for (const index of deferredIndexes) {
+      if (
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= pending.request.questions.length
+      ) {
+        throw Object.assign(new Error("asktool deferred index is out of range"), {
+          errorCode: "ASKTOOL_INVALID_ARGUMENT",
+        });
+      }
+      if (answers[index] !== null) {
+        throw Object.assign(new Error("asktool deferral cannot accompany an answer"), {
+          errorCode: "ASKTOOL_INVALID_ARGUMENT",
+        });
+      }
+    }
+    const deferred = [...new Set(deferredIndexes)];
     const disposition =
       resolution.disposition === "halt" || resolution.disposition === "proceed"
         ? resolution.disposition
@@ -6641,7 +6714,17 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
         { errorCode: "ASKTOOL_INVALID_ARGUMENT" },
       );
     }
-    pending.resolve({ answers, ...(disposition ? { disposition } : {}) });
+    // Handing every question back is the whole prompt handed back, which the
+    // proceed text already says. A partial handoff keeps the answers it has and
+    // marks the questions the model must now decide itself.
+    const everythingDeferred =
+      deferred.length > 0 && deferred.length === pending.request.questions.length;
+    const settledDisposition = disposition ?? (everythingDeferred ? "proceed" : undefined);
+    pending.resolve({
+      answers,
+      ...(settledDisposition ? { disposition: settledDisposition } : {}),
+      ...(settledDisposition || deferred.length === 0 ? {} : { deferred }),
+    });
     return { ok: true };
   }
 

@@ -3918,51 +3918,68 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
     const askTool = (runtime as any).agent.state.tools.find(
       (tool: any) => tool.name === "asktool",
     );
-    const optionVariants =
-      (askTool.parameters as any).properties.questions.items.properties.options.items.anyOf;
-    expect(optionVariants).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ type: "string" }),
-        expect.objectContaining({
-          type: "object",
-          properties: expect.objectContaining({
-            label: expect.objectContaining({ type: "string" }),
-            description: expect.objectContaining({ type: "string" }),
-          }),
-        }),
-      ]),
-    );
-    const pending = askTool.execute("ask-call-1", {
-      questions: [
-        {
-          question: "**Color?**",
-          options: [
-            { label: "**Blue**", description: "A calm, cool color." },
-            "Green",
-          ],
-        },
-        { question: "Targets?", options: ["Web", "Desktop"], multiSelect: true },
-      ],
-    });
+  const optionSchema = (askTool.parameters as any).properties.questions.items.properties.options
+    .items;
+  // Every option carries its consequence: the string shorthand is gone, and
+  // impact.summary sits in the required shape so the card cannot open with
+  // blank answers.
+  expect(optionSchema.type).toBe("object");
+  expect(optionSchema.required).toEqual(expect.arrayContaining(["label", "impact"]));
+  expect(optionSchema.properties.impact.required).toEqual(["summary"]);
+  expect(optionSchema.properties.impact.properties.summary).toMatchObject({ type: "string" });
+  const pending = askTool.execute("ask-call-1", {
+    questions: [
+      {
+        question: "**Color?**",
+        options: [
+          {
+            label: "**Blue**",
+            description: "A calm, cool color.",
+            impact: { summary: "Keeps the surface cool." },
+          },
+          { label: "Green", impact: { summary: "Warmer, louder surface." } },
+        ],
+      },
+      {
+        question: "Targets?",
+        options: [
+          { label: "Web", impact: { summary: "Ships in the browser build." } },
+          { label: "Desktop", impact: { summary: "Ships in the app build." } },
+        ],
+        multiSelect: true,
+      },
+    ],
+  });
     await new Promise<void>((resolve) => setImmediate(resolve));
     const request = onEvent.mock.calls
       .map(([envelope]) => envelope as any)
       .map((envelope) => envelope.event)
       .find((event) => event.type === "asktool_request")?.request;
-    expect(request).toMatchObject({
-      sessionId: "session-1",
-      toolCallId: "ask-call-1",
-      questions: [
-        {
-          question: "**Color?**",
-          options: [
-            { label: "**Blue**", description: "A calm, cool color." },
-            "Green",
-          ],
-        },
-        { question: "Targets?", options: ["Web", "Desktop"], multiSelect: true },
-      ],
-    });
+  expect(request).toMatchObject({
+    sessionId: "session-1",
+    toolCallId: "ask-call-1",
+    questions: [
+      {
+        question: "**Color?**",
+        options: [
+          {
+            label: "**Blue**",
+            description: "A calm, cool color.",
+            impact: { summary: "Keeps the surface cool." },
+          },
+          { label: "Green", impact: { summary: "Warmer, louder surface." } },
+        ],
+      },
+      {
+        question: "Targets?",
+        options: [
+          { label: "Web", impact: { summary: "Ships in the browser build." } },
+          { label: "Desktop", impact: { summary: "Ships in the app build." } },
+        ],
+        multiSelect: true,
+      },
+    ],
+  });
     expect(
       runtime.resolveAskTool({
         requestId: request.requestId,
@@ -3984,7 +4001,15 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
       (tool: any) => tool.name === "asktool",
     );
     const pending = askTool.execute("ask-call-halt", {
-      questions: [{ question: "Which way?", options: ["A", "B"] }],
+      questions: [
+        {
+          question: "Which way?",
+          options: [
+            { label: "A", impact: { summary: "Takes path A." } },
+            { label: "B", impact: { summary: "Takes path B." } },
+          ],
+        },
+      ],
     });
     await new Promise<void>((resolve) => setImmediate(resolve));
     const request = onEvent.mock.calls
@@ -4014,7 +4039,15 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
       (tool: any) => tool.name === "asktool",
     );
     const pending = askTool.execute("ask-call-proceed", {
-      questions: [{ question: "Which way?", options: ["A", "B"] }],
+      questions: [
+        {
+          question: "Which way?",
+          options: [
+            { label: "A", impact: { summary: "Takes path A." } },
+            { label: "B", impact: { summary: "Takes path B." } },
+          ],
+        },
+      ],
     });
     await new Promise<void>((resolve) => setImmediate(resolve));
     const request = onEvent.mock.calls
@@ -4042,7 +4075,15 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
       (tool: any) => tool.name === "asktool",
     );
     const pending = askTool.execute("ask-call-mixed", {
-      questions: [{ question: "Which way?", options: ["A", "B"] }],
+      questions: [
+        {
+          question: "Which way?",
+          options: [
+            { label: "A", impact: { summary: "Takes path A." } },
+            { label: "B", impact: { summary: "Takes path B." } },
+          ],
+        },
+      ],
     });
     await new Promise<void>((resolve) => setImmediate(resolve));
     const request = onEvent.mock.calls
@@ -4091,7 +4132,12 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
     expect(questionSchema.maxLength).toBe(300);
 
     const result = await askTool.execute("ask-call-too-long", {
-      questions: [{ question: "q".repeat(301), options: ["Continue"] }],
+      questions: [
+        {
+          question: "q".repeat(301),
+          options: [{ label: "Continue", impact: { summary: "Keeps going." } }],
+        },
+      ],
     });
 
     expect(result).toMatchObject({
@@ -4113,7 +4159,12 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
 
     const validQuestion = "🧭".repeat(300);
     const pendingAtLimit = askTool.execute("ask-call-at-limit", {
-      questions: [{ question: validQuestion, options: ["Continue"] }],
+      questions: [
+        {
+          question: validQuestion,
+          options: [{ label: "Continue", impact: { summary: "Keeps going." } }],
+        },
+      ],
     });
     await new Promise<void>((resolve) => setImmediate(resolve));
     const request = askRequests()[0]?.request;
@@ -4130,6 +4181,163 @@ describe("DesktopAgentRuntime deferred tool catalog", () => {
       content: [{ text: `${validQuestion}：Continue` }],
       details: { answers: [["Continue"]] },
     });
+    await runtime.dispose();
+  });
+
+  it("refuses an asktool request whose options carry no consequence summary", async () => {
+    const onEvent = vi.fn();
+    const runtime = createRuntime({ onEvent });
+    const askTool = (runtime as any).agent.state.tools.find(
+      (tool: any) => tool.name === "asktool",
+    );
+    const result = await askTool.execute("ask-call-blank", {
+      questions: [
+        {
+          question: "Which way?",
+          options: [
+            { label: "A", impact: { summary: "Takes path A." } },
+            { label: "B" },
+          ],
+        },
+      ],
+    });
+    expect(result).toMatchObject({
+      isError: true,
+      details: { errorCode: "ASKTOOL_MISSING_IMPACT", labels: ["B"] },
+    });
+    expect(result.content?.[0]?.text).toContain("impact.summary");
+    expect(result.content?.[0]?.text).toContain('"B"');
+    // Refused before the card: an option with no consequence is not a decision
+    // the user could make, so asking is worse than failing.
+    const askRequests = onEvent.mock.calls
+      .map(([envelope]) => (envelope as { event: { type: string } }).event)
+      .filter((event) => event.type === "asktool_request");
+    expect(askRequests).toHaveLength(0);
+    await runtime.dispose();
+  });
+
+  it("hands single asktool questions back and keeps the answered ones", async () => {
+    const onEvent = vi.fn();
+    const runtime = createRuntime({ onEvent });
+    const askTool = (runtime as any).agent.state.tools.find(
+      (tool: any) => tool.name === "asktool",
+    );
+    const pending = askTool.execute("ask-call-defer", {
+      questions: [
+        {
+          question: "Which way?",
+          options: [
+            { label: "A", impact: { summary: "Takes path A." } },
+            { label: "B", impact: { summary: "Takes path B." } },
+          ],
+        },
+        {
+          question: "Ship it?",
+          options: [
+            { label: "Yes", impact: { summary: "Ships now." } },
+            { label: "No", impact: { summary: "Waits for the next window." } },
+          ],
+        },
+      ],
+    });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    runtime.resolveAskTool({
+      requestId: request.requestId,
+      sessionId: "session-1",
+      answers: [["A"], null],
+      deferred: [1],
+    });
+    const result = await pending;
+    // The answered question survives; only the handed-back one belongs to the
+    // model, and the marker is what stops it asking that question again.
+    expect(result.content?.[0]?.text).toBe(
+      "Which way?：A\n---\nShip it?：(handed back to you: decide it yourself)\n\n" +
+        "The questions marked handed back are yours to decide: pick one option yourself, " +
+        "open your next reply with the choice and its reason, and do not ask them again.",
+    );
+    expect(result.details).toMatchObject({ answers: [["A"], null], deferred: [1] });
+    expect(result.details.disposition).toBeUndefined();
+    await runtime.dispose();
+  });
+
+  it("turns a fully handed-back asktool prompt into the proceed handoff", async () => {
+    const onEvent = vi.fn();
+    const runtime = createRuntime({ onEvent });
+    const askTool = (runtime as any).agent.state.tools.find(
+      (tool: any) => tool.name === "asktool",
+    );
+    const pending = askTool.execute("ask-call-defer-all", {
+      questions: [
+        {
+          question: "Which way?",
+          options: [
+            { label: "A", impact: { summary: "Takes path A." } },
+            { label: "B", impact: { summary: "Takes path B." } },
+          ],
+        },
+      ],
+    });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    runtime.resolveAskTool({
+      requestId: request.requestId,
+      sessionId: "session-1",
+      answers: [null],
+      deferred: [0],
+    });
+    const result = await pending;
+    // Every question handed back is the whole prompt handed back: one proceed
+    // turn, not a per-question note.
+    expect(result.content?.[0]?.text).toContain("handed the decision back");
+    expect(result.details).toMatchObject({ disposition: "proceed" });
+    expect(result.details.deferred).toBeUndefined();
+    await runtime.dispose();
+  });
+
+  it("refuses an asktool deferral that accompanies an answer", async () => {
+    const onEvent = vi.fn();
+    const runtime = createRuntime({ onEvent });
+    const askTool = (runtime as any).agent.state.tools.find(
+      (tool: any) => tool.name === "asktool",
+    );
+    const pending = askTool.execute("ask-call-defer-clash", {
+      questions: [
+        {
+          question: "Which way?",
+          options: [
+            { label: "A", impact: { summary: "Takes path A." } },
+            { label: "B", impact: { summary: "Takes path B." } },
+          ],
+        },
+      ],
+    });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    const request = onEvent.mock.calls
+      .map(([envelope]) => envelope as any)
+      .map((envelope) => envelope.event)
+      .find((event) => event.type === "asktool_request")?.request;
+    expect(() =>
+      runtime.resolveAskTool({
+        requestId: request.requestId,
+        sessionId: "session-1",
+        answers: [["A"]],
+        deferred: [0],
+      }),
+    ).toThrow(/cannot accompany an answer/);
+    // The request stays pending after the rejection, so the card can retry.
+    runtime.resolveAskTool({
+      requestId: request.requestId,
+      sessionId: "session-1",
+      answers: [["A"]],
+    });
+    await pending;
     await runtime.dispose();
   });
 
