@@ -273,6 +273,159 @@
   gap: 2px;
 }
 
+/* The consequence of the answer under the pointer or the keyboard focus.
+   Floated from a portal on `body`, because the option list scrolls and clips
+   overflow; the card places it to the option's right, flips it left, or floats
+   it above the card when the window is too narrow for either. */
+.asktool-impact {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  gap: 6px;
+  width: 300px;
+  max-height: 70vh;
+  padding: 9px 11px;
+  overflow: auto;
+  border: 1px solid var(--ds-border-default);
+  border-radius: var(--radius-md);
+  background: var(--ds-bg-elevated-opaque);
+  box-shadow: 0 14px 44px rgb(0 0 0 / 45%);
+  color: var(--ds-text-secondary);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+}
+
+/* The bridge: the pointer crosses the gap between the row and the panel
+   without leaving either, so the panel does not vanish under the cursor. */
+.asktool-impact::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -9px;
+  width: 9px;
+}
+
+.asktool-impact.flipped::before {
+  left: auto;
+  right: -9px;
+}
+
+.asktool-impact-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.asktool-impact-option {
+  min-width: 0;
+  color: var(--ds-text-primary);
+  font-weight: var(--font-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.asktool-impact-flag {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--ds-bg-chip);
+  color: var(--ds-warning);
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.asktool-impact-summary,
+.asktool-impact-risk {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.asktool-impact-section {
+  display: grid;
+  gap: 2px;
+}
+
+.asktool-impact-heading {
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.asktool-impact-list {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding-inline-start: 14px;
+}
+
+.asktool-impact-file {
+  color: var(--ds-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  overflow-wrap: anywhere;
+}
+
+/* The row whose consequence is on screen keeps a quiet highlight, so the
+   panel and the option it describes stay visibly paired. */
+.asktool-option.is-previewing {
+  background: var(--ds-bg-hover);
+}
+
+/* Declining is a decision: the card asks who makes the call instead of
+   dismissing the question. */
+.asktool-handoff {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.asktool-handoff-note {
+  margin: 0;
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+}
+
+.asktool-handoff-choice {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--ds-tile-deep);
+  color: var(--ds-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  text-align: start;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.asktool-handoff-choice:hover {
+  background: var(--ds-bg-hover);
+  border-color: var(--ds-border-default);
+}
+
+.asktool-handoff-choice:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.asktool-handoff-choice-title {
+  color: var(--ds-text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.asktool-handoff-choice-copy {
+  color: var(--ds-text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+}
+
 .asktool-rich-paragraph,
 .asktool-rich-heading,
 .asktool-rich-list,

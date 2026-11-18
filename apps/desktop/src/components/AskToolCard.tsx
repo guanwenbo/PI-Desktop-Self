@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   askToolOptionDescription,
+  askToolOptionImpact,
   askToolOptionLabel,
+  type AskToolDisposition,
 } from "@pi-desktop/shared";
+import { AskToolImpactFlyout } from "./AskToolImpactFlyout";
 import { AskToolRichText } from "./AskToolRichText";
 import {
   emptyAskDraft,
@@ -25,6 +28,9 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
   const storedDraft = useAppStore((state) => state.askDrafts[request.requestId]);
   const setAskDraft = useAppStore((state) => state.setAskDraft);
   const [resolving, setResolving] = useState(false);
+  // Declining is a decision, not a dismissal: the handoff card asks who makes
+  // the call before anything is sent to the runtime.
+  const [declining, setDeclining] = useState(false);
   // The store owns the draft, so a session switch (which unmounts this card)
   // cannot reset the answers. Read lazily rather than seeding during render.
   const draft: AskDraft =
@@ -44,6 +50,32 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
     updateDraft({ ...draft, index: nextIndex });
   const current = request.questions[index];
   const currentDraft = drafts[index];
+  const optionsRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLElement>(null);
+  // Which answer's consequence is on screen. Keyed by question so switching
+  // questions drops a preview that no longer belongs to the visible list,
+  // without an effect that would clear it one render too late.
+  const [preview, setPreview] = useState<{ question: number; option: number }>();
+  const hideTimer = useRef<number>(0);
+  const cancelHide = () => window.clearTimeout(hideTimer.current);
+  // Leaving the option row only schedules the hide: the pointer needs a moment
+  // to cross the gap into the panel before the panel disappears under it.
+  const scheduleHide = () => {
+    cancelHide();
+    hideTimer.current = window.setTimeout(() => setPreview(undefined), 220);
+  };
+  useEffect(() => cancelHide, []);
+  const previewOffset =
+    preview && preview.question === index ? preview.option : undefined;
+  const previewOption =
+    previewOffset === undefined ? undefined : current.options[previewOffset];
+  const previewImpact = previewOption ? askToolOptionImpact(previewOption) : undefined;
+  const previewAnchor =
+    previewOffset === undefined || !optionsRef.current
+      ? undefined
+      : optionsRef.current.querySelector<HTMLElement>(
+          `[data-option-index="${previewOffset}"]`,
+        ) ?? undefined;
 
   const currentValues = (draft: DraftAnswer): string[] => [
     ...draft.values,
@@ -102,6 +134,7 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
   const submit = async (
     nextDrafts = drafts,
     explicitAnswers?: Array<string[] | null>,
+    disposition?: AskToolDisposition,
   ) => {
     if (resolving) return;
     setResolving(true);
@@ -110,6 +143,7 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
         requestId: request.requestId,
         sessionId: request.sessionId,
         answers: explicitAnswers ?? answers(nextDrafts),
+        ...(disposition ? { disposition } : {}),
       });
     } catch (error) {
       showToast(error instanceof Error ? error.message : String(error), { variant: "error" });
@@ -144,7 +178,12 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
   };
 
   return (
-    <section className="asktool-card" role="region" aria-label={t("askTool.title")}>
+    <section
+      className="asktool-card"
+      role="region"
+      aria-label={t("askTool.title")}
+      ref={cardRef}
+    >
       <div className="asktool-card-header">
         <div className="asktool-card-header-main">
           <span className="asktool-card-title" role="status" aria-live="polite">
@@ -172,7 +211,12 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
             type="button"
             className="asktool-decline"
             disabled={resolving}
-            onClick={() => void submit(drafts, request.questions.map(() => null))}
+            aria-expanded={declining}
+            onClick={() => {
+              cancelHide();
+              setPreview(undefined);
+              setDeclining(true);
+            }}
           >
             {t("askTool.decline")}
           </button>
@@ -193,7 +237,35 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
           <AskToolRichText source={current.question} />
         </span>
       </h3>
-      <div className="asktool-options" role={current.multiSelect ? "group" : "radiogroup"}>
+      {declining ? (
+        <div className="asktool-handoff">
+          <p className="asktool-handoff-note">{t("askTool.handoff.note")}</p>
+          {(
+            [
+              ["proceed", "askTool.handoff.proceed", "askTool.handoff.proceedDesc"],
+              ["halt", "askTool.handoff.halt", "askTool.handoff.haltDesc"],
+            ] as const
+          ).map(([disposition, title, description]) => (
+            <button
+              key={disposition}
+              type="button"
+              className="asktool-handoff-choice"
+              disabled={resolving}
+              onClick={() => void submit(drafts, request.questions.map(() => null), disposition)}
+            >
+              <span className="asktool-handoff-choice-title">{t(title)}</span>
+              <span className="asktool-handoff-choice-copy">{t(description)}</span>
+            </button>
+          ))}
+        </div>
+      ) : (
+      <div
+        className="asktool-options"
+        role={current.multiSelect ? "group" : "radiogroup"}
+        ref={optionsRef}
+        onMouseLeave={scheduleHide}
+        onBlur={scheduleHide}
+      >
         {current.options.map((option, optionIndex) => {
           const label = askToolOptionLabel(option);
           const description = askToolOptionDescription(option);
@@ -202,10 +274,21 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
             <button
               key={`${label}-${optionIndex}`}
               type="button"
-              className={`asktool-option ${selected ? "selected" : ""}`}
+              className={`asktool-option ${selected ? "selected" : ""} ${
+                previewOffset === optionIndex ? "is-previewing" : ""
+              }`}
+              data-option-index={optionIndex}
               aria-pressed={current.multiSelect ? selected : undefined}
               aria-checked={!current.multiSelect ? selected : undefined}
               role={current.multiSelect ? "checkbox" : "radio"}
+              onMouseEnter={() => {
+                cancelHide();
+                setPreview({ question: index, option: optionIndex });
+              }}
+              onFocus={() => {
+                cancelHide();
+                setPreview({ question: index, option: optionIndex });
+              }}
               onClick={() => selectOption(label)}
             >
               <span className="asktool-option-mark" aria-hidden>{selected ? "✓" : ""}</span>
@@ -232,6 +315,21 @@ export function AskToolCard({ request, queued = 0 }: { request: PendingAsk; queu
           <span>{t("askTool.customOption")}</span>
         </button>
       </div>
+      )}
+      {previewImpact && previewAnchor && cardRef.current ? (
+        <AskToolImpactFlyout
+          anchor={previewAnchor}
+          card={cardRef.current}
+          label={previewOption ? askToolOptionLabel(previewOption) : ""}
+          impact={previewImpact}
+          onKeepOpen={cancelHide}
+          onDismiss={scheduleHide}
+          onClose={() => {
+            cancelHide();
+            setPreview(undefined);
+          }}
+        />
+      ) : null}
       {currentDraft.customSelected ? (
         <input
           className="asktool-custom-input"
