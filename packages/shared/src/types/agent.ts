@@ -172,12 +172,43 @@ export type ToolPermissionResolution = {
   decision: PermissionDecision;
 };
 
+/**
+ * What choosing one answer actually does, shown beside the answer before the
+ * choice is made (borrowed from DeepSeek Harness's consequence-aware ask panel).
+ *
+ * Every field is optional: a model that only knows the one-line summary writes
+ * that and the card renders the rest as absent rather than inventing detail.
+ * Applies to the option-level preview only, never to the model-facing answer.
+ */
+export type AskToolImpact = {
+  /** One line: what choosing this does. */
+  summary?: string;
+  /** Concrete edits or actions the choice causes. */
+  changes?: string[];
+  /** Files or paths the choice touches. */
+  files?: string[];
+  /** Effect on behavior that already works today. */
+  effects?: string[];
+  /** Risk of taking this path. */
+  risk?: string;
+  /** Rough cost in effort, tokens, or rounds. */
+  cost?: string;
+  /** False when the choice is hard to undo, which is when the answer matters most. */
+  reversible?: boolean;
+};
+
+/** Caps that keep a model-written impact readable inside the composer card. */
+const MAX_ASK_TOOL_IMPACT_SUMMARY_CHARS = 400;
+const MAX_ASK_TOOL_IMPACT_ITEM_CHARS = 200;
+const MAX_ASK_TOOL_IMPACT_ITEMS = 6;
+
 /** A selectable asktool answer: a plain label or a label with supporting copy. */
 export type AskToolOption =
   | string
   | {
       label: string;
       description?: string;
+      impact?: AskToolImpact;
     };
 
 /** Maximum length of one asktool prompt, counted in Unicode code points. */
@@ -192,6 +223,50 @@ export function isAskToolQuestionWithinLimit(question: string): boolean {
   return true;
 }
 
+/** Trim one impact line and bound it, so a runaway value cannot unbalance the card. */
+function clipAskToolImpactText(value: unknown, limit: number): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  return trimmed.length > limit ? `${trimmed.slice(0, limit - 1).trimEnd()}…` : trimmed;
+}
+
+/** Trim a list of impact lines, dropping blanks and bounding both count and width. */
+function clipAskToolImpactList(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const items: string[] = [];
+  for (const entry of value) {
+    const item = clipAskToolImpactText(entry, MAX_ASK_TOOL_IMPACT_ITEM_CHARS);
+    if (item) items.push(item);
+    if (items.length >= MAX_ASK_TOOL_IMPACT_ITEMS) break;
+  }
+  return items.length > 0 ? items : undefined;
+}
+
+/**
+ * Normalize a model-provided impact object, dropping empty fields so the card
+ * only renders sections that carry something the user can read.
+ */
+export function normalizeAskToolImpact(value: unknown): AskToolImpact | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const source = value as Record<string, unknown>;
+  const impact: AskToolImpact = {};
+  const summary = clipAskToolImpactText(source.summary, MAX_ASK_TOOL_IMPACT_SUMMARY_CHARS);
+  if (summary) impact.summary = summary;
+  const changes = clipAskToolImpactList(source.changes);
+  if (changes) impact.changes = changes;
+  const files = clipAskToolImpactList(source.files);
+  if (files) impact.files = files;
+  const effects = clipAskToolImpactList(source.effects);
+  if (effects) impact.effects = effects;
+  const risk = clipAskToolImpactText(source.risk, MAX_ASK_TOOL_IMPACT_ITEM_CHARS);
+  if (risk) impact.risk = risk;
+  const cost = clipAskToolImpactText(source.cost, MAX_ASK_TOOL_IMPACT_ITEM_CHARS);
+  if (cost) impact.cost = cost;
+  if (typeof source.reversible === "boolean") impact.reversible = source.reversible;
+  return Object.keys(impact).length > 0 ? impact : undefined;
+}
+
 /** Normalize a model-provided asktool option and discard malformed/empty values. */
 export function normalizeAskToolOption(value: unknown): AskToolOption | undefined {
   if (typeof value === "string") {
@@ -204,7 +279,12 @@ export function normalizeAskToolOption(value: unknown): AskToolOption | undefine
   if (!label) return undefined;
   const description =
     typeof option.description === "string" ? option.description.trim() : "";
-  return description ? { label, description } : { label };
+  const impact = normalizeAskToolImpact(option.impact);
+  return {
+    label,
+    ...(description ? { description } : {}),
+    ...(impact ? { impact } : {}),
+  };
 }
 
 export function askToolOptionLabel(option: AskToolOption): string {
@@ -217,6 +297,14 @@ export function askToolOptionDescription(
   if (typeof option === "string") return undefined;
   const description = option.description?.trim();
   return description || undefined;
+}
+
+/** The consequence preview of one answer, when the model supplied one. */
+export function askToolOptionImpact(
+  option: AskToolOption,
+): AskToolImpact | undefined {
+  if (typeof option === "string") return undefined;
+  return option.impact;
 }
 
 /** A model-created question shown in the inline asktool card. */
@@ -244,11 +332,28 @@ export type PendingInteractiveRequests = {
   permissions: ToolPermissionRequest[];
 };
 
-/** `null` means the user skipped that question or declined the whole prompt. */
+/**
+ * What the user decided by declining the whole prompt.
+ *
+ * Declining used to be a silent "no answer", which left the agent to guess
+ * whether the question was unwanted or the user wanted to answer later. A
+ * disposition makes the decision explicit: `proceed` hands the call back to
+ * the agent, `halt` ends the turn so no further model request is issued.
+ */
+export type AskToolDisposition = "proceed" | "halt";
+
+/**
+ * One resolution of a pending asktool request.
+ *
+ * `null` in `answers` means the user skipped that question or declined the
+ * whole prompt. `disposition` is present only when the user declined, and an
+ * absent value keeps the pre-existing behaviour (the agent carries on).
+ */
 export type AskToolResolution = {
   requestId: string;
   sessionId: string;
   answers: Array<string[] | null>;
+  disposition?: AskToolDisposition;
 };
 
 /** Stable model-facing serialization for one asktool result. */
