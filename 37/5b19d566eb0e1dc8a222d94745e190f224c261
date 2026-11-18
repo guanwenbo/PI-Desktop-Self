@@ -1,0 +1,38 @@
+apps/desktop/src/components/AskToolCard.tsx
+  h_b98c004121ae66 90,113,124,127-134,138-151,155,158-160,168-176,182-183,193,207-209,356-375
+apps/desktop/src/lib/pending-asks.ts
+  h_b98c004121ae66 60-64,70,90
+apps/desktop/src/styles/messages.css
+  h_b98c004121ae66 206-209,358,573-580
+apps/desktop/test/asktool-impact-preview.test.mjs
+  h_b98c004121ae66 13-16,117-119,152-196
+packages/i18n/src/locales/de/index.ts
+  h_b98c004121ae66 2278-2279,2303-2304
+packages/i18n/src/locales/en/index.ts
+  h_b98c004121ae66 2298-2300,2325
+packages/i18n/src/locales/es/index.ts
+  h_b98c004121ae66 2278-2279,2303-2304
+packages/i18n/src/locales/fr/index.ts
+  h_b98c004121ae66 2278-2279,2303-2304
+packages/i18n/src/locales/ko/index.ts
+  h_b98c004121ae66 2294-2296,2321
+packages/i18n/src/locales/pt-BR/index.ts
+  h_b98c004121ae66 2248-2250,2274-2275
+packages/i18n/src/locales/tr/index.ts
+  h_b98c004121ae66 2288-2290,2315
+packages/i18n/src/locales/zh-CN/index.ts
+  h_b98c004121ae66 2273-2274,2299
+packages/i18n/src/locales/zh-TW/index.ts
+  h_b98c004121ae66 2273-2274,2299
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "375b19d566eb0e1dc8a222d94745e190f224c261",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
