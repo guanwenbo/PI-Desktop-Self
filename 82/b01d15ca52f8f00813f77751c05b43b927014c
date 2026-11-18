@@ -1,0 +1,20 @@
+apps/desktop/src/components/AskToolCard.tsx
+  h_b98c004121ae66 1,5,7,9,31-33,53-78,137,146,181-186,214-219,240-268,277-280,284-291,318-332
+apps/desktop/src/components/AskToolImpactFlyout.tsx
+  h_b98c004121ae66 1-156
+apps/desktop/src/styles/messages.css
+  h_b98c004121ae66 276-428
+apps/desktop/test/asktool-impact-preview.test.mjs
+  h_b98c004121ae66 1-146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "82b01d15ca52f8f00813f77751c05b43b927014c",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
