@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   askToolOptionImpact,
+  askToolOptionsMissingImpact,
   formatAskToolOutput,
   isAskToolQuestionWithinLimit,
   MAX_ASK_TOOL_QUESTION_CHARS,
@@ -108,4 +109,40 @@ describe("asktool option impact", () => {
   it("reports no impact for legacy string options", () => {
     expect(askToolOptionImpact("Blue")).toBeUndefined();
   });
+
+describe("asktool required impact", () => {
+  it("names the options that carry no consequence summary", () => {
+    const options = [
+      { label: "Rewrite it", impact: { summary: "Replaces the parser." } },
+      { label: "Patch it" },
+      { label: "Leave it", impact: { summary: "   " } },
+      { label: "Ship it", impact: { risk: "Unknown" } },
+    ];
+    expect(askToolOptionsMissingImpact(options)).toEqual(["Patch it", "Leave it", "Ship it"]);
+  });
+
+  it("accepts legacy string options only when nothing is required of them", () => {
+    expect(askToolOptionsMissingImpact([])).toEqual([]);
+    expect(askToolOptionsMissingImpact(["Blue"])).toEqual(["Blue"]);
+  });
+});
+
+describe("asktool handed-back questions", () => {
+  const questions: AskToolQuestion[] = [
+    { question: "Preferred color?", options: ["Blue", "Green"] },
+    { question: "Which platforms?", options: ["Web", "Desktop"] },
+  ];
+
+  it("marks a handed-back question instead of leaving it blank", () => {
+    expect(formatAskToolOutput(questions, [["Blue"], null], [1])).toBe(
+      "Preferred color?：Blue\n---\nWhich platforms?：(handed back to you: decide it yourself)",
+    );
+  });
+
+  it("keeps an unanswered question blank when nothing was handed back", () => {
+    expect(formatAskToolOutput(questions, [["Blue"], null])).toBe(
+      "Preferred color?：Blue\n---\nWhich platforms?：",
+    );
+  });
+});
 });

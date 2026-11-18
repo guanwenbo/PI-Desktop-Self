@@ -307,6 +307,19 @@ export function askToolOptionImpact(
   return option.impact;
 }
 
+/**
+ * Labels of the options that carry no consequence summary.
+ *
+ * A summary is the line the card shows beside an answer, so an option without
+ * one leaves the user deciding on a bare label. The runtime rejects the whole
+ * request when this returns anything, instead of opening a blank card.
+ */
+export function askToolOptionsMissingImpact(options: AskToolOption[]): string[] {
+  return options
+    .filter((option) => !askToolOptionImpact(option)?.summary?.trim())
+    .map((option) => askToolOptionLabel(option));
+}
+
 /** A model-created question shown in the inline asktool card. */
 export type AskToolQuestion = {
   question: string;
@@ -348,22 +361,41 @@ export type AskToolDisposition = "proceed" | "halt";
  * `null` in `answers` means the user skipped that question or declined the
  * whole prompt. `disposition` is present only when the user declined, and an
  * absent value keeps the pre-existing behaviour (the agent carries on).
+ *
+ * `deferred` lists the 0-based questions the user handed back one at a time
+ * ("decide it yourself" on that question only). Such a question always has a
+ * `null` answer, and the tool result then says which ones the model must now
+ * decide instead of asking again.
  */
 export type AskToolResolution = {
   requestId: string;
   sessionId: string;
   answers: Array<string[] | null>;
   disposition?: AskToolDisposition;
+  deferred?: number[];
 };
+
+/** Stable model-facing serialization for one asktool result. */
+/**
+ * Answer cell rendered for a question the user handed back to the model.
+ *
+ * Without it a deferred question would serialize as an empty answer, which
+ * reads as "skipped" and invites the model to ask again.
+ */
+export const ASK_TOOL_DEFERRED_ANSWER = "(handed back to you: decide it yourself)";
 
 /** Stable model-facing serialization for one asktool result. */
 export function formatAskToolOutput(
   questions: AskToolQuestion[],
   answers: Array<string[] | null>,
+  deferred: number[] = [],
 ): string {
+  const handedBack = new Set(deferred);
   return questions
     .map((question, index) => {
-      const answer = answers[index]?.join("、") ?? "";
+      const answer = handedBack.has(index)
+        ? ASK_TOOL_DEFERRED_ANSWER
+        : answers[index]?.join("、") ?? "";
       return `${question.question}：${answer}`;
     })
     .join("\n---\n");
