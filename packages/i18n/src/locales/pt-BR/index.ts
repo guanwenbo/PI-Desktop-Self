@@ -2250,6 +2250,21 @@ export const ptBR = {
     skip: "Ignorar",
     decline: "Rejeitar tudo",
     queued: "Mais {{count}} prompt aguardando",
+    impact: {
+      title: "O que escolher isso faz",
+      changes: "O que muda",
+      files: "Arquivos",
+      effects: "Efeito no comportamento atual",
+      risk: "Risco e custo",
+      irreversible: "Difícil de desfazer",
+    },
+    handoff: {
+      note: "Cancelar também é uma decisão: quem decide desta vez?",
+      proceed: "Siga com o seu próprio julgamento",
+      proceedDesc: "Devolve a decisão: o agente continua com o próprio julgamento e explica no início da próxima resposta o que escolheu e por quê.",
+      halt: "Pare aqui e espere a minha decisão",
+      haltDesc: "A etapa termina sem novas requisições ao modelo nem alterações de arquivos; a tarefa fica pausada até você escrever.",
+    },
     status: {
       answered: "Pergunta {{number}} respondida",
       unanswered: "Pergunta {{number}} não respondida",

@@ -2296,6 +2296,21 @@ sklm: {
     skip: "건너뛰기",
     decline: "모두 거부",
     queued: "프롬프트 {{count}}개가 더 대기 중",
+    impact: {
+      title: "이 선택이 하는 일",
+      changes: "무엇이 바뀌는지",
+      files: "파일",
+      effects: "기존 동작에 미치는 영향",
+      risk: "위험과 비용",
+      irreversible: "되돌리기 어려움",
+    },
+    handoff: {
+      note: "취소도 하나의 결정입니다: 이번 판단은 누가 합니까?",
+      proceed: "당신의 판단으로 계속 진행",
+      proceedDesc: "결정권을 돌려줍니다: 에이전트가 스스로 판단해 계속하고, 다음 답변 첫머리에 무엇을 왜 골랐는지 밝힙니다.",
+      halt: "여기서 멈추고 내 결정을 기다림",
+      haltDesc: "이 단계가 끝나면 더 이상 모델 요청이나 파일 변경이 없으며, 다시 지시할 때까지 작업이 멈춥니다.",
+    },
     status: {
       answered: "질문 {{number}}에 답변함",
       unanswered: "질문 {{number}}에 답변하지 않음",

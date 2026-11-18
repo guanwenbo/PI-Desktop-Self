@@ -2280,6 +2280,21 @@ sklm: {
     "skip": "Ignorer",
     "decline": "Tout refuser",
     "queued": "{{count}} une autre invite est en attente",
+    "impact": {
+      "title": "Ce que ce choix change",
+      "changes": "Ce qui change",
+      "files": "Fichiers",
+      "effects": "Effet sur le comportement actuel",
+      "risk": "Risque et coût",
+      "irreversible": "Difficile à annuler",
+    },
+    "handoff": {
+      "note": "Annuler est aussi une décision : qui tranche cette fois ?",
+      "proceed": "Continue avec ton propre jugement",
+      "proceedDesc": "Rendre la décision : l'agent poursuit selon son jugement et annonce son choix et sa raison au début de sa prochaine réponse.",
+      "halt": "Arrête-toi ici et attends ma décision",
+      "haltDesc": "L'étape se termine sans nouvelle requête au modèle ni modification de fichier ; la tâche reste en pause jusqu'à ta prochaine consigne.",
+    },
     "status": {
       "answered": "Question {{number}} répondue",
       "unanswered": "Question {{number}} sans réponse",

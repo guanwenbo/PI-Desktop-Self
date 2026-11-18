@@ -2275,6 +2275,21 @@ sklm: {
     skip: "跳過",
     decline: "全部拒絕",
     queued: "還有 {{count}} 個提問在等待",
+    impact: {
+      title: "選它會怎樣",
+      changes: "會改什麼",
+      files: "涉及檔案",
+      effects: "對現有功能的影響",
+      risk: "風險與成本",
+      irreversible: "難以復原",
+    },
+    handoff: {
+      note: "取消也是一個決定：這次的判斷由誰來做？",
+      proceed: "按你的思路繼續做完",
+      proceedDesc: "把決定權交回給智能體：它按自己的判斷繼續，並在下一輪開頭說明選了什麼、為什麼。",
+      halt: "停在這裡，等我重新決策",
+      haltDesc: "當前這一步結束後不再發起模型請求、不再改檔案；任務原樣暫停。",
+    },
     status: {
       answered: "第 {{number}} 題已回答",
       unanswered: "第 {{number}} 題未回答",

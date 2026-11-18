@@ -2300,6 +2300,21 @@ sklm: {
     skip: "Skip",
     decline: "Decline all",
     queued: "{{count}} more prompt is waiting",
+    impact: {
+      title: "What choosing this does",
+      changes: "What changes",
+      files: "Files",
+      effects: "Effect on current behavior",
+      risk: "Risk and cost",
+      irreversible: "Hard to undo",
+    },
+    handoff: {
+      note: "Cancelling is a decision too: who makes this call?",
+      proceed: "Carry on with your own judgement",
+      proceedDesc: "Hand the decision back: the agent proceeds and states the choice and its reason at the start of its next reply.",
+      halt: "Stop here and wait for me",
+      haltDesc: "The step ends with no further model request or file change; the task pauses until you speak.",
+    },
     status: {
       answered: "Question {{number}} answered",
       unanswered: "Question {{number}} not answered",

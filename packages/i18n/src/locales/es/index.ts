@@ -2280,6 +2280,21 @@ sklm: {
     "skip": "Omitir",
     "decline": "Rechazar todo",
     "queued": "{{count}} más mensaje está esperando",
+    "impact": {
+      "title": "Qué ocurre si eliges esto",
+      "changes": "Qué cambia",
+      "files": "Archivos",
+      "effects": "Efecto en el comportamiento actual",
+      "risk": "Riesgo y coste",
+      "irreversible": "Difícil de deshacer",
+    },
+    "handoff": {
+      "note": "Cancelar también es una decisión: ¿quién decide esta vez?",
+      "proceed": "Sigue con tu propio criterio",
+      "proceedDesc": "Devuelve la decisión: el agente continúa con su criterio y explica al inicio de su siguiente respuesta qué eligió y por qué.",
+      "halt": "Detente aquí y espera mi decisión",
+      "haltDesc": "El paso termina sin nuevas peticiones al modelo ni cambios de archivos; la tarea queda en pausa hasta que escribas.",
+    },
     "status": {
       "answered": "Pregunta {{number}} respondida",
       "unanswered": "Pregunta {{number}} no respondida",

@@ -2290,6 +2290,21 @@ sklm: {
     skip: "Atla",
     decline: "Tümünü reddet",
     queued: "{{count}} istem daha bekliyor",
+    impact: {
+      title: "Bu seçeneği seçmek ne yapar",
+      changes: "Neler değişir",
+      files: "Dosyalar",
+      effects: "Mevcut davranışa etkisi",
+      risk: "Risk ve maliyet",
+      irreversible: "Geri alması zor",
+    },
+    handoff: {
+      note: "İptal etmek de bir karar: bu sefer kararı kim veriyor?",
+      proceed: "Kendi değerlendirmenle devam et",
+      proceedDesc: "Kararı geri ver: ajan kendi kararıyla ilerler ve seçimini nedeniyle birlikte bir sonraki yanıtının başında belirtir.",
+      halt: "Burada dur, ben karar vereyim",
+      haltDesc: "Adım, yeni model isteği veya dosya değişikliği olmadan biter; görev sen konuşana kadar durur.",
+    },
     status: {
       answered: "Soru {{number}} yanıtlandı",
       unanswered: "Soru {{number}} yanıtlanmadı",

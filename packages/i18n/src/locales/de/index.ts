@@ -2280,6 +2280,21 @@ sklm: {
     "skip": "Überspringen",
     "decline": "Alle ablehnen",
     "queued": "{{count}} weitere Eingabeaufforderung wartet",
+    "impact": {
+      "title": "Was diese Wahl bewirkt",
+      "changes": "Was sich ändert",
+      "files": "Dateien",
+      "effects": "Auswirkung auf bestehendes Verhalten",
+      "risk": "Risiko und Aufwand",
+      "irreversible": "Schwer rückgängig zu machen",
+    },
+    "handoff": {
+      "note": "Abbrechen ist auch eine Entscheidung: Wer trifft sie?",
+      "proceed": "Mit deiner eigenen Einschätzung fortfahren",
+      "proceedDesc": "Die Entscheidung zurückgeben: die KI fährt mit eigener Einschätzung fort und nennt Wahl und Grund zu Beginn ihrer nächsten Antwort.",
+      "halt": "Hier anhalten und auf mich warten",
+      "haltDesc": "Der Schritt endet ohne weitere Modellanfrage und ohne Dateiänderung; die Aufgabe pausiert, bis du sprichst.",
+    },
     "status": {
       "answered": "Frage {{number}} beantwortet",
       "unanswered": "Frage {{number}} nicht beantwortet",
