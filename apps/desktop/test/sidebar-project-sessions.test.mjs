@@ -16,8 +16,14 @@ test("loading more project sessions resets to the initial page after collapse", 
     sessions,
     expandedByProject[projectKey] ?? false,
   );
-  assert.deepEqual(initialPage.visibleSessions, sessions.slice(0, 10));
-  assert.equal(initialPage.hiddenCount, 2);
+  assert.deepEqual(
+    initialPage.visibleSessions,
+    sessions.slice(0, DEFAULT_VISIBLE_PROJECT_SESSION_COUNT),
+  );
+  assert.equal(
+    initialPage.hiddenCount,
+    sessions.length - DEFAULT_VISIBLE_PROJECT_SESSION_COUNT,
+  );
 
   expandedByProject = updateProjectSessionExpansion(
     expandedByProject,
@@ -48,7 +54,10 @@ test("loading more project sessions resets to the initial page after collapse", 
     sessions,
     expandedByProject[projectKey] ?? false,
   );
-  assert.deepEqual(reopenedPage.visibleSessions, sessions.slice(0, 10));
+  assert.deepEqual(
+    reopenedPage.visibleSessions,
+    sessions.slice(0, DEFAULT_VISIBLE_PROJECT_SESSION_COUNT),
+  );
   assert.equal(
     reopenedPage.hiddenCount,
     sessions.length - DEFAULT_VISIBLE_PROJECT_SESSION_COUNT,

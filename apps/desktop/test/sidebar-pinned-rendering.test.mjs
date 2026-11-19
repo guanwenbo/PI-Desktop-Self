@@ -7,6 +7,7 @@ import i18n from "i18next";
 import { I18nextProvider } from "react-i18next";
 import { catalogs } from "@pi-desktop/i18n";
 import { createServer } from "vite";
+import { DEFAULT_VISIBLE_PROJECT_SESSION_COUNT } from "../src/lib/sidebar-project-sessions.ts";
 
 test("sidebar renders global pins once, outside project folding and history limits", async () => {
   const previousDocument = globalThis.document;
@@ -108,7 +109,10 @@ test("sidebar renders global pins once, outside project folding and history limi
         html.indexOf('data-sidebar-session-section="temporary"'),
     );
     assert.equal(rows(html).length, new Set(rows(html)).size, "pins have no duplicate rows");
-    assert.equal(rows(html).filter((id) => id.startsWith("normal-")).length, 10);
+    assert.equal(
+      rows(html).filter((id) => id.startsWith("normal-")).length,
+      DEFAULT_VISIBLE_PROJECT_SESSION_COUNT,
+    );
     assert.ok(rows(html).includes("temporary-normal"));
     assert.ok(!rows(html).includes("archived-pin"));
     assert.ok(!rows(html).includes("archived-project-pin"));
