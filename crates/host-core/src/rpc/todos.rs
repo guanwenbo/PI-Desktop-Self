@@ -11,7 +11,7 @@ use std::time::Instant;
 use serde_json::{json, Value};
 use tokio::sync::{mpsc, Mutex};
 
-use super::{emit_notification, rpc_err, AppState, JsonRpcError};
+use super::{emit_notification, rpc_err, send_notification, AppState, JsonRpcError};
 use crate::todos::{self, TodoRefusal, TodoSnapshot, TodoWriteError};
 use crate::tools::{ToolsExecuteParams, ToolsExecuteResult};
 
@@ -130,6 +130,42 @@ pub async fn execute_write(
         &normalized.warnings,
         started,
     ))
+}
+
+/// A new turn has begun for `session_id`: drop a checklist the previous work
+/// finished, so the user does not carry it into the next conversation turn and
+/// a later `TodoWrite` starts a new list.
+///
+/// A failure to clear is logged and left to the next turn. It must not fail
+/// the turn that has already begun.
+pub fn clear_finished_for_new_turn(
+    state: &AppState,
+    tx: &mpsc::UnboundedSender<String>,
+    session_id: &str,
+) {
+    match todos::clear_if_all_completed(&state.db, session_id) {
+        Ok(Some(snapshot)) => {
+            match serde_json::to_value(&snapshot) {
+                Ok(payload) => send_notification(tx, "todos.changed", payload),
+                Err(error) => tracing::warn!(
+                    session_id = %session_id,
+                    error = %error,
+                    "cleared checklist could not be announced"
+                ),
+            }
+            tracing::info!(
+                session_id = %snapshot.session_id,
+                revision = snapshot.revision,
+                "finished checklist cleared at the start of a new turn"
+            );
+        }
+        Ok(None) => {}
+        Err(error) => tracing::warn!(
+            session_id = %session_id,
+            error = %error,
+            "finished checklist could not be cleared at the start of a new turn"
+        ),
+    }
 }
 
 fn refusal_wire(refusal: TodoRefusal) -> (&'static str, &'static str, bool) {
@@ -758,5 +794,112 @@ mod tests {
         let content = &todo["parameters"]["properties"]["todos"]["items"]["properties"]["content"];
         assert_eq!(content["minLength"], json!(1));
         assert!(content.get("maxLength").is_none());
+    }
+
+    /// Finish the running turn, as the runtime does when a reply ends.
+    async fn end_turn(harness: &Harness, turn_id: &str) {
+        let st = harness.state.lock().await;
+        sessions::end_turn(&st.db, turn_id, "completed", None, None, false).unwrap();
+    }
+
+    async fn write_list(harness: &Harness, session_id: &str, turn_id: &str, status: &str) {
+        let result = harness
+            .call(
+                "tools.execute",
+                write_call(
+                    session_id,
+                    turn_id,
+                    json!({"todos": [
+                        {"content": "one", "status": "completed"},
+                        {"content": "two", "status": status}
+                    ]}),
+                ),
+            )
+            .await
+            .unwrap();
+        assert_eq!(result["ok"], json!(true), "{result}");
+    }
+
+    #[tokio::test]
+    async fn the_next_turn_clears_a_finished_checklist_and_announces_it() {
+        let mut harness = Harness::new();
+        let session_id = harness.session("agent").await;
+        let turn_id = harness.begin_turn(&session_id).await;
+        write_list(&harness, &session_id, &turn_id, "completed").await;
+        end_turn(&harness, &turn_id).await;
+        harness.events();
+
+        let begun = harness
+            .call("session.beginTurn", json!({ "sessionId": session_id }))
+            .await
+            .unwrap();
+        let next_turn = begun["turnId"].as_str().unwrap().to_string();
+
+        let emitted = harness.events();
+        assert_eq!(emitted.len(), 1, "{emitted:?}");
+        assert_eq!(emitted[0]["method"], json!("todos.changed"));
+        assert_eq!(emitted[0]["params"]["sessionId"], json!(session_id));
+        assert_eq!(emitted[0]["params"]["revision"], json!(2));
+        assert_eq!(emitted[0]["params"]["todos"], json!([]));
+        // The event is the committed state, so recovery reads the same list.
+        assert_eq!(harness.snapshot(&session_id).await, emitted[0]["params"]);
+
+        // The new turn writes a brand-new list, not a continuation.
+        let result = harness
+            .call(
+                "tools.execute",
+                write_call(&session_id, &next_turn, items(&["fresh"])),
+            )
+            .await
+            .unwrap();
+        assert_eq!(result["content"]["revision"], json!(3));
+        assert_eq!(
+            harness.snapshot(&session_id).await["todos"]
+                .as_array()
+                .unwrap()
+                .len(),
+            1
+        );
+    }
+
+    #[tokio::test]
+    async fn the_next_turn_keeps_an_unfinished_checklist_and_stays_silent() {
+        let mut harness = Harness::new();
+        for status in ["pending", "in_progress", "cancelled"] {
+            let session_id = harness.session("agent").await;
+            let turn_id = harness.begin_turn(&session_id).await;
+            write_list(&harness, &session_id, &turn_id, status).await;
+            end_turn(&harness, &turn_id).await;
+            harness.events();
+
+            harness
+                .call("session.beginTurn", json!({ "sessionId": session_id }))
+                .await
+                .unwrap();
+
+            assert!(harness.events().is_empty(), "{status}");
+            let snapshot = harness.snapshot(&session_id).await;
+            assert_eq!(snapshot["revision"], json!(1), "{status}");
+            assert_eq!(snapshot["todos"].as_array().unwrap().len(), 2, "{status}");
+        }
+    }
+
+    #[tokio::test]
+    async fn a_refused_turn_start_leaves_the_finished_checklist_in_place() {
+        let mut harness = Harness::new();
+        let session_id = harness.session("agent").await;
+        let turn_id = harness.begin_turn(&session_id).await;
+        write_list(&harness, &session_id, &turn_id, "completed").await;
+        harness.events();
+
+        // The previous turn is still running, so no new turn may begin and
+        // nothing may be cleared on its behalf.
+        let busy = harness
+            .call("session.beginTurn", json!({ "sessionId": session_id }))
+            .await
+            .unwrap_err();
+        assert_eq!(busy.data.unwrap()["errorCode"], json!("AGENT_BUSY"));
+        assert!(harness.events().is_empty());
+        assert_eq!(harness.snapshot(&session_id).await["revision"], json!(1));
     }
 }

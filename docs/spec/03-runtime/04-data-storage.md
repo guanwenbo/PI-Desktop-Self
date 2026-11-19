@@ -1027,8 +1027,11 @@ boundary. Forks begin with revision zero and no rows; session deletion cascades
 the rows.
 
 The row content is bounded at 500 Unicode scalar values, contains no NUL, and
-is trimmed before storage. TodoWrite is the only writer; renderer and sidecar
-code access this state through host RPC.
+is trimmed before storage. TodoWrite and the host's turn-start clear (below) are
+the only writers; renderer and sidecar code access this state through host RPC.
+When a new turn begins and every row is `completed`, the host deletes the rows and
+advances the revision in one transaction, so the cleared state is ordered like any
+other write.
 
 ### 4.6c session collaboration ledger — Host-owned delivery state (schema v16)
 
