@@ -593,6 +593,11 @@ deletes per 60 seconds. P2/P3 methods are not present in protocol v11.
   storage. A successful replacement advances the session revision even when
   `todos` is empty and emits `todos.changed` after the transaction commits.
   The event payload is the same complete snapshot returned by `todos.get`.
+- `session.beginTurn` clears the session's checklist when it is non-empty and
+  every item is `completed`, after the new turn has been created. The clear
+  advances the revision and emits `todos.changed` with an empty `todos` array. A
+  list with any `pending`, `in_progress`, or `cancelled` item is left untouched
+  and emits nothing. A refused turn start (`AGENT_BUSY`) clears nothing.
 - SQLite ownership is host-core only. The renderer receives snapshots through
   Electron Main IPC, keeps them by session id, and ignores revisions older than
   or equal to the cached revision. Remote RACP sessions are local-only for this

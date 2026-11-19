@@ -302,6 +302,55 @@ pub fn replace_for_turn(
     Ok(snapshot)
 }
 
+/// Bump the session's checklist revision and timestamp, returning the new
+/// revision. Every committed change to the rows goes through here, so a clear
+/// stays distinguishable from "nothing happened".
+fn advance_revision(tx: &Transaction<'_>, session_id: &str, now: i64) -> rusqlite::Result<i64> {
+    tx.query_row(
+        "UPDATE sessions SET todo_revision = todo_revision + 1, todo_updated_at = ?2
+          WHERE id = ?1 RETURNING todo_revision",
+        params![session_id, now],
+        |row| row.get(0),
+    )
+}
+
+/// Clear a checklist whose every item is `completed`, so the next turn starts
+/// from a fresh list instead of inheriting the finished one.
+///
+/// Returns the committed empty snapshot, or `None` when nothing was cleared:
+/// the list is empty, any item is still unfinished (a `cancelled` item counts
+/// as unfinished work, not a completed one), or the session is unknown or
+/// deleted. The caller invokes this right after a turn begins, when no running
+/// turn can still write the checklist, so the check and the clear need no
+/// further authorization.
+pub fn clear_if_all_completed(db: &Database, session_id: &str) -> Result<Option<TodoSnapshot>> {
+    let tx = db.conn().unchecked_transaction()?;
+    let Some(current) = read_tx(&tx, session_id)? else {
+        return Ok(None);
+    };
+    if current.todos.is_empty()
+        || current
+            .todos
+            .iter()
+            .any(|item| item.status != STATUS_COMPLETED)
+    {
+        return Ok(None);
+    }
+    let now = now_ms();
+    let revision = advance_revision(&tx, session_id, now)?;
+    tx.execute(
+        "DELETE FROM session_todo WHERE session_id = ?1",
+        params![session_id],
+    )?;
+    tx.commit()?;
+    Ok(Some(TodoSnapshot {
+        session_id: session_id.to_string(),
+        todos: Vec::new(),
+        revision,
+        updated_at: now,
+    }))
+}
+
 fn replace_tx(
     tx: &Transaction<'_>,
     session_id: &str,
@@ -344,12 +393,7 @@ fn replace_tx(
     }
 
     let now = now_ms();
-    let revision: i64 = tx.query_row(
-        "UPDATE sessions SET todo_revision = todo_revision + 1, todo_updated_at = ?2
-          WHERE id = ?1 RETURNING todo_revision",
-        params![session_id, now],
-        |row| row.get(0),
-    )?;
+    let revision = advance_revision(tx, session_id, now)?;
     tx.execute(
         "DELETE FROM session_todo WHERE session_id = ?1",
         params![session_id],
@@ -763,5 +807,92 @@ mod tests {
             .query_row("SELECT COUNT(*) FROM session_todo", [], |row| row.get(0))
             .unwrap();
         assert_eq!(count, 2);
+    }
+
+    fn statuses(db: &Database, session_id: &str) -> Vec<String> {
+        get(db, session_id)
+            .unwrap()
+            .unwrap()
+            .todos
+            .into_iter()
+            .map(|item| item.status)
+            .collect()
+    }
+
+    #[test]
+    fn a_fully_completed_checklist_is_cleared_and_the_next_one_starts_fresh() {
+        let db = db();
+        let id = session(&db);
+        let written = write(
+            &db,
+            &id,
+            json!({"todos": [
+                {"content": "a", "status": "completed"},
+                {"content": "b", "status": "completed"}
+            ]}),
+        );
+
+        let cleared = clear_if_all_completed(&db, &id).unwrap().unwrap();
+        assert!(cleared.todos.is_empty());
+        assert_eq!(cleared.revision, written.revision + 1);
+        // The cleared state is the committed one, so recovery reads it too.
+        let read = get(&db, &id).unwrap().unwrap();
+        assert!(read.todos.is_empty());
+        assert_eq!(read.revision, cleared.revision);
+
+        // A later TodoWrite carries none of the old items.
+        let next = write(
+            &db,
+            &id,
+            json!({"todos": [{"content": "new", "status": "pending"}]}),
+        );
+        assert_eq!(next.revision, cleared.revision + 1);
+        assert_eq!(statuses(&db, &id), vec!["pending"]);
+        assert_eq!(get(&db, &id).unwrap().unwrap().todos[0].content, "new");
+    }
+
+    #[test]
+    fn an_unfinished_checklist_survives_the_next_turn() {
+        let db = db();
+        let id = session(&db);
+        for todos in [
+            json!({"todos": [
+                {"content": "a", "status": "completed"},
+                {"content": "b", "status": "pending"}
+            ]}),
+            json!({"todos": [
+                {"content": "a", "status": "completed"},
+                {"content": "b", "status": "in_progress"}
+            ]}),
+            // A cancelled step is unfinished work, not a completed one.
+            json!({"todos": [
+                {"content": "a", "status": "completed"},
+                {"content": "b", "status": "cancelled"}
+            ]}),
+            json!({"todos": [{"content": "a", "status": "cancelled"}]}),
+        ] {
+            let written = write(&db, &id, todos);
+            assert!(clear_if_all_completed(&db, &id).unwrap().is_none());
+            let read = get(&db, &id).unwrap().unwrap();
+            assert_eq!(read.todos, written.todos);
+            assert_eq!(read.revision, written.revision);
+        }
+    }
+
+    #[test]
+    fn clearing_has_nothing_to_do_for_an_empty_checklist_or_a_missing_session() {
+        let db = db();
+        let id = session(&db);
+        assert!(clear_if_all_completed(&db, &id).unwrap().is_none());
+        assert_eq!(get(&db, &id).unwrap().unwrap().revision, 0);
+
+        // An empty list that was written explicitly keeps its revision too.
+        let written = write(&db, &id, json!({"todos": []}));
+        assert!(clear_if_all_completed(&db, &id).unwrap().is_none());
+        assert_eq!(get(&db, &id).unwrap().unwrap().revision, written.revision);
+
+        assert!(clear_if_all_completed(&db, "no-such-session")
+            .unwrap()
+            .is_none());
     }
 }

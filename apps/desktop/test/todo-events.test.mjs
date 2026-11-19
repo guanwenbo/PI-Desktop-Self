@@ -60,3 +60,30 @@ test("Todo events keep the newest valid session snapshot only", () => {
   apply(snapshot(3, [{ content: "cleared", status: "cancelled", priority: "low" }]));
   assert.equal(read().sessionTodos["session-1"].revision, 3);
 });
+
+test("An empty snapshot at a higher revision clears a finished list for good", () => {
+  const { slice, read } = makeSlice();
+  const apply = slice.applyTodosChanged;
+  const finished = [
+    { content: "one", status: "completed", priority: "medium" },
+    { content: "two", status: "completed", priority: "medium" },
+  ];
+  apply(snapshot(2, finished));
+  assert.equal(read().sessionTodos["session-1"].todos.length, 2);
+
+  // The Host clears the finished list when the next turn begins.
+  apply(snapshot(3, []));
+  assert.deepEqual(read().sessionTodos["session-1"].todos, []);
+  assert.equal(read().sessionTodos["session-1"].revision, 3);
+
+  // A late recovery read of the old list must not bring it back.
+  apply(snapshot(2, finished));
+  assert.deepEqual(read().sessionTodos["session-1"].todos, []);
+
+  // The new turn's list starts from scratch.
+  apply(snapshot(4, [{ content: "fresh", status: "pending", priority: "medium" }]));
+  assert.deepEqual(
+    read().sessionTodos["session-1"].todos.map((todo) => todo.content),
+    ["fresh"],
+  );
+});

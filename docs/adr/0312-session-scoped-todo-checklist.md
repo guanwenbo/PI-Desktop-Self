@@ -36,9 +36,22 @@ RACP sessions remain local-only for this vertical slice because RACP v1 has no
 Todo snapshot operation; the renderer skips local recovery for those session
 ids rather than reading the local database.
 
+A checklist is also cleared by the host. When a new turn begins, `session.beginTurn`
+removes the session's checklist if it is non-empty and every item is
+`completed`, advances the revision, and emits `todos.changed` with the empty
+snapshot, so a later `TodoWrite` starts a new list rather than continuing the
+finished one. A list with any `pending`, `in_progress`, or `cancelled` item is
+kept: a cancelled step is unfinished work, and the next turn may resume it. A
+failed clear is logged and does not fail the turn.
+
 ## Consequences
 
 - Empty checklist writes remain observable through revision advancement.
+- A finished checklist does not carry into the next turn; the clear advances the
+  revision, so the cleared state stays observable and a stale snapshot cannot
+  restore it.
+- A multi-turn task whose checklist is fully `completed` at a turn boundary starts
+  its next turn without it.
 - Session deletion cascades checklist rows; forks start with an empty checklist.
 - Plan, Goal, delegated, plugin, and MCP execution paths cannot write the
   checklist through this contract.

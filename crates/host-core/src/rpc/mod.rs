@@ -3502,6 +3502,9 @@ async fn handle_request(
                 None => sessions::begin_turn(&st.db, session_id, provider, model),
             }
             .map_err(session_collaboration_rpc_err)?;
+            // The previous turn's finished checklist must not follow the user
+            // into this one.
+            todos::clear_finished_for_new_turn(&st, &tx, session_id);
             Ok(json!({ "turnId": turn_id }))
         }
         "session.recordUsage" => {
