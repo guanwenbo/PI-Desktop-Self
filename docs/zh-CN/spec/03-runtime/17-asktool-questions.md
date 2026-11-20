@@ -40,7 +40,7 @@
 工具行。对于每个问题，内容序列化为：
 
 ```text
-question text：answer 1、answer 2
+question text：answer label 1、answer label 2
 ```
 
 多个问题由 `\n---\n` 分隔。跳过或未答复
@@ -48,6 +48,13 @@ Question 保留问题文本并使用空占位符：
 
 ```text
 question text：
+```
+
+交还给 agent 的问题保留其文本，并序列化下面的标记，
+随后附一条不要再询问这些问题的指示：
+
+```text
+question text：(handed back to you: decide it yourself)
 ```
 
 这种格式是确定性的，保留问题顺序，并进行多项选择
