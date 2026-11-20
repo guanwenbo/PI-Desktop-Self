@@ -192,6 +192,7 @@ function createRuntime(
     pluginSkills: import("./plugin-skills-prompt.js").PluginSkillDef[];
     commandShell: CommandShellOption;
     jevApiKey: string;
+    jevEndpoint: import("@pi-desktop/shared").JevEndpoint;
     turnId: string;
     host: { call: ReturnType<typeof vi.fn>; onNotification?: ReturnType<typeof vi.fn> };
     onEvent: (envelope: unknown) => void;
@@ -202,6 +203,7 @@ function createRuntime(
     sessionId: "session-1",
     mode: overrides.mode === "chat" ? "plan" : overrides.mode ?? "agent",
     jevApiKey: overrides.jevApiKey,
+    jevEndpoint: overrides.jevEndpoint,
     turnId: overrides.turnId,
     provider: overrides.provider ?? provider,
     commandShell: overrides.commandShell ?? commandShell,
@@ -1340,6 +1342,26 @@ function runtimeFirstMismatch(
     ...overrides,
   });
 }
+
+describe("Jev endpoint runtime matching", () => {
+  it("retires the runtime when the configured endpoint changes", async () => {
+    const endpoint = { baseUrl: "https://api.zhizengzeng.com/v1", modelId: "jev-latest" };
+    const runtime = createRuntime({ jevApiKey: "fixture-key", jevEndpoint: endpoint });
+    expect(
+      runtimeMatches(runtime, { jevApiKey: "fixture-key", jevEndpoint: { ...endpoint } }),
+    ).toBe(true);
+    expect(
+      runtimeMatches(runtime, {
+        jevApiKey: "fixture-key",
+        jevEndpoint: { ...endpoint, modelId: "jev-other" },
+      }),
+    ).toBe(false);
+    expect(
+      runtimeFirstMismatch(runtime, { jevApiKey: "fixture-key", jevEndpoint: undefined }),
+    ).toBe("jevEndpoint");
+    await runtime.dispose();
+  });
+});
 
 describe("system transcript reconstruction", () => {
   it.each(["progressTurnRerunInProgress", "silentTurnRerunInProgress", "providerRetryInProgress", "overflowRecoveryInProgress"])("starts a new recovery reply after consumed steering during %s (#1699)", async (recovery) => {

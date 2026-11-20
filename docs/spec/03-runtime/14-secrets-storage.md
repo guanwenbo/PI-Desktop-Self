@@ -62,7 +62,11 @@ path, so it is encrypted by the same backend but is not indexed in
 The Jev API key uses the fixed `secret:app:typesafe-jev` reference through the
 same encrypted Host store. Renderer access is limited to set/delete/has; Electron
 main reads it only for an explicitly enabled Agent launch and passes it
-ephemerally to the sidecar.
+ephemerally to the sidecar. The slot is shared by every Jev endpoint: the
+endpoint itself is settings data (`jevEndpoint`), not a secret, and changing
+it re-checks and replaces the key rather than reusing a stored key at a new
+address. Removing the Jev service clears the endpoint with the switch before
+the key is deleted.
 
 ## 4a. Provider readiness flags
 

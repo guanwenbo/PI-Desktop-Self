@@ -99,7 +99,7 @@ export function jevServiceOption(translate: Translate): ServiceOption {
     label,
     endpoint,
     haystack:
-      `${label} jev typesafe classifier ${endpoint} ${TYPESAFE_SYSTEM_ONE_URL}`.toLowerCase(),
+      `${label} jev typesafe classifier zhizengzeng 智增增 custom local systemone ${endpoint} ${TYPESAFE_SYSTEM_ONE_URL}`.toLowerCase(),
   };
 }
 

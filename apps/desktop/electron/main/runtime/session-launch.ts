@@ -5,11 +5,15 @@ import {
   isActiveInProject,
   isCommandShellCatalog,
   JEV_API_KEY_SECRET_REF,
+  allowInsecureUserEndpoints,
   imageGenerationBindings,
   isImageGenerationModel,
+  isSafeUserEndpointUrl,
+  normalizeJevEndpoint,
   normalizeMode,
   trustedExtensionAgentKeyFromProviderId,
   type CommandShellCatalog,
+  type JevEndpoint,
   type McpServerRecord,
   type ModelBinding,
   type Mode,
@@ -724,19 +728,36 @@ export function createSessionLaunchRuntime({
       overrides.mode ?? session.mode ?? settings.defaultMode ?? "agent",
     );
     let jevApiKey: string | undefined;
+    let jevEndpoint: JevEndpoint | undefined;
     if (mode === "agent" && settings.jevEnabled === true) {
-      try {
-        const saved = await runtimeState.host!.call<{ value?: string | null }>(
-          "secrets.getForRuntime",
-          { secretRef: JEV_API_KEY_SECRET_REF },
-        );
-        if (typeof saved.value === "string" && saved.value.trim().length > 0) {
-          jevApiKey = saved.value;
-        }
-      } catch {
-        logger.app("session", "warn", "Jev API key could not be loaded", {
+      // A configured endpoint is a user-typed address: it must pass the same
+      // user-endpoint policy as a model base URL before the key is loaded, so
+      // a refused address never receives the credential.
+      const configuredEndpoint = normalizeJevEndpoint(settings.jevEndpoint);
+      const endpointAllowed =
+        configuredEndpoint === undefined ||
+        isSafeUserEndpointUrl(configuredEndpoint.baseUrl, {
+          allowInsecureHttp: allowInsecureUserEndpoints(settings),
+        });
+      if (!endpointAllowed) {
+        logger.app("session", "warn", "Jev endpoint is not allowed by the network policy", {
           sessionId,
         });
+      } else {
+        jevEndpoint = configuredEndpoint;
+        try {
+          const saved = await runtimeState.host!.call<{ value?: string | null }>(
+            "secrets.getForRuntime",
+            { secretRef: JEV_API_KEY_SECRET_REF },
+          );
+          if (typeof saved.value === "string" && saved.value.trim().length > 0) {
+            jevApiKey = saved.value;
+          }
+        } catch {
+          logger.app("session", "warn", "Jev API key could not be loaded", {
+            sessionId,
+          });
+        }
       }
     }
     return {
@@ -753,7 +774,9 @@ export function createSessionLaunchRuntime({
         // The session `/fast` switch only reaches a model the user allowed it
         // for in model settings (ADR 0334).
         fastMode: session.fastMode === true && storedModel?.fastModeAllowed === true,
-        ...(jevApiKey ? { jevApiKey } : {}),
+        ...(jevApiKey
+          ? { jevApiKey, ...(jevEndpoint ? { jevEndpoint } : {}) }
+          : {}),
         // A disabled feature is absent from the prompt rather than advertised
         // and refused on every call (ADR 0342 §13).
         ...(mode === "agent" && settings.computerUse?.enabled === true

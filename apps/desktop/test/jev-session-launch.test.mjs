@@ -146,6 +146,37 @@ test("session launch resolves Jev credentials only for opted-in Agent mode", asy
     assert.equal("jevApiKey" in plan.sidecarParams, false);
     assert.deepEqual(keyReads, []);
 
+    // A configured relay endpoint travels with the key to the sidecar.
+    keyReads.length = 0;
+    logs.length = 0;
+    const relay = { baseUrl: "https://api.zhizengzeng.com/v1", modelId: "jev-latest" };
+    const withRelay = await launch("agent", true, { jevEndpoint: relay });
+    assert.deepEqual(withRelay.sidecarParams.jevEndpoint, relay);
+    assert.equal(withRelay.sidecarParams.jevApiKey, "jev-launch-fixture-key");
+
+    // A local http gateway is a user endpoint: the default relaxed policy allows it.
+    const local = { baseUrl: "http://127.0.0.1:8080/v1", modelId: "jev-latest" };
+    const withLocal = await launch("agent", true, { jevEndpoint: local });
+    assert.deepEqual(withLocal.sidecarParams.jevEndpoint, local);
+
+    // The strict policy refuses the plaintext hop before the key is even read.
+    keyReads.length = 0;
+    const strictLocal = await launch("agent", true, {
+      jevEndpoint: local,
+      networkPolicy: { mode: "strict" },
+    });
+    assert.equal("jevApiKey" in strictLocal.sidecarParams, false);
+    assert.equal("jevEndpoint" in strictLocal.sidecarParams, false);
+    assert.deepEqual(keyReads, []);
+    assert.ok(logs.some((entry) => entry[2] === "Jev endpoint is not allowed by the network policy"));
+
+    // A malformed stored endpoint falls back to the TypeSafe default, not to a guess.
+    const malformed = await launch("agent", true, { jevEndpoint: { baseUrl: "not a url" } });
+    assert.equal("jevEndpoint" in malformed.sidecarParams, false);
+    assert.equal(malformed.sidecarParams.jevApiKey, "jev-launch-fixture-key");
+
+    keyReads.length = 0;
+    logs.length = 0;
     failJevSecretRead = true;
     const unavailable = await launch("agent", true);
     assert.equal("jevApiKey" in unavailable.sidecarParams, false);

@@ -257,8 +257,11 @@ test("packaging publishes an electron-updater feed for GitHub Releases", async (
   const pkg = JSON.parse(pkgSource);
   assert.ok(pkg.dependencies["electron-updater"], "electron-updater dependency");
   assert.equal(pkg.build.publish[0].provider, "github");
-  assert.equal(pkg.build.publish[0].owner, "vastsa");
-  assert.equal(pkg.build.publish[0].repo, "PI-Desktop");
+  // The feed follows this repository's own releases (see the self-signed
+  // release guide); the cross-file consistency check below pins the Windows
+  // updater config to the same coordinates.
+  assert.equal(pkg.build.publish[0].owner, "guanwenbo");
+  assert.equal(pkg.build.publish[0].repo, "PI-Desktop-Self");
   const windowsUpdateConfigResource = pkg.build.win.extraResources.find(
     ({ from }) => from === "resources/app-update.yml",
   );

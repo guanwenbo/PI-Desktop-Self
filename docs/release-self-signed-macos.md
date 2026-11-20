@@ -153,7 +153,7 @@ Two paths, both supported:
 
 * **In-app** — the installed app checks this repository's releases and
   installs newer builds silently, because they carry the same certificate.
-* **Rebuild locally** — [`scripts/self-update.sh`](../scripts/self-update.sh)
+* **Rebuild locally** — `scripts/self-update.sh`
   pulls `main`, rebuilds with the pinned identity, and replaces
   `/Applications/PI-Desktop.app`.
 

@@ -19,7 +19,7 @@ import {
   type RuntimeProviderConfig,
 } from "./runtime.js";
 import type { PluginSkillDef } from "./plugin-skills-prompt.js";
-import type { SessionMessageOrigin, TrustedExtensionSpec } from "@pi-desktop/shared";
+import type { JevEndpoint, SessionMessageOrigin, TrustedExtensionSpec } from "@pi-desktop/shared";
 import type { ProjectInstructions } from "./project-instructions.js";
 import type { CustomSystemPrompt } from "./custom-system-prompt.js";
 import {
@@ -120,8 +120,10 @@ type RuntimeParams = {
   infiniteProviderRetry?: boolean;
   /** Session `/fast` switch AND the model's opt-in, resolved by main (ADR 0334). */
   fastMode?: boolean;
-  /** Opt-in TypeSafe classifier credential resolved by Electron main. */
+  /** Opt-in Jev classifier credential resolved by Electron main. */
   jevApiKey?: string;
+  /** The user's System One endpoint; absent means the TypeSafe default. */
+  jevEndpoint?: JevEndpoint;
   provider: RuntimeProviderConfig;
   commandShell: CommandShellOption;
   pluginTools?: PluginToolDef[];
@@ -252,6 +254,7 @@ async function runtimeFor(
     subagentProviders,
     subagentModelKeys,
     jevApiKey: params.jevApiKey,
+    jevEndpoint: params.jevEndpoint,
     projectInstructions: params.projectInstructions,
     customSystemPrompt: params.customSystemPrompt,
     projectMemory: params.projectMemory,
@@ -329,6 +332,7 @@ async function runtimeFor(
     infiniteProviderRetry: params.infiniteProviderRetry === true,
     fastMode: params.fastMode === true,
     jevApiKey: params.jevApiKey,
+    jevEndpoint: params.jevEndpoint,
     history,
     compaction,
     compactionSettings: params.compactionSettings,

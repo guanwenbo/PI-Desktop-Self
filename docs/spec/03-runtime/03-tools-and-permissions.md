@@ -155,7 +155,7 @@ their full schemas up front:
 - `BrowserPreview`
 - `PluginCheck`, `PluginScaffold`, and `PluginPack`
 - plugin-declared agent tools
-- `JevClassify` when the user enables Jev and saves a TypeSafe API key
+- `JevClassify` when the user enables Jev and saves a Jev API key
 
 These tools appear in a bounded `# On-demand tools` catalog with compact
 descriptions. The model calls the local `ToolSearch` tool with an exact name or
@@ -173,14 +173,19 @@ tool is loaded. `ToolSearch` itself never executes a workspace operation and
 never bypasses host-core policy.
 
 `JevClassify` is offered only in Agent mode, only when explicitly enabled in
-Settings → Models, and only while its TypeSafe key is available. It is a
-structured classifier call, not a chat model or workspace operation. The Agent
-must supply its JSON state and typed questions; those values go directly to
-TypeSafe when the tool is called. The tool validates JSON shape and bounds the
-payload to 24 KiB, uses the pi-ai `jev-latest` classifier with a 45-second
-timeout, and returns only structured answers and reported usage. Plan and Goal
-never receive the tool. The settings disclosure warns users not to pass secrets
-or personal information.
+Settings → Models, and only while its key is available. It is a structured
+classifier call, not a chat model or workspace operation. The Agent must
+supply its JSON state and typed questions; those values go directly to the
+configured System One endpoint when the tool is called — the TypeSafe default,
+or the user's `jevEndpoint` (a relay such as Zhizengzeng, or a self-hosted
+gateway). A configured endpoint is a user-typed address and must pass the
+stored network policy before the key is loaded for a launch; the tool
+description names the target host so the data destination stays visible. The
+tool validates JSON shape and bounds the payload to 24 KiB, uses the pi-ai
+System One classifier (`jev-latest` by default, or the configured model id)
+with a 45-second timeout, and returns only structured answers and reported
+usage. Plan and Goal never receive the tool. The settings disclosure warns
+users not to pass secrets or personal information.
 
 An explicit composer MCP selection carries exact server IDs to the runtime.
 The current host-supplied catalog associates each MCP tool with its server ID;
