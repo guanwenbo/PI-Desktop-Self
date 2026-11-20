@@ -1,0 +1,32 @@
+packages/shared/src/changelog-de.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-en.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-es.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-fr.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-ko.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-pt-BR.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-tr.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-zh-CN.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog-zh-TW.ts
+  h_b98c004121ae66 4-79
+packages/shared/src/changelog.test.ts
+  h_b98c004121ae66 37,43-45,47-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "1af54e4ebd795819eb3a07ba75fbf55bb3190305",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
