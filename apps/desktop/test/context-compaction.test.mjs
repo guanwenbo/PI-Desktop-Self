@@ -240,9 +240,13 @@ test("compaction runs inline at the hard boundary, never ahead of it", () => {
   assert.doesNotMatch(runtime, /pendingBackgroundCheckpoint/);
   assert.doesNotMatch(runtime, /BACKGROUND_COMPACTION_LIMIT_RATIO/);
   assert.doesNotMatch(runtime, /phase: "background"/);
+  // The budget is computed inline from the turn's messages (recomputed after
+  // model-free tool-result pruning), and the hard-boundary decision derives
+  // from it before any compaction runs.
+  assert.match(runtime, /let budget = this\.contextBudget\(context\.messages\);/);
   assert.match(
     runtime,
-    /const budget = this\.contextBudget\(context\.messages\);\s*const hardLimitReached = budget\.tokens >= budget\.hardLimit;/,
+    /const hardLimitReached = budget\.tokens >= budget\.hardLimit;/,
   );
   // Generation stays separate from installation so a failed build can still
   // fall through to the retained-tail recovery path.
