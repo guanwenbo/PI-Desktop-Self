@@ -138,6 +138,24 @@ window.jevSettingsProbe = async () => {
   flushSync(() => toggle().click());
   await waitFor(() => toggle().getAttribute("aria-checked") === "true", "Jev setting did not turn on");
 
+  // 3b) A stored custom endpoint is what the card names: the privacy notice
+  //     and the endpoint line both follow the configured address.
+  useAppStore.setState({
+    settings: {
+      ...savedSettings,
+      jevEnabled: true,
+      jevEndpoint: { baseUrl: "https://api.zhizengzeng.com/v1", modelId: "jev-latest" },
+    },
+  });
+  flushSync(() => window.__remount());
+  await settle();
+  const customPrivacyShown = [...document.querySelectorAll("button")].some(
+    (candidate) => candidate.getAttribute("aria-label")?.includes("sent directly to api.zhizengzeng.com"),
+  );
+  const endpointLineShown = [...document.querySelectorAll("button")].some(
+    (candidate) => candidate.getAttribute("aria-label")?.includes("Endpoint: api.zhizengzeng.com/v1"),
+  );
+
   // 4) Removing the key takes the switch down first, deletes the key, and the
   //    card leaves with it.
   const remove = button("Remove key");
@@ -150,6 +168,10 @@ window.jevSettingsProbe = async () => {
     (call) => call.channel === "pi-desktop/settings/set" && call.input.jevEnabled === false,
   );
   const firstDelete = apiCalls.findIndex((call) => call.channel === "pi-desktop/secrets/delete");
+  const lastSettingsWrite = settingsWrites[settingsWrites.length - 1];
+  const removalClearedEndpoint = Boolean(lastSettingsWrite)
+    && lastSettingsWrite.input.jevEnabled === false
+    && !("jevEndpoint" in lastSettingsWrite.input);
   return {
     hiddenUntilAdded,
     toggleReadyWithKey,
@@ -166,6 +188,9 @@ window.jevSettingsProbe = async () => {
     storedKeyNeverInSettings: settingsWrites.every(
       (call) => !Object.values(call.input).includes("jev-ui-fixture-key"),
     ),
+    customPrivacyShown,
+    endpointLineShown,
+    removalClearedEndpoint,
   };
 };
 `;
@@ -264,6 +289,9 @@ app.whenReady().then(async () => {
       removalDisabledFirst: true,
       keyNeverStoredFromTheCard: true,
       storedKeyNeverInSettings: true,
+      customPrivacyShown: true,
+      endpointLineShown: true,
+      removalClearedEndpoint: true,
     });
   } finally {
     await rm(temp, { recursive: true, force: true });

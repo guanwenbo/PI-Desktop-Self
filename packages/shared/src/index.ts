@@ -82,6 +82,7 @@ export * from "./native-web-search.js";
 export * from "./native-web-search-transport.js";
 export * from "./header-value.js";
 export * from "./secret-refs.js";
+export * from "./jev-endpoint.js";
 
 export * from "./session-todos.js";
 export * from "./tool-call-lineage.js";

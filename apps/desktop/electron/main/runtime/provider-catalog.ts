@@ -3,6 +3,7 @@ import {
   SESSION_THINKING_LEVELS,
   defaultCommandShellForPlatform,
   isCommandShellId,
+  normalizeJevEndpoint,
   normalizeRadialMenuPreferences,
   radialMenuWriteError,
   validateNetworkProxy,
@@ -178,6 +179,7 @@ export function createProviderCatalogRuntime({
       scheduledTasksEnabled: (value as T & { scheduledTasksEnabled?: unknown })
         .scheduledTasksEnabled !== false,
       jevEnabled: (value as T & { jevEnabled?: unknown }).jevEnabled === true,
+      jevEndpoint: normalizeJevEndpoint((value as T & { jevEndpoint?: unknown }).jevEndpoint),
       transcriptDisplayMode:
         (value as T & { transcriptDisplayMode?: unknown }).transcriptDisplayMode === "flat" ||
         (value as T & { transcriptDisplayMode?: unknown }).transcriptDisplayMode === "command-first" ||
@@ -205,6 +207,7 @@ export function createProviderCatalogRuntime({
       keepAwakeWhileRunning?: unknown;
       scheduledTasksEnabled?: unknown;
       jevEnabled?: unknown;
+      jevEndpoint?: unknown;
       updatePreference?: unknown;
       lastNotifiedUpdateVersion?: unknown;
       networkProxy?: unknown;
@@ -252,6 +255,15 @@ export function createProviderCatalogRuntime({
       typeof value.jevEnabled !== "boolean"
     ) {
       throw Object.assign(new Error("jevEnabled is invalid"), {
+        errorCode: ErrorCodes.INVALID_PARAMS,
+      });
+    }
+    if (
+      Object.prototype.hasOwnProperty.call(value, "jevEndpoint") &&
+      value.jevEndpoint !== undefined &&
+      normalizeJevEndpoint(value.jevEndpoint) === undefined
+    ) {
+      throw Object.assign(new Error("jevEndpoint is invalid"), {
         errorCode: ErrorCodes.INVALID_PARAMS,
       });
     }

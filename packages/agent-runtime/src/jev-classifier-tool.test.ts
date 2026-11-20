@@ -194,3 +194,45 @@ describe("JevClassify", () => {
     }
   });
 });
+
+describe("JevClassify with a configured endpoint", () => {
+  it("sends the request to the configured System One address", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => successResponse());
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const tool = createJevClassifierTool(API_KEY, {
+        baseUrl: "https://api.zhizengzeng.com/v1",
+        modelId: "jev-latest",
+      });
+      expect(tool.description).toContain("api.zhizengzeng.com");
+      const result = await tool.execute("call-relay", params);
+      expect(result.isError).not.toBe(true);
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(String(url)).toBe("https://api.zhizengzeng.com/v1/systemone");
+      expect(new Headers(init?.headers).get("authorization")).toBe(`Bearer ${API_KEY}`);
+      expect(JSON.parse(String(init?.body)).model).toBe("jev-latest");
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("honors a custom model id and the state-image-urls compat", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => successResponse());
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const result = await createJevClassifierTool(API_KEY, {
+        baseUrl: "http://127.0.0.1:8080/v1/",
+        modelId: "jev-local",
+        imageInput: "state-image-urls",
+      }).execute("call-local", params);
+      expect(result.isError).not.toBe(true);
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(String(url)).toBe("http://127.0.0.1:8080/v1/systemone");
+      expect(JSON.parse(String(init?.body)).model).toBe("jev-local");
+      expect(new Headers(init?.headers).get("TypeSafe-Danger-Zone-Images")).toBeNull();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+});

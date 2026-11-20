@@ -266,6 +266,78 @@ window.jevServiceSetupProbe = async () => {
   };
   pendingCheck = null;
 
+  // 6) The Zhizengzeng relay preset: same protocol, preset address, its own key.
+  apiCalls.length = 0;
+  savedKey = undefined;
+  configured = false;
+  useAppStore.setState({ toasts: [] });
+  jevCheck = { ok: true, status: 200 };
+  mount(jevDialog("relay"));
+  await waitFor(() => !!document.querySelector('input[aria-label="TypeSafe API key"]'), "the Jev form did not open");
+  flushSync(() => button("Zhizengzeng").click());
+  await settle();
+  const relayPrivacy = document.documentElement.innerText.includes("sent directly to api.zhizengzeng.com");
+  setValue(document.querySelector('input[aria-label="API key"]'), "zzz-fixture-key");
+  await settle();
+  flushSync(() => button("Check and save").click());
+  await waitFor(() => configured === true, "the relay service was not configured");
+  const relayFlow = apiCalls.filter((call) => call.channel !== "pi-desktop/secrets/has");
+  const relayChecked = relayFlow[0]?.channel === "pi-desktop/jev/test"
+    && relayFlow[0].input?.apiKey === "zzz-fixture-key"
+    && relayFlow[0].input?.endpoint?.baseUrl === "https://api.zhizengzeng.com/v1"
+    && relayFlow[0].input?.endpoint?.modelId === "jev-latest";
+  const relayStored = relayFlow[1]?.channel === "pi-desktop/secrets/set"
+    && relayFlow[1].input.value === "zzz-fixture-key";
+  const relayEnabled = relayFlow[2]?.channel === "pi-desktop/settings/set"
+    && relayFlow[2].input.jevEnabled === true
+    && relayFlow[2].input.jevEndpoint?.baseUrl === "https://api.zhizengzeng.com/v1";
+
+  // 7) A local System One gateway: custom base URL and model id. The dialog
+  //    reopens on the stored relay endpoint, and the custom mode takes over.
+  apiCalls.length = 0;
+  savedKey = undefined;
+  configured = false;
+  useAppStore.setState({ toasts: [] });
+  mount(jevDialog("local"));
+  await waitFor(() => !!document.querySelector('input[aria-label="API key"]'), "the form did not reopen on the stored endpoint");
+  flushSync(() => button("Custom / local").click());
+  await settle();
+  setValue(document.querySelector('input[aria-label="Base URL"]'), "http://127.0.0.1:8080/v1");
+  setValue(document.querySelector('input[aria-label="Classifier model ID"]'), "jev-local");
+  setValue(document.querySelector('input[aria-label="API key"]'), "local-fixture-key");
+  await settle();
+  flushSync(() => button("Check and save").click());
+  await waitFor(() => configured === true, "the local service was not configured");
+  const localFlow = apiCalls.filter((call) => call.channel !== "pi-desktop/secrets/has");
+  const localChecked = localFlow[0]?.channel === "pi-desktop/jev/test"
+    && localFlow[0].input?.apiKey === "local-fixture-key"
+    && localFlow[0].input?.endpoint?.baseUrl === "http://127.0.0.1:8080/v1"
+    && localFlow[0].input?.endpoint?.modelId === "jev-local";
+  const localEnabled = localFlow[2]?.channel === "pi-desktop/settings/set"
+    && localFlow[2].input.jevEnabled === true
+    && localFlow[2].input.jevEndpoint?.modelId === "jev-local";
+
+  // 8) An invalid custom address is refused in the form: nothing is checked,
+  //    stored, or enabled.
+  apiCalls.length = 0;
+  savedKey = undefined;
+  configured = false;
+  useAppStore.setState({ toasts: [] });
+  mount(jevDialog("invalid"));
+  await waitFor(() => !!document.querySelector('input[aria-label="API key"]'), "the form did not reopen");
+  flushSync(() => button("Custom / local").click());
+  await settle();
+  setValue(document.querySelector('input[aria-label="Base URL"]'), "not a url");
+  setValue(document.querySelector('input[aria-label="API key"]'), "invalid-fixture-key");
+  await settle();
+  flushSync(() => button("Check and save").click());
+  await settle();
+  await settle();
+  const invalidNoCheck = !apiCalls.some((call) => call.channel === "pi-desktop/jev/test");
+  const invalidNothingStored = savedKey === undefined
+    && !apiCalls.some((call) => call.channel === "pi-desktop/secrets/set");
+  const invalidReported = useAppStore.getState().toasts.some((item) => item.variant === "error");
+
   return {
     offersClassifiers,
     pickedJev,
@@ -288,6 +360,15 @@ window.jevServiceSetupProbe = async () => {
     abandonedNothingStored: abandoned.nothingStored,
     abandonedNothingEnabled: abandoned.nothingEnabled,
     abandonedSilent: abandoned.noSuccessToast,
+    relayPrivacy,
+    relayChecked,
+    relayStored,
+    relayEnabled,
+    localChecked,
+    localEnabled,
+    invalidNoCheck,
+    invalidNothingStored,
+    invalidReported,
   };
 };
 `;
@@ -394,6 +475,15 @@ app.whenReady().then(async () => {
       abandonedNothingStored: true,
       abandonedNothingEnabled: true,
       abandonedSilent: true,
+      relayPrivacy: true,
+      relayChecked: true,
+      relayStored: true,
+      relayEnabled: true,
+      localChecked: true,
+      localEnabled: true,
+      invalidNoCheck: true,
+      invalidNothingStored: true,
+      invalidReported: true,
     });
   } finally {
     await rm(temp, { recursive: true, force: true });

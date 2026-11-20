@@ -19592,9 +19592,11 @@ host-created files. The full app's file-preview viewer is covered separately.
   as usage.
 
 - **Preconditions:** Isolated Electron profile, fake Host IPC/secret storage,
-  and a `globalThis.fetch` fixture for `https://api.typesafe.ai/v1/systemone`.
+  and a `globalThis.fetch` fixture for `https://api.typesafe.ai/v1/systemone`
+  and for configured relay/local System One endpoints.
   Build workspace JS packages with `pnpm build:js`, then run
-  `pnpm test:e2e:jev`. Do not use a real TypeSafe key or endpoint.
+  `pnpm test:e2e:jev`. Do not use a real TypeSafe, relay, or local key or
+  endpoint.
 - **Steps:** 1) On the service chooser's add path, confirm Jev is offered in
   its own Classifiers group and absent when an existing row changes service,
   and that no Jev card is on the model configuration page yet. 2) Open the Jev
@@ -19610,7 +19612,16 @@ host-created files. The full app's file-preview viewer is covered separately.
   for a second key: nothing is written and Jev stays off. 7) Start a check and
   close the dialog while it is still in flight: the key is not stored and Jev
   stays off. 8) In the Jev card, switch Jev off and remove the key; the card
-  leaves with it.
+  leaves with it. 9) Add Jev through the Zhizengzeng relay preset and through
+  a custom local base URL with a custom model id: the check carries the
+  endpoint, the enabling settings write stores it, and the form reopens on
+  the stored endpoint. 10) Enter an invalid custom address: the form refuses
+  it before any check or write. 11) Resolve launches with a relay endpoint, a
+  loopback HTTP endpoint under the default relaxed policy, the same endpoint
+  under the strict policy, and a malformed stored endpoint. 12) With a stored
+  custom endpoint, confirm the card's help names the endpoint address and its
+  privacy notice names the endpoint host, and that removal clears the
+  endpoint from settings.
 - **Expected:** The check runs before any write, in the order check, store, then
   enable, so a refused key leaves no secret and no enabled setting behind, and
   the refusal is reported with TypeSafe's status. The card is on the page only
@@ -19623,8 +19634,12 @@ host-created files. The full app's file-preview viewer is covered separately.
   `JevClassify` appears in the Agent's deferred catalog only with a key and
   never in Plan or Goal. Closing the dialog cancels an in-flight check the same
   way a refused key does: nothing stored, nothing enabled. The fixture receives
-  the TypeSafe System One payload and bearer header; the tool returns bounded
-  structured answers and usage.
+  the System One payload and bearer header at the configured address; the tool
+  returns bounded structured answers and usage. A relay or local endpoint
+  travels with the key to the sidecar and retires a runtime whose endpoint
+  changed; the strict policy withholds the key before reading it, and a
+  malformed stored endpoint falls back to the TypeSafe default. Removal
+  clears the stored endpoint with the disable write.
 - **Specs:** [Tools and permissions](../03-runtime/03-tools-and-permissions.md),
   [provider/model system](../03-runtime/11-provider-model-system.md),
   [secrets storage](../03-runtime/14-secrets-storage.md),

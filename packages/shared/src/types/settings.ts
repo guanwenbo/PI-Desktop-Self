@@ -86,8 +86,16 @@ export type AppSettings = {
    * Absent and false use the bounded ten-retry policy.
    */
   infiniteProviderRetry?: boolean;
-  /** Allow Agent mode to call TypeSafe Jev for explicit structured classifications. */
+  /** Allow Agent mode to call the Jev classifier for explicit structured classifications. */
   jevEnabled?: boolean;
+  /**
+   * The System One endpoint Jev asks. Absent means the TypeSafe default;
+   * a stored endpoint is a user-typed address (a relay such as Zhizengzeng,
+   * or a self-hosted gateway) and is judged by the network policy before any
+   * request. The key stays in the same Host secret slot, so changing the
+   * endpoint re-checks and replaces the key rather than reusing it silently.
+   */
+  jevEndpoint?: import("../jev-endpoint.js").JevEndpoint;
   /** Prevent idle system sleep while this desktop app runs; off when absent. */
   keepAwakeWhileRunning?: boolean;
   /** Enable scheduled task UI, tools and new runs. Absent means enabled. */

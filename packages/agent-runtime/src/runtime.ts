@@ -69,6 +69,8 @@ import { Type } from "typebox";
 import {
   DEFAULT_COMMAND_TIMEOUT_MS,
   OAUTH_AUTH_KIND,
+  jevEndpointsEqual,
+  type JevEndpoint,
   type TrustedExtensionCommand,
   type TrustedExtensionDiagnostic,
   type TrustedExtensionSpec,
@@ -1047,8 +1049,10 @@ export type AgentRuntimeOptions = {
    * session `/fast` switch and the model binding's opt-in (ADR 0334).
    */
   fastMode?: boolean;
-  /** TypeSafe Jev credential, resolved by Electron main only when enabled. */
+  /** Jev credential, resolved by Electron main only when enabled. */
   jevApiKey?: string;
+  /** The user's System One endpoint; absent means the TypeSafe default. */
+  jevEndpoint?: JevEndpoint;
   /**
    * Whether the `Computer` tool is offered at all (ADR 0342). Resolved by
    * Electron main from settings, so a disabled feature is absent from the
@@ -1131,6 +1135,7 @@ export type RuntimeMatchConfig = {
   provider: RuntimeProviderConfig;
   thinkingLevel: SessionThinkingLevel;
   jevApiKey?: string;
+  jevEndpoint?: JevEndpoint;
   computerUseEnabled?: boolean;
   pluginTools?: PluginToolDef[];
   pluginSkills?: PluginSkillDef[];
@@ -2032,6 +2037,7 @@ export class DesktopAgentRuntime {
   private infiniteProviderRetry = false;
   private fastMode = false;
   private jevApiKey?: string;
+  private jevEndpoint?: JevEndpoint;
   private computerUseEnabled = false;
   private activeProviderRetryAttempt = 0;
   private providerRetryInProgress = false;
@@ -2149,6 +2155,7 @@ export class DesktopAgentRuntime {
     this.infiniteProviderRetry = opts.infiniteProviderRetry === true;
     this.fastMode = opts.fastMode === true;
     this.jevApiKey = opts.jevApiKey;
+    this.jevEndpoint = opts.jevEndpoint;
     this.computerUseEnabled = opts.computerUseEnabled === true;
     this.host = opts.host;
     this.batchPlanner = new BatchPlanner(this.host, this.sessionId);
@@ -2873,6 +2880,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       ["disposed", !this.disposed],
       ["mode", this.mode === config.mode],
       ["jevApiKey", this.jevApiKey === config.jevApiKey],
+      ["jevEndpoint", jevEndpointsEqual(this.jevEndpoint, config.jevEndpoint)],
       // Turning computer use on or off changes the tool list, so the runtime
       // is retired rather than left advertising a stale set.
       ["computerUseEnabled", this.computerUseEnabled === (config.computerUseEnabled === true)],
@@ -4297,9 +4305,8 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     for (const tool of builtins) this.builtinTools.add(tool);
     const jevTools: AgentTool[] =
       agentLevel && this.jevApiKey
-        ? [createJevClassifierTool(this.jevApiKey)]
+        ? [createJevClassifierTool(this.jevApiKey, this.jevEndpoint)]
         : [];
-
     // Plugins contribute Agent tools by default. Plan/Goal modes only
     // expose plugins that declare plan-safe actions (ADR 0211); the
     // host still enforces the per-action restriction at execute time.

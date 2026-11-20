@@ -8,6 +8,7 @@ import type {
   JsonValue,
 } from "@earendil-works/pi-ai";
 import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { JevEndpoint } from "@pi-desktop/shared";
 import { Type } from "typebox";
 
 const MAX_CONTEXT_BYTES = 24 * 1024;
@@ -20,6 +21,30 @@ const models = createModels();
 models.setProvider(typesafeProvider());
 
 const jevModel = TYPESAFE_CLASSIFIER_MODELS["jev-latest"];
+
+/**
+ * The catalog model retargeted to a user-configured endpoint. pi-ai's System
+ * One transport dispatches by provider and builds its URL from the model's
+ * base URL, so the registered TypeSafe provider serves any endpoint speaking
+ * the same protocol; only address, model id, and image compat move.
+ */
+function resolveJevModel(endpoint?: JevEndpoint) {
+  if (!endpoint) return jevModel;
+  return {
+    ...jevModel,
+    id: endpoint.modelId,
+    baseUrl: `${endpoint.baseUrl.replace(/\/+$/u, "")}/`,
+    ...(endpoint.imageInput
+      ? {
+          compat: {
+            ...jevModel.compat,
+            imageInput: endpoint.imageInput,
+            sendImageOptInHeader: endpoint.imageInput === "assets",
+          },
+        }
+      : {}),
+  };
+}
 
 const choiceQuestionSchema = Type.Object(
   {
@@ -160,13 +185,17 @@ function parseContext(value: unknown): ClassifierContext | undefined {
   return context;
 }
 
-/** Agent-only, deferred call to pi-ai's TypeSafe System One classifier. */
-export function createJevClassifierTool(apiKey: string): AgentTool {
+/** Agent-only, deferred call to pi-ai's System One classifier. */
+export function createJevClassifierTool(apiKey: string, endpoint?: JevEndpoint): AgentTool {
+  const model = resolveJevModel(endpoint);
+  const target = endpoint ? new URL(endpoint.baseUrl).hostname : "TypeSafe";
   return {
     name: "JevClassify",
     label: "Jev classify",
     description:
-      "Classify JSON state with TypeSafe Jev and return structured choice, score, or boolean answers. The state and questions are sent directly to TypeSafe; include only information the user has approved for that service.",
+      endpoint
+        ? `Classify JSON state with the Jev classifier at ${target} and return structured choice, score, or boolean answers. The state and questions are sent directly to ${target}; include only information the user has approved for that service.`
+        : "Classify JSON state with TypeSafe Jev and return structured choice, score, or boolean answers. The state and questions are sent directly to TypeSafe; include only information the user has approved for that service.",
     parameters: Type.Object(
       {
         state: Type.Record(Type.String(), Type.Any()),
@@ -200,7 +229,7 @@ export function createJevClassifierTool(apiKey: string): AgentTool {
       const requestSignal = signal
         ? AbortSignal.any([signal, timeoutSignal])
         : timeoutSignal;
-      const result = await models.classify(jevModel, context, {
+      const result = await models.classify(model, context, {
         apiKey,
         signal: requestSignal,
         timeoutMs: 45_000,

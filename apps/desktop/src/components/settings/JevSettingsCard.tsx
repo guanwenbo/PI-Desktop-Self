@@ -10,13 +10,14 @@
  */
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { AppSettings } from "@pi-desktop/shared";
+import { TYPESAFE_SYSTEM_ONE_URL, type AppSettings } from "@pi-desktop/shared";
 import { api } from "../../lib/api";
 import { useAppStore } from "../../stores/app-store";
 import { Button, SettingsToggle } from "../ui";
 import { SettingsCard, SettingsRow } from "../../features/settings/primitives";
 import { removeJevService } from "./jev-config";
 import { persistJevEnabled, useJevKeyStatus } from "./jev-app-config";
+import { endpointLabel } from "./service-catalog";
 
 type BusyAction = "toggle" | "remove" | null;
 
@@ -90,11 +91,17 @@ export function JevSettingsCard({
       : keyStatus === "loading"
         ? t("settings.jevKeyStatusChecking")
         : t("settings.jevKeyMissing");
+  const endpointText = endpointLabel(
+    settings?.jevEndpoint ? settings.jevEndpoint.baseUrl : TYPESAFE_SYSTEM_ONE_URL,
+  );
+  const privacyNotice = settings?.jevEndpoint
+    ? t("settings.jevPrivacyNoticeCustom", { host: endpointText })
+    : t("settings.jevPrivacyNotice");
 
   return (
     <SettingsCard
       title={t("settings.jevTitle")}
-      description={`${t("settings.jevDescription")}\n\n${t("settings.jevPrivacyNotice")}`}
+      description={`${t("settings.jevDescription")}\n\n${privacyNotice}\n\n${t("settings.jevEndpointLine", { endpoint: endpointText })}`}
     >
       <SettingsRow
         title={t("settings.jevEnable")}

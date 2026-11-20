@@ -1,4 +1,4 @@
-import type { ReviewContextLines, ReviewContextResult, ReviewTurnsPage, ReviewChangesPage } from "@pi-desktop/shared";
+import type { JevEndpoint, ReviewContextLines, ReviewContextResult, ReviewTurnsPage, ReviewChangesPage } from "@pi-desktop/shared";
 type ClipboardDirectoryPaste = {
   items: Array<{ kind: "directory"; path: string; name: string } | { kind: "file"; name: string }>;
   token: string | null;
@@ -173,6 +173,7 @@ import {
   normalizeLargePasteThreshold,
   normalizeMode,
   normalizeNetworkProxy,
+  normalizeJevEndpoint,
   normalizeNetworkPolicy,
   normalizeRadialMenuPreferences,
   radialMenuWriteError,
@@ -461,6 +462,7 @@ export function normalizeSettings(settings: AppSettings): AppSettings {
     infiniteProviderRetry:
       (settings as { infiniteProviderRetry?: unknown }).infiniteProviderRetry === true,
     jevEnabled: (settings as { jevEnabled?: unknown }).jevEnabled === true,
+    jevEndpoint: normalizeJevEndpoint(settings.jevEndpoint),
     defaultCommandShell: isCommandShellId(
       (settings as { defaultCommandShell?: unknown }).defaultCommandShell,
     )
@@ -526,6 +528,15 @@ export function validateSettingsWrite(settings: AppSettings): AppSettings {
   const radialMenuProblem = radialMenuWriteError(settings.radialMenu);
   if (radialMenuProblem) {
     throw Object.assign(new Error(radialMenuProblem), {
+      errorCode: "INVALID_PARAMS",
+    });
+  }
+  if (
+    Object.prototype.hasOwnProperty.call(settings, "jevEndpoint") &&
+    settings.jevEndpoint !== undefined &&
+    normalizeJevEndpoint(settings.jevEndpoint) === undefined
+  ) {
+    throw Object.assign(new Error("jevEndpoint is invalid"), {
       errorCode: "INVALID_PARAMS",
     });
   }
@@ -903,11 +914,15 @@ export const api = {
   hasJevApiKey: () =>
     invoke<{ has: boolean }>(IPC.invoke.secretsHas, JEV_API_KEY_SECRET_REF).then((result) => result.has),
   /**
-   * Ask TypeSafe whether this key works, without storing anything. Jev keeps
-   * a key only after this answered it; the check text is TypeSafe's own.
+   * Ask the configured Jev endpoint whether this key works, without storing
+   * anything. Jev keeps a key only after the endpoint answered it; the check
+   * text is the endpoint's own. Absent endpoint checks the TypeSafe default.
    */
-  testJevApiKey: (value: string) =>
-    invoke<JevKeyCheckResult>(IPC.invoke.jevTest, value),
+  testJevApiKey: (value: string, endpoint?: JevEndpoint) =>
+    invoke<JevKeyCheckResult>(
+      IPC.invoke.jevTest,
+      endpoint ? { apiKey: value, endpoint } : value,
+    ),
   backgroundTasksList: () =>
     invoke<BackgroundTasksListResult>(IPC.invoke.backgroundTasksList),
   backgroundTasksOutput: (id: string) =>

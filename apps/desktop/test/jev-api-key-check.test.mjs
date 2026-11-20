@@ -15,6 +15,9 @@ import {
   TYPESAFE_SYSTEM_ONE_URL,
 } from "../../../packages/shared/src/secret-refs.ts";
 
+
+/** The Zhizengzeng relay preset, as the shared contract defines it. */
+const ZHIZENGZENG_JEV_BASE_URL = "https://api.zhizengzeng.com/v1";
 const KEY = "typesafe-fixture-key";
 
 /** A fetch stand-in that records the one request it received. */
@@ -115,4 +118,67 @@ test("a silent service is reported as a timeout", async () => {
 
 test("the default timeout is bounded", () => {
   assert.ok(JEV_PROBE_TIMEOUT_MS > 0 && JEV_PROBE_TIMEOUT_MS <= 60_000);
+});
+
+const RELAY_ENDPOINT = { baseUrl: ZHIZENGZENG_JEV_BASE_URL, modelId: "jev-latest" };
+
+test("a configured relay endpoint is checked at its own System One address", async () => {
+  const { calls, fetch } = recordingFetch(jsonResponse({ ok: true, status: 200 }));
+  const result = await probeJevApiKey(KEY, { fetchImpl: fetch, endpoint: RELAY_ENDPOINT });
+  assert.deepEqual(result, { ok: true, status: 200 });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, "https://api.zhizengzeng.com/v1/systemone");
+  assert.equal(calls[0].init.headers.authorization, `Bearer ${KEY}`);
+  assert.equal(JSON.parse(calls[0].init.body).model, "jev-latest");
+});
+
+test("a custom model id travels in the probe body", async () => {
+  const { calls, fetch } = recordingFetch(jsonResponse({ ok: true, status: 200 }));
+  await probeJevApiKey(KEY, {
+    fetchImpl: fetch,
+    endpoint: { baseUrl: "http://127.0.0.1:8080/v1", modelId: "jev-local" },
+    allowInsecureHttp: true,
+  });
+  assert.equal(calls[0].url, "http://127.0.0.1:8080/v1/systemone");
+  assert.equal(JSON.parse(calls[0].init.body).model, "jev-local");
+});
+
+test("a loopback http endpoint is checked only under the relaxed policy", async () => {
+  const endpoint = { baseUrl: "http://127.0.0.1:8080/v1", modelId: "jev-latest" };
+  const strict = recordingFetch(jsonResponse({ ok: true, status: 200 }));
+  const refused = await probeJevApiKey(KEY, { fetchImpl: strict.fetch, endpoint });
+  assert.equal(refused.ok, false);
+  assert.deepEqual(strict.calls, [], "plain http without the policy opt-in must not reach the network");
+
+  const relaxed = recordingFetch(jsonResponse({ ok: true, status: 200 }));
+  const allowed = await probeJevApiKey(KEY, {
+    fetchImpl: relaxed.fetch,
+    endpoint,
+    allowInsecureHttp: true,
+  });
+  assert.deepEqual(allowed, { ok: true, status: 200 });
+  assert.equal(relaxed.calls.length, 1);
+});
+
+test("an endpoint with embedded credentials never reaches the network", async () => {
+  const { calls, fetch } = recordingFetch(jsonResponse({ ok: true, status: 200 }));
+  const result = await probeJevApiKey(KEY, {
+    fetchImpl: fetch,
+    endpoint: { baseUrl: "https://user:pass@example.com/v1", modelId: "jev-latest" },
+  });
+  assert.equal(result.ok, false);
+  assert.deepEqual(calls, []);
+});
+
+test("a relay refusal names the endpoint host and redacts the key", async () => {
+  const { fetch } = recordingFetch(
+    jsonResponse({ ok: false, status: 401, body: `invalid api key ${KEY}` }),
+  );
+  const result = await probeJevApiKey(KEY, { fetchImpl: fetch, endpoint: RELAY_ENDPOINT });
+  assert.equal(result.ok, false);
+  assert.equal(result.status, 401);
+  assert.match(result.message, /api\.zhizengzeng\.com/);
+  assert.match(result.message, /401/);
+  assert.ok(!result.message.includes(KEY), "the key must not be echoed back");
+  assert.match(result.message, /\[redacted\]/);
 });

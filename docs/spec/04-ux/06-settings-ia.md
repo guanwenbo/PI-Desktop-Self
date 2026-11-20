@@ -733,28 +733,39 @@ profiles.
 
 ### Jev classifier
 
-- Keep Jev out of the chat provider/model list: it is a TypeSafe structured
+- Keep Jev out of the chat provider/model list: it is a System One structured
   classifier, not a conversation model, and it owns no provider row.
 - Offer it from **Add service**, in its own Classifiers group, on the add path
   only: changing an existing row's service never turns it into a classifier.
-  The tile carries the TypeSafe address the key is spent on.
-- Adding Jev is one action with two steps: check the key against TypeSafe, then
-  store it and turn the classifier on. Nothing is written when the check fails,
-  and closing the dialog while the check is still running cancels the whole
-  action, so an enabled Jev always has a key the Agent can spend and an
-  abandoned dialog never leaves a credential behind. The credential is a
-  TypeSafe API key; this integration has no OAuth path.
+  The tile carries the default TypeSafe address.
+- The service dialog chooses the endpoint: TypeSafe official (default), the
+  Zhizengzeng relay preset (same System One protocol, preset base URL), or a
+  custom/local base URL with an optional classifier model id. The dialog
+  reopens on the stored endpoint.
+- Adding Jev is one action with two steps: check the key against the chosen
+  endpoint, then store it and turn the classifier on. The endpoint rides the
+  same settings write as the enable switch, so there is no intermediate state
+  with the switch on against a stale address. Nothing is written when the
+  check fails, and closing the dialog while the check is still running cancels
+  the whole action, so an enabled Jev always has a key the Agent can spend and
+  an abandoned dialog never leaves a credential behind. The credential is an
+  API key for the chosen endpoint; this integration has no OAuth path.
+- A custom endpoint is a user-typed address: HTTPS anywhere, plain HTTP only
+  under the relaxed network policy (for example a loopback deployment). An
+  invalid address is refused in the form before any check; a stored endpoint
+  the policy refuses withholds the key at session launch.
 - The model configuration page shows the Jev card only once Jev has been added:
   an install without it has nothing there to configure, and adding stays in the
   service chooser. The card carries the stored-key state, the Agent-mode switch
   and the actions that replace or remove the key; removing the key takes the
-  switch down first, then the card. The key itself is entered only in the
-  service dialog, which is also where it is checked. It stays in Host secure
-  storage; the renderer only learns whether one exists. Keep the card free of
-  persistent explanatory paragraphs: its heading help icon provides integration
-  and data-handling details, while the switch help icon explains Agent-mode
+  switch down first, clears the endpoint, then the card. The key itself is
+  entered only in the service dialog, which is also where it is checked. It
+  stays in Host secure storage; the renderer only learns whether one exists.
+  Keep the card free of persistent explanatory paragraphs: its heading help
+  icon provides integration and data-handling details — naming the configured
+  endpoint and its address — while the switch help icon explains Agent-mode
   availability. The setup form keeps the privacy notice visible before a key
-  is stored.
+  is stored, naming the endpoint that receives the state.
 - The tool is on demand and unavailable in Plan and Goal modes. Removing the
   key turns Jev off first, then deletes it.
 

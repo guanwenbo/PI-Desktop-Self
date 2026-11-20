@@ -6,25 +6,36 @@
  * a renderer, an IPC bridge or a store.
  */
 import { useEffect, useState } from "react";
-import type { AppSettings } from "@pi-desktop/shared";
+import type { AppSettings, JevEndpoint } from "@pi-desktop/shared";
 import { api } from "../../lib/api";
 import { useAppStore } from "../../stores/app-store";
 import type { JevConfigDeps } from "./jev-config";
 
 export type JevKeyStatus = "loading" | "configured" | "missing" | "unavailable";
 
-/** Jev is one field of the same AppSettings document, so it takes a full write. */
-export async function persistJevEnabled(enabled: boolean): Promise<void> {
+/**
+ * Jev is one field of the same AppSettings document, so it takes a full write.
+ * The endpoint rides along only when the caller decided it: `null` clears back
+ * to the TypeSafe default, `undefined` keeps whatever is stored.
+ */
+export async function persistJevEnabled(
+  enabled: boolean,
+  endpoint?: JevEndpoint | null,
+): Promise<void> {
   const current = useAppStore.getState().settings;
   if (!current) throw new Error("Settings are not ready");
   const next: AppSettings = { ...current, jevEnabled: enabled };
+  if (endpoint !== undefined) {
+    if (endpoint === null) delete next.jevEndpoint;
+    else next.jevEndpoint = endpoint;
+  }
   await api.setSettings(next);
   useAppStore.setState({ settings: next });
 }
 
 export function appJevConfigDeps(): JevConfigDeps {
   return {
-    probe: (key) => api.testJevApiKey(key),
+    probe: (key, endpoint) => api.testJevApiKey(key, endpoint),
     storeKey: (key) => api.setJevApiKey(key),
     deleteKey: () => api.deleteJevApiKey(),
     setEnabled: persistJevEnabled,
@@ -32,7 +43,7 @@ export function appJevConfigDeps(): JevConfigDeps {
 }
 
 /**
- * Whether a TypeSafe key is stored. The renderer only ever learns whether one
+ * Whether a Jev key is stored. The renderer only ever learns whether one
  * exists, and a Host that cannot answer reads as `unavailable` — never as
  * "no key", which would describe a configured install as unconfigured.
  */
@@ -47,9 +58,7 @@ export function useJevKeyStatus(
       (hasKey) => {
         if (current) setStatus(hasKey ? "configured" : "missing");
       },
-      () => {
-        if (current) setStatus("unavailable");
-      },
+      () => setStatus("unavailable"),
     );
     return () => {
       current = false;
