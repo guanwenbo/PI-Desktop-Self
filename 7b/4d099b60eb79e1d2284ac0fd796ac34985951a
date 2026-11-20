@@ -1,0 +1,18 @@
+apps/desktop/resources/app-update.yml
+  h_b98c004121ae66 2-3
+apps/desktop/test/auto-update.test.mjs
+  h_b98c004121ae66 260-264
+apps/desktop/test/context-compaction.test.mjs
+  h_b98c004121ae66 243-246,249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "7b4d099b60eb79e1d2284ac0fd796ac34985951a",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
