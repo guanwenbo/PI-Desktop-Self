@@ -2,6 +2,82 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const enEntries: ChangelogEntry[] = [
   {
+    version: "0.26.6",
+    date: "2026-11-19",
+    highlights: [
+      "Clear a finished todo checklist when the next turn begins, so a completed list stops sitting beside new work.",
+    ],
+  },
+  {
+    version: "0.26.5",
+    date: "2026-11-19",
+    highlights: [
+      "Show five sessions per project in the sidebar instead of one.",
+    ],
+  },
+  {
+    version: "0.26.4",
+    date: "2026-11-18",
+    highlights: [
+      "Require every ask option to state its consequence, and refuse a question whose options carry none.",
+      "Hand a question back to the agent instead of answering it when neither choice fits.",
+      "Carry the ask decision through the host input path, so a parked question resumes the turn that asked it.",
+    ],
+  },
+  {
+    version: "0.26.3",
+    date: "2026-11-18",
+    highlights: [
+      "Read each option's consequence beside it before deciding, and say who decides when you decline.",
+      "Let an ask choice carry a consequence and give its decline a disposition.",
+    ],
+  },
+  {
+    version: "0.26.2",
+    date: "2026-11-17",
+    highlights: [
+      "Search past work across sessions with SessionSearch.",
+      "Spill oversized plugin and MCP tool results to scratch and prune oversized older results before a summary, so a large tool output cannot crowd out the conversation.",
+      "Refuse scheduled automations started from a delegated subagent.",
+      "Get an advisory reminder when the same tool repeats, before a loop spends another turn.",
+      "Name the orchestration vocabulary in the Task description, so delegation is described in the same terms the tools use.",
+    ],
+  },
+  {
+    version: "0.26.1",
+    date: "2026-11-17",
+    highlights: [
+      "Repair a rejected thinking signature in place, and drop further thinking blocks after a rejection, so a turn that hits a signature error continues instead of failing.",
+    ],
+  },
+  {
+    version: "0.24.0",
+    date: "2026-11-13",
+    highlights: [
+      "Keep a session usable when a stored hosted-search replay is malformed: drop that replay instead of failing every later turn.",
+      "Show a durable assistant error row when a prompt is rejected before streaming, with its safe failure reason, instead of leaving the prompt with no outcome.",
+      "Return a pinned context window to the catalog in one click, so a wrong pin no longer disables context compaction silently.",
+      "Keep an image out of the model request when its bytes are not a readable PNG, JPEG, GIF, or WebP, instead of replaying a request the provider rejects.",
+      "Install or upgrade a released build with one verified command, signed by this fork's own identity.",
+    ],
+  },
+  {
+    version: "0.23.0",
+    date: "2026-11-12",
+    highlights: [
+      "Run staged mode workflows you define yourself, with per-stage prompts and tools.",
+      "Let the agent use computer control: a bounded decision loop, a drawn cursor, a desktop grant, and Accessibility requested from its settings row.",
+      "Rebuild the plugin launcher as a grouped grid, launch installed applications from it, and let a plugin claim launcher input by pattern.",
+      "Follow the cost of each turn and of the whole conversation in the usage surfaces.",
+      "Route an @agent mention to a named subagent.",
+      "Pick a model in a two-pane picker with a source rail and segmented reasoning.",
+      "Summarize the files each turn changed under the reply.",
+      "Use /fast for OpenAI's priority service tier.",
+      "Keep a background Bash command running after the turn that started it, and read its output from TaskList, TaskWait, and TaskStop.",
+      "Open a radial context menu on the transcript background for the browser, the work panel, and the project folder.",
+    ],
+  },
+  {
     version: "0.21.0",
     date: "2026-10-24",
     highlights: [

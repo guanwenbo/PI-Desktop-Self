@@ -2,6 +2,82 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const esEntries: ChangelogEntry[] = [
   {
+    version: "0.26.6",
+    date: "2026-11-19",
+    highlights: [
+      "La lista de Todo terminada se vacía al empezar el siguiente turno, para que una lista completada deje de quedarse junto al trabajo nuevo.",
+    ],
+  },
+  {
+    version: "0.26.5",
+    date: "2026-11-19",
+    highlights: [
+      "La barra lateral muestra cinco sesiones por proyecto en lugar de una.",
+    ],
+  },
+  {
+    version: "0.26.4",
+    date: "2026-11-18",
+    highlights: [
+      "Cada opción de una pregunta debe indicar su consecuencia, y se rechaza una pregunta cuyas opciones no lleven ninguna.",
+      "Si ninguna de las dos opciones encaja, la pregunta vuelve al agente en lugar de responderse.",
+      "La decisión de la pregunta viaja por la ruta de entrada del host, así que una pregunta en espera retoma el turno que la hizo.",
+    ],
+  },
+  {
+    version: "0.26.3",
+    date: "2026-11-18",
+    highlights: [
+      "Lee la consecuencia de cada opción junto a ella antes de decidir, y al rechazar se indica quién decide.",
+      "Una opción de una pregunta puede llevar una consecuencia, y su rechazo tiene un destino definido.",
+    ],
+  },
+  {
+    version: "0.26.2",
+    date: "2026-11-17",
+    highlights: [
+      "Busca trabajo pasado entre sesiones con SessionSearch.",
+      "Los resultados demasiado grandes de herramientas de plugins y MCP se vuelcan a un espacio temporal, y los resultados antiguos demasiado grandes se recortan antes de un resumen, para que una salida grande de herramienta no desplace la conversación.",
+      "Se rechazan las automatizaciones programadas iniciadas desde un subagente delegado.",
+      "Cuando la misma herramienta se repite aparece un aviso, antes de que un bucle gaste otro turno.",
+      "El vocabulario de orquestación figura en la descripción de Task, para que la delegación se describa con los mismos términos que usan las herramientas.",
+    ],
+  },
+  {
+    version: "0.26.1",
+    date: "2026-11-17",
+    highlights: [
+      "Una firma de razonamiento rechazada se repara en el sitio, y tras un rechazo se descartan los bloques de razonamiento siguientes, para que un turno con error de firma continúe en lugar de fallar.",
+    ],
+  },
+  {
+    version: "0.24.0",
+    date: "2026-11-13",
+    highlights: [
+      "La sesión sigue siendo utilizable cuando una repetición guardada de la búsqueda alojada está mal formada: se descarta esa repetición en lugar de hacer fallar todos los turnos posteriores.",
+      "Cuando un prompt se rechaza antes del streaming aparece una fila de error duradera del asistente con su motivo de fallo seguro, en lugar de dejar el prompt sin resultado.",
+      "Una ventana de contexto fijada vuelve al catálogo con un clic, para que una fijación equivocada ya no desactive la compactación de contexto en silencio.",
+      "Una imagen queda fuera de la petición al modelo cuando sus bytes no son un PNG, JPEG, GIF o WebP legible, en lugar de repetir una petición que el proveedor rechaza.",
+      "Instala o actualiza una compilación publicada con un solo comando verificado, firmado con la propia identidad de este fork.",
+    ],
+  },
+  {
+    version: "0.23.0",
+    date: "2026-11-12",
+    highlights: [
+      "Ejecuta flujos de trabajo en modo por etapas que definas tú mismo, con prompts y herramientas por etapa.",
+      "Deja que el agente use el control del ordenador: un bucle de decisión acotado, un cursor dibujado, un permiso de escritorio y Accesibilidad solicitada desde su fila de ajustes.",
+      "El lanzador de plugins es una cuadrícula agrupada, lanza aplicaciones instaladas desde ella y permite que un plugin reclame la entrada del lanzador por patrón.",
+      "Sigue el coste de cada turno y de toda la conversación en las superficies de uso.",
+      "Dirige una mención @agent a un subagente con nombre.",
+      "Elige modelo en un selector de dos paneles con carril de origen y razonamiento segmentado.",
+      "Resume bajo la respuesta los archivos que cambió cada turno.",
+      "Usa /fast para el nivel de servicio prioritario de OpenAI.",
+      "Un comando Bash en segundo plano sigue ejecutándose después del turno que lo inició, y su salida se lee desde TaskList, TaskWait y TaskStop.",
+      "Abre un menú contextual radial en el fondo del historial para el navegador, el panel de trabajo y la carpeta del proyecto.",
+    ],
+  },
+  {
     version: "0.21.0",
     date: "2026-10-24",
     highlights: [

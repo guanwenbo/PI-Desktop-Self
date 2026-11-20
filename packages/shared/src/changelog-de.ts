@@ -2,6 +2,82 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const deEntries: ChangelogEntry[] = [
   {
+    version: "0.26.6",
+    date: "2026-11-19",
+    highlights: [
+      "Eine erledigte Todo-Checkliste wird zu Beginn der nächsten Runde geleert, damit eine abgeschlossene Liste nicht neben neuer Arbeit stehen bleibt.",
+    ],
+  },
+  {
+    version: "0.26.5",
+    date: "2026-11-19",
+    highlights: [
+      "In der Seitenleiste erscheinen fünf Sitzungen pro Projekt statt nur einer.",
+    ],
+  },
+  {
+    version: "0.26.4",
+    date: "2026-11-18",
+    highlights: [
+      "Jede Option einer Frage muss ihre Konsequenz nennen; eine Frage, deren Optionen keine Konsequenz tragen, wird abgelehnt.",
+      "Passt keine der Möglichkeiten, geht die Frage an den Agenten zurück, statt beantwortet zu werden.",
+      "Die Entscheidung zur Frage läuft über den Eingabepfad des Hosts, sodass eine wartende Frage die Runde fortsetzt, die sie gestellt hat.",
+    ],
+  },
+  {
+    version: "0.26.3",
+    date: "2026-11-18",
+    highlights: [
+      "Jede Option zeigt ihre Konsequenz direkt daneben, bevor entschieden wird, und beim Ablehnen ist sichtbar, wer entscheidet.",
+      "Eine Option einer Frage kann eine Konsequenz tragen, und das Ablehnen erhält eine feste Zuordnung.",
+    ],
+  },
+  {
+    version: "0.26.2",
+    date: "2026-11-17",
+    highlights: [
+      "Frühere Arbeiten mit SessionSearch sitzungsübergreifend durchsuchen.",
+      "Übergroße Ergebnisse von Plugin- und MCP-Tools werden in den Scratch-Bereich ausgelagert, und übergroße ältere Ergebnisse werden vor einer Zusammenfassung gekürzt, damit eine große Tool-Ausgabe die Unterhaltung nicht verdrängt.",
+      "Geplante Automatisierungen, die ein delegierter Subagent startet, werden abgelehnt.",
+      "Bei wiederholtem Einsatz desselben Tools erscheint ein Hinweis, bevor eine Schleife eine weitere Runde verbraucht.",
+      "Die Begriffe der Orchestrierung stehen in der Task-Beschreibung, sodass Delegation mit denselben Begriffen beschrieben wird, die die Tools verwenden.",
+    ],
+  },
+  {
+    version: "0.26.1",
+    date: "2026-11-17",
+    highlights: [
+      "Eine abgelehnte Denk-Signatur wird an Ort und Stelle repariert, und nach einer Ablehnung werden weitere Denkblöcke verworfen, sodass eine Runde mit Signaturfehler weiterläuft, statt zu scheitern.",
+    ],
+  },
+  {
+    version: "0.24.0",
+    date: "2026-11-13",
+    highlights: [
+      "Eine Sitzung bleibt nutzbar, wenn eine gespeicherte Wiedergabe der Hosted Search fehlerhaft ist: Die Wiedergabe wird verworfen, statt jede spätere Runde scheitern zu lassen.",
+      "Wird ein Prompt vor dem Streaming abgelehnt, erscheint eine dauerhafte Fehlerzeile des Assistenten mit dem sicheren Fehlergrund, statt den Prompt ohne Ergebnis zu lassen.",
+      "Ein angeheftetes Kontextfenster kehrt mit einem Klick in den Katalog zurück, sodass eine falsche Anheftung die Kontextkompaktierung nicht mehr stillschweigend abschaltet.",
+      "Ein Bild bleibt aus der Modellanfrage heraus, wenn seine Bytes kein lesbares PNG, JPEG, GIF oder WebP sind, statt eine Anfrage zu wiederholen, die der Anbieter ablehnt.",
+      "Ein veröffentlichter Build lässt sich mit einem einzigen verifizierten Befehl installieren oder aktualisieren, signiert mit der eigenen Identität dieses Forks.",
+    ],
+  },
+  {
+    version: "0.23.0",
+    date: "2026-11-12",
+    highlights: [
+      "Selbst definierte Workflows im Staged-Modus ausführen, mit eigenen Prompts und Tools pro Stufe.",
+      "Der Agent kann die Computersteuerung nutzen: eine begrenzte Entscheidungsschleife, ein gezeichneter Cursor, eine Desktop-Freigabe und eine über die eigene Einstellungszeile angeforderte Bedienungshilfen-Freigabe.",
+      "Der Plugin-Launcher ist ein gruppiertes Raster, startet installierte Anwendungen und lässt ein Plugin Launcher-Eingaben per Muster übernehmen.",
+      "Die Kosten jeder Runde und der ganzen Unterhaltung in den Nutzungsflächen verfolgen.",
+      "Eine @agent-Erwähnung wird an einen benannten Subagenten geroutet.",
+      "Modellwahl in einem zweispaltigen Auswahldialog mit Quellenleiste und segmentierter Denkstufe.",
+      "Unter der Antwort werden die Dateien zusammengefasst, die die jeweilige Runde geändert hat.",
+      "/fast nutzt die Prioritätsstufe von OpenAI.",
+      "Ein Hintergrund-Bash-Befehl läuft nach der Runde, die ihn gestartet hat, weiter; seine Ausgabe lässt sich über TaskList, TaskWait und TaskStop lesen.",
+      "Auf dem Hintergrund des Gesprächs öffnet sich ein radiales Kontextmenü für den Browser, das Arbeitspanel und den Projektordner.",
+    ],
+  },
+  {
     version: "0.21.0",
     date: "2026-10-24",
     highlights: [

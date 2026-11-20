@@ -2,6 +2,82 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const frEntries: ChangelogEntry[] = [
   {
+    version: "0.26.6",
+    date: "2026-11-19",
+    highlights: [
+      "La liste de Todo terminée est vidée au début du tour suivant, pour qu'une liste achevée ne reste plus à côté du nouveau travail.",
+    ],
+  },
+  {
+    version: "0.26.5",
+    date: "2026-11-19",
+    highlights: [
+      "La barre latérale affiche cinq sessions par projet au lieu d'une.",
+    ],
+  },
+  {
+    version: "0.26.4",
+    date: "2026-11-18",
+    highlights: [
+      "Chaque option d'une question doit énoncer sa conséquence, et une question dont les options n'en portent aucune est refusée.",
+      "Si aucun des deux choix ne convient, la question revient à l'agent au lieu d'être tranchée.",
+      "La décision de la question passe par le chemin d'entrée de l'hôte, afin qu'une question en attente reprenne le tour qui l'a posée.",
+    ],
+  },
+  {
+    version: "0.26.3",
+    date: "2026-11-18",
+    highlights: [
+      "Lisez la conséquence de chaque option juste à côté avant de décider, et le refus indique qui décide.",
+      "Une option de question peut porter une conséquence, et son refus a une issue définie.",
+    ],
+  },
+  {
+    version: "0.26.2",
+    date: "2026-11-17",
+    highlights: [
+      "Recherchez le travail passé entre les sessions avec SessionSearch.",
+      "Les résultats d'outils de plugins et MCP trop volumineux sont déversés dans un espace temporaire, et les anciens résultats trop gros sont élagués avant un résumé, afin qu'une grosse sortie d'outil ne prenne pas la place de la conversation.",
+      "Les automatisations planifiées lancées depuis un sous-agent délégué sont refusées.",
+      "Un rappel apparaît quand le même outil se répète, avant qu'une boucle ne consomme un autre tour.",
+      "Le vocabulaire d'orchestration figure dans la description de Task, afin que la délégation se décrive avec les mêmes termes que ceux des outils.",
+    ],
+  },
+  {
+    version: "0.26.1",
+    date: "2026-11-17",
+    highlights: [
+      "Une signature de raisonnement refusée est réparée sur place, et les blocs de raisonnement suivants sont écartés après un refus, afin qu'un tour touché par une erreur de signature continue au lieu d'échouer.",
+    ],
+  },
+  {
+    version: "0.24.0",
+    date: "2026-11-13",
+    highlights: [
+      "La session reste utilisable quand une relecture enregistrée de la recherche hébergée est malformée : cette relecture est écartée au lieu de faire échouer tous les tours suivants.",
+      "Quand une invite est refusée avant le streaming, une ligne d'erreur durable de l'assistant apparaît avec son motif d'échec sûr, au lieu de laisser l'invite sans résultat.",
+      "Une fenêtre de contexte épinglée revient au catalogue en un clic, afin qu'une mauvaise épingle ne désactive plus silencieusement la compaction du contexte.",
+      "Une image reste hors de la requête au modèle quand ses octets ne sont pas un PNG, JPEG, GIF ou WebP lisible, au lieu de rejouer une requête que le fournisseur refuse.",
+      "Installez ou mettez à niveau une version publiée avec une seule commande vérifiée, signée par l'identité propre à ce fork.",
+    ],
+  },
+  {
+    version: "0.23.0",
+    date: "2026-11-12",
+    highlights: [
+      "Exécutez les workflows en mode par étapes que vous définissez vous-même, avec des invites et des outils par étape.",
+      "Laissez l'agent utiliser le contrôle de l'ordinateur : une boucle de décision bornée, un curseur dessiné, une autorisation de bureau et l'Accessibilité demandée depuis sa ligne de réglages.",
+      "Le lanceur de plugins devient une grille groupée, lance les applications installées et permet à un plugin de revendiquer l'entrée du lanceur par motif.",
+      "Suivez le coût de chaque tour et de toute la conversation dans les surfaces d'usage.",
+      "Acheminez une mention @agent vers un sous-agent nommé.",
+      "Choisissez un modèle dans un sélecteur à deux panneaux avec un rail de sources et un raisonnement segmenté.",
+      "Résumez sous la réponse les fichiers modifiés par chaque tour.",
+      "Utilisez /fast pour le niveau de service prioritaire d'OpenAI.",
+      "Une commande Bash d'arrière-plan continue de tourner après le tour qui l'a lancée, et sa sortie se lit depuis TaskList, TaskWait et TaskStop.",
+      "Ouvrez un menu contextuel radial sur le fond du fil pour le navigateur, le panneau de travail et le dossier du projet.",
+    ],
+  },
+  {
     version: "0.21.0",
     date: "2026-10-24",
     highlights: [

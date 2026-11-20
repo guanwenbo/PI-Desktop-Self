@@ -2,6 +2,82 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const trEntries: ChangelogEntry[] = [
   {
+    version: "0.26.6",
+    date: "2026-11-19",
+    highlights: [
+      "Bir sonraki tur başladığında tamamlanmış Todo kontrol listesini temizleyin, böylece biten liste yeni işin yanında durmaya devam etmesin.",
+    ],
+  },
+  {
+    version: "0.26.5",
+    date: "2026-11-19",
+    highlights: [
+      "Kenar çubuğunda proje başına bir yerine beş oturum gösterin.",
+    ],
+  },
+  {
+    version: "0.26.4",
+    date: "2026-11-18",
+    highlights: [
+      "Her soru seçeneğinin sonucunu belirtmesini zorunlu kılın ve seçeneklerinde sonuç bulunmayan bir soruyu reddedin.",
+      "Hiçbir seçenek uymadığında soruyu yanıtlamak yerine aracıya geri verin.",
+      "Soru kararını ana makine giriş yolundan geçirin, böylece bekleyen bir soru onu soran turu sürdürsün.",
+    ],
+  },
+  {
+    version: "0.26.3",
+    date: "2026-11-18",
+    highlights: [
+      "Karar vermeden önce her seçeneğin sonucunu yanında okuyun ve reddettiğinizde kimin karar verdiğini söyleyin.",
+      "Bir soru seçeneğinin sonuç taşımasını sağlayın ve reddine bir sonuç durumu atayın.",
+    ],
+  },
+  {
+    version: "0.26.2",
+    date: "2026-11-17",
+    highlights: [
+      "SessionSearch ile oturumlar arasında geçmiş işlerde arama yapın.",
+      "Aşırı büyük eklenti ve MCP araç sonuçlarını scratch alanına taşırın ve bir özetten önce aşırı büyük eski sonuçları budayın, böylece büyük bir araç çıktısı konuşmayı dışarı itemesin.",
+      "Devredilmiş bir alt aracıdan başlatılan zamanlanmış otomasyonları reddedin.",
+      "Aynı araç tekrarlandığında, bir döngü bir tur daha harcamadan önce bilgilendirici bir hatırlatma alın.",
+      "Task açıklamasında orkestrasyon sözlüğünü adlandırın, böylece devretme araçların kullandığı terimlerle anlatılsın.",
+    ],
+  },
+  {
+    version: "0.26.1",
+    date: "2026-11-17",
+    highlights: [
+      "Reddedilen bir thinking imzasını yerinde onarın ve bir reddin ardından sonraki thinking bloklarını bırakın, böylece imza hatasına takılan tur başarısız olmak yerine devam etsin.",
+    ],
+  },
+  {
+    version: "0.24.0",
+    date: "2026-11-13",
+    highlights: [
+      "Kayıtlı barındırılan arama yeniden oynatımı bozuk olduğunda oturumu kullanılabilir tutun: sonraki tüm turların başarısız olması yerine o yeniden oynatımı bırakın.",
+      "İstem akış başlamadan reddedildiğinde, istemi sonuçsuz bırakmak yerine güvenli hata nedeniyle birlikte kalıcı bir asistan hata satırı gösterin.",
+      "Sabitlenmiş bağlam penceresini tek tıkla kataloğa döndürün, böylece yanlış bir sabitleme bağlam sıkıştırmayı sessizce devre dışı bırakmasın.",
+      "Bir görselin baytları okunabilir bir PNG, JPEG, GIF veya WebP değilse onu model isteğinin dışında tutun, sağlayıcının reddettiği bir isteği yeniden oynatmak yerine.",
+      "Yayınlanmış bir derlemeyi, bu çatalın kendi kimliğiyle imzalanmış tek bir doğrulanmış komutla yükleyin veya yükseltin.",
+    ],
+  },
+  {
+    version: "0.23.0",
+    date: "2026-11-12",
+    highlights: [
+      "Kendi tanımladığınız aşamalı mod iş akışlarını, aşama başına istem ve araçlarla çalıştırın.",
+      "Aracının bilgisayar denetimini kullanmasına izin verin: sınırlı bir karar döngüsü, çizilmiş bir imleç, masaüstü izni ve ayarlar satırından istenen Erişilebilirlik.",
+      "Eklenti başlatıcısını gruplanmış bir ızgara olarak yeniden oluşturun, yüklü uygulamaları oradan başlatın ve bir eklentinin başlatıcı girdisini desene göre talep etmesine izin verin.",
+      "Kullanım yüzeylerinde her turun ve tüm konuşmanın maliyetini izleyin.",
+      "Bir @agent bahsini adlandırılmış bir alt aracıya yönlendirin.",
+      "Kaynak rayı ve bölümlenmiş akıl yürütme içeren iki panelli bir seçicide model seçin.",
+      "Her turda değişen dosyaları yanıtın altında özetleyin.",
+      "OpenAI'nin öncelikli hizmet katmanı için /fast kullanın.",
+      "Arka plandaki bir Bash komutunu, onu başlatan tur bittikten sonra da çalışır durumda tutun ve çıktısını TaskList, TaskWait ve TaskStop üzerinden okuyun.",
+      "Transkript arka planında tarayıcı, çalışma paneli ve proje klasörü için radyal bir bağlam menüsü açın.",
+    ],
+  },
+  {
     version: "0.21.0",
     date: "2026-10-24",
     highlights: [

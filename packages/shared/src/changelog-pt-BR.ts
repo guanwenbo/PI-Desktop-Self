@@ -2,6 +2,82 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const ptBREntries: ChangelogEntry[] = [
   {
+    version: "0.26.6",
+    date: "2026-11-19",
+    highlights: [
+      "Limpe uma lista de Todo concluída quando o próximo turno começar, para que uma lista finalizada deixe de ficar ao lado do trabalho novo.",
+    ],
+  },
+  {
+    version: "0.26.5",
+    date: "2026-11-19",
+    highlights: [
+      "Mostre cinco sessões por projeto na barra lateral em vez de uma.",
+    ],
+  },
+  {
+    version: "0.26.4",
+    date: "2026-11-18",
+    highlights: [
+      "Exija que toda opção de pergunta declare sua consequência e recuse uma pergunta cujas opções não tragam nenhuma.",
+      "Devolva a pergunta ao agente em vez de respondê-la quando nenhuma das escolhas servir.",
+      "Leve a decisão da pergunta pelo caminho de entrada do host, para que uma pergunta em espera retome o turno que a fez.",
+    ],
+  },
+  {
+    version: "0.26.3",
+    date: "2026-11-18",
+    highlights: [
+      "Leia a consequência de cada opção ao lado dela antes de decidir e diga quem decide quando você recusar.",
+      "Permita que uma escolha de pergunta carregue uma consequência e dê à sua recusa um destino.",
+    ],
+  },
+  {
+    version: "0.26.2",
+    date: "2026-11-17",
+    highlights: [
+      "Pesquise trabalhos anteriores entre sessões com o SessionSearch.",
+      "Despeje resultados grandes de ferramentas de plugin e MCP no scratch e pode resultados antigos grandes antes de um resumo, para que uma saída grande de ferramenta não expulse a conversa.",
+      "Recuse automações agendadas iniciadas a partir de um subagente delegado.",
+      "Receba um lembrete consultivo quando a mesma ferramenta se repetir, antes que um loop gaste mais um turno.",
+      "Nomeie o vocabulário de orquestração na descrição da Task, para que a delegação seja descrita nos mesmos termos que as ferramentas usam.",
+    ],
+  },
+  {
+    version: "0.26.1",
+    date: "2026-11-17",
+    highlights: [
+      "Repare uma assinatura de thinking rejeitada no próprio local e descarte novos blocos de thinking após uma rejeição, para que um turno que encontre um erro de assinatura continue em vez de falhar.",
+    ],
+  },
+  {
+    version: "0.24.0",
+    date: "2026-11-13",
+    highlights: [
+      "Mantenha a sessão utilizável quando uma reprodução armazenada de pesquisa hospedada estiver malformada: descarte essa reprodução em vez de falhar em todos os turnos seguintes.",
+      "Mostre uma linha de erro durável do assistente quando um prompt for rejeitado antes do streaming, com o motivo seguro da falha, em vez de deixar o prompt sem resultado.",
+      "Devolva uma janela de contexto fixada ao catálogo com um clique, para que uma fixação errada não desative mais a compactação de contexto em silêncio.",
+      "Mantenha uma imagem fora da requisição ao modelo quando seus bytes não forem um PNG, JPEG, GIF ou WebP legível, em vez de repetir uma requisição que o provedor rejeita.",
+      "Instale ou atualize uma build lançada com um único comando verificado, assinado pela identidade própria deste fork.",
+    ],
+  },
+  {
+    version: "0.23.0",
+    date: "2026-11-12",
+    highlights: [
+      "Execute fluxos de trabalho em modo escalonado que você mesmo define, com prompts e ferramentas por etapa.",
+      "Deixe o agente usar o controle do computador: um loop de decisão limitado, um cursor desenhado, uma concessão de área de trabalho e Acessibilidade solicitada na própria linha de configurações.",
+      "Reconstrua o inicializador de plugins como uma grade agrupada, inicie aplicativos instalados a partir dele e permita que um plugin reivindique a entrada do inicializador por padrão.",
+      "Acompanhe o custo de cada turno e da conversa inteira nas superfícies de uso.",
+      "Encaminhe uma menção @agent para um subagente nomeado.",
+      "Escolha um modelo em um seletor de dois painéis com trilho de origem e raciocínio segmentado.",
+      "Resuma os arquivos alterados em cada turno abaixo da resposta.",
+      "Use /fast para a camada de serviço prioritária da OpenAI.",
+      "Mantenha um comando Bash em segundo plano em execução após o turno que o iniciou e leia sua saída em TaskList, TaskWait e TaskStop.",
+      "Abra um menu de contexto radial no plano de fundo da transcrição para o navegador, o painel de trabalho e a pasta do projeto.",
+    ],
+  },
+  {
     version: "0.21.0",
     date: "2026-10-24",
     highlights: [
