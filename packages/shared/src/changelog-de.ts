@@ -2,6 +2,17 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const deEntries: ChangelogEntry[] = [
   {
+    version: "0.27.0",
+    highlights: [
+      "Übernimmt 272 Upstream-Commits und behebt 86 Fehler, unter anderem bei der Lebensdauer des Plugin-Hosts, veralteten Sitzungslesevorgängen, Läufen, die nach dem Stoppen weiter aktiv erschienen, Kompaktierungszusammenfassungen und Clone-Timeouts.",
+      "Die installierte App ist kleiner: Der Rust-Host wird gestrippt und mit LTO gelinkt ausgeliefert, doppelte Abhängigkeiten werden zusammengeführt, und die native Sprachbibliothek lädt aus ihrem entpackten asar-Pfad.",
+      "Die Plan-Genehmigung startet jetzt mit der Berechtigung der zugehörigen Sitzung statt mit einem geräteweit gemerkten Modus, sodass eine Sitzung die Richtlinie einer anderen nicht mehr überschreibt.",
+      "Der Abschlussbericht eines Sub-Agenten springt vor normale wartende Nachrichten, statt hinter ihnen zu warten.",
+      "Die Worker-Parallelität der Sitzungszusammenarbeit ist konfigurierbar und beträgt standardmäßig vier pro Elternsitzung und sechzehn pro Plugin.",
+      "Die Dokumentation verliert das doppelte chinesische Spiegelbild und behält das ADR- und Spez-Gerüst.",
+    ],
+  },
+  {
     version: "0.23.0",
     highlights: [
       "Aktiviere OpenAI Fast pro Modell und nutze /fast im Gespräch für bevorzugte Verarbeitung; dadurch können Abo-Limits schneller sinken oder die Kosten pro Token steigen.",

@@ -2,6 +2,17 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const zhCNEntries: ChangelogEntry[] = [
   {
+    version: "0.27.0",
+    highlights: [
+      "同步上游 272 个提交，修复 86 处缺陷，涵盖插件宿主生命周期、会话选中脏读、停止后仍显示运行中、压缩摘要与克隆超时等。",
+      "安装包体积明显变小：Rust 宿主启用 strip 与 LTO、重复依赖被去重，原生语音库改以解包后的 asar 路径加载。",
+      "Plan 审批的默认执行模式改为取自提案所属会话的权限，不再被设备级记住的选择跨会话污染。",
+      "子 Agent 的完成报告会优先投递，不再排在普通消息后面等待。",
+      "会话协作的 worker 并发上限改为可配置，默认每个父会话 4、每个插件 16。",
+      "文档精简：移除重复的中文镜像，保留 ADR 与规格骨架。",
+    ],
+  },
+  {
     version: "0.23.0",
     highlights: [
       "可按模型启用 OpenAI Fast 模式，并在会话中输入 /fast 请求优先服务；这会更快消耗订阅限额，或增加按 Token 计费的费用。",

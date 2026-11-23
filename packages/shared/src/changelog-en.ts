@@ -2,6 +2,17 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const enEntries: ChangelogEntry[] = [
   {
+    version: "0.27.0",
+    highlights: [
+      "Syncs 272 upstream commits and fixes 86 defects, including plugin host lifetime, stale session reads, runs that kept showing as active after stopping, compaction summaries, and clone timeouts.",
+      "The installed app is smaller: the Rust host now ships stripped and LTO-linked, duplicate dependencies are deduplicated, and the native voice library loads from its unpacked asar path.",
+      "Plan approval now starts from the owning session's permission instead of a device-wide remembered mode, so one session can no longer overwrite another session's policy.",
+      "A sub-agent's completion report moves ahead of ordinary queued messages instead of waiting behind them.",
+      "Session-collaboration worker concurrency is configurable, defaulting to four per parent session and sixteen per plugin.",
+      "Documentation drops the duplicated Chinese mirror and keeps the ADR and spec skeleton.",
+    ],
+  },
+  {
     version: "0.23.0",
     highlights: [
       "Turn on OpenAI Fast mode per model and use /fast in a conversation to request priority service; it may use subscription limits faster or cost more per token.",

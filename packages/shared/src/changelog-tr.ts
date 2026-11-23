@@ -2,6 +2,17 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const trEntries: ChangelogEntry[] = [
   {
+    version: "0.27.0",
+    highlights: [
+      "272 upstream commit'i birleştirir ve eklenti ana sürecinin yaşam döngüsü, bayat oturum okumaları, durdurulduktan sonra etkin görünen çalışmalar, sıkıştırma özetleri ve klon zaman aşımları dahil 86 hatayı düzeltir.",
+      "Kurulu uygulama küçüldü: Rust ana süreci sembollerden arındırılmış ve LTO ile bağlanmış olarak gelir, yinelenen bağımlılıklar tekilleştirilir ve yerel ses kütüphanesi açılmış asar yolundan yüklenir.",
+      "Plan onayı artık cihaz genelinde hatırlanan mod yerine teklifi sahiplenen oturumun izninden başlar; bir oturum diğerinin politikasını ezmez.",
+      "Alt ajanın tamamlanma raporu sıradaki normal iletilerin arkasında beklemek yerine öne geçer.",
+      "Oturum işbirliği çalışan eşzamanlılığı yapılandırılabilir; varsayılan olarak üst oturum başına dört, eklenti başına on altıdır.",
+      "Belgeler yinelenen Çince kopyayı kaldırır, ADR ve spec iskeletini korur.",
+    ],
+  },
+  {
     version: "0.23.0",
     highlights: [
       "OpenAI Fast modunu model başına açın ve öncelikli hizmet istemek için konuşmada /fast kullanın; bu, abonelik limitlerini daha hızlı tüketebilir veya token başına maliyeti artırabilir.",

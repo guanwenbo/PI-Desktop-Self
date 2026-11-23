@@ -2,6 +2,17 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const ptBREntries: ChangelogEntry[] = [
   {
+    version: "0.27.0",
+    highlights: [
+      "Integra 272 commits upstream e corrige 86 defeitos, incluindo o ciclo de vida do host de plugins, leituras de sessão desatualizadas, execuções que continuavam ativas após parar, resumos de compactação e tempos limite de clone.",
+      "O app instalado ficou menor: o host Rust é distribuído sem símbolos e com LTO, dependências duplicadas são unificadas e a biblioteca de voz nativa carrega do caminho asar desempacotado.",
+      "A aprovação de plano agora parte da permissão da sessão proprietária em vez de um modo lembrado no dispositivo, então uma sessão não sobrescreve mais a política de outra.",
+      "O relatório de conclusão de um subagente passa à frente das mensagens enfileiradas em vez de esperar atrás delas.",
+      "A concorrência de workers da colaboração de sessões é configurável, com padrão de quatro por sessão pai e dezesseis por plugin.",
+      "A documentação remove o espelho chinês duplicado e mantém o esqueleto de ADR e spec.",
+    ],
+  },
+  {
     version: "0.23.0",
     highlights: [
       "Ative o OpenAI Fast por modelo e use /fast na conversa para solicitar prioridade; isso pode consumir os limites da assinatura mais rápido ou aumentar o custo por token.",

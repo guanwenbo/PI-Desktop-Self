@@ -2,6 +2,17 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const frEntries: ChangelogEntry[] = [
   {
+    version: "0.27.0",
+    highlights: [
+      "Intègre 272 commits amont et corrige 86 défauts, dont la durée de vie de l'hôte de plugins, les lectures de session obsolètes, les exécutions encore affichées actives après l'arrêt, les résumés de compaction et les délais de clonage.",
+      "L'application installée est plus légère : l'hôte Rust est livré dépouillé et lié en LTO, les dépendances en double sont dédupliquées et la bibliothèque vocale native se charge depuis son chemin asar dépaqueté.",
+      "L'approbation de plan part désormais de la permission de la session propriétaire au lieu d'un mode mémorisé à l'échelle de l'appareil : une session n'écrase plus la politique d'une autre.",
+      "Le rapport d'achèvement d'un sous-agent passe devant les messages en file au lieu d'attendre derrière eux.",
+      "La concurrence des workers de collaboration de session est configurable : par défaut quatre par session parente et seize par plugin.",
+      "La documentation supprime le miroir chinois dupliqué et conserve la structure ADR et spec.",
+    ],
+  },
+  {
     version: "0.23.0",
     highlights: [
       "Activez OpenAI Fast par modèle et utilisez /fast dans une conversation pour demander un service prioritaire ; les limites d’abonnement peuvent baisser plus vite ou le coût par token augmenter.",
