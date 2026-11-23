@@ -22,6 +22,18 @@ later changes.
 | Required consequence | community `dsh-ask-panel`, follow-up | `impact` started optional and the model then wrote the consequence into the option label and left the field empty, so no card ever showed a preview. It is now part of the required schema, the runtime rejects the whole request (`ASKTOOL_MISSING_IMPACT`, listing the offending labels) before a card opens, and the string option shorthand is gone because a bare string cannot carry a consequence. |
 | Hand one question back | community `dsh-ask-panel` | Every question carries a synthetic "decide it yourself" choice rendered by the card, never sent to the model. Choosing it defers that question alone: `AskToolResolution.deferred` lists the handoffs, the remaining answers survive, and the tool result marks those questions `(handed back to you: decide it yourself)` plus one instruction not to ask them again. Every question deferred is the whole prompt deferred and reuses the `proceed` path, so a mixed prompt never loses the answers it already has the way the plugin's single proceed label does. |
 
+## 0.2.3-alpha.2 follow-up (2026-11-24)
+
+Re-diffed against `0.2.3-alpha.2` (2026-11-22, `4b399c39`). Four candidates from
+that review, each checked against the current code before changing anything:
+
+| Candidate | dsh change | PI-Desktop outcome |
+|---|---|---|
+| Tolerate empty-string tool args | `delegationModelRequest()` treats `""` as omitted, so a model that sends an empty optional field no longer errors | **Already covered.** Every string parameter is read as `typeof x === "string" ? x.trim() : ""`, so an empty value is falsy and falls back to the default (Task `model`/`resume`/`task`/`agent`, ToolSearch `query`, subagent `description`). No code change. |
+| Subagent capacity visible | New `capacityOf(caller)` query API | **Adopted, smaller.** PI already has `TaskList`; the missing piece was that the concurrency refusal named no one. The refusal now lists the running `agentName(delegationId)` entries and points at TaskList / TaskWait / TaskStop, so the model can converge or stop a specific delegation instead of retrying blind. |
+| Viewer-safe answers | `user-questions.answer()` only answers a `continued` timed question, so a blocking approval cannot be answered by a viewer | **Already covered.** `resolveAskTool` requires the matching session, deletes the pending entry on resolve (a second answer gets `ASKTOOL_NOT_FOUND`), and RACP `input/respond` / `approval/respond` go through `requireRole(principal, ...)` so a viewer role cannot answer. |
+| Compaction guard | Refuse a compaction range that contains the initial system message | **Already covered.** Compaction operates on transcript `Entry` chains (`message` / `compaction` / `branch_summary` / `custom`); the system prompt is assembled per request and never an entry. `replayRetainedTail` already drops `role: "system"` rows from a persisted window (compaction-tail.test.ts). |
+
 ## Deferred designs
 
 ### 1. Capability seam for fs + subprocess (partial adoption)
