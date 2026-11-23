@@ -41,22 +41,19 @@ export function PluginViewTab({
   locationRef.current = location;
   const viewLocation = pluginId === "pi.browser" && viewId === "browser" ? undefined : location;
   const [failed, setFailed] = useState(false);
-  const boundsFrameRef = useRef(0);
+  const lastBoundsRef = useRef<string | null>(null);
   const reportBounds = useCallback(() => {
-    // Replacing a pending frame on every commit can starve bounds updates.
-    if (boundsFrameRef.current) return;
-    boundsFrameRef.current = requestAnimationFrame(() => {
-      boundsFrameRef.current = 0;
-      const surface = surfaceRef.current;
-      if (!surface || failed) return;
-      const rect = surface.getBoundingClientRect();
-      void api.pluginViewSetBounds({
-        x: rect.x,
-        y: rect.y,
-        width: rect.width,
-        height: rect.height,
-      });
-    });
+    // Report synchronously: the rect is final at layout-commit and resize
+    // observer time, and waiting another frame made the native view trail a
+    // work panel resize. Unchanged rects are not sent again.
+    const surface = surfaceRef.current;
+    if (!surface || failed) return;
+    const rect = surface.getBoundingClientRect();
+    const bounds = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+    const key = `${bounds.x},${bounds.y},${bounds.width},${bounds.height}`;
+    if (key === lastBoundsRef.current) return;
+    lastBoundsRef.current = key;
+    void api.pluginViewSetBounds(bounds);
   }, [failed]);
 
   // ResizeObserver does not cover position-only movement caused by an ancestor
@@ -110,8 +107,8 @@ export function PluginViewTab({
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", reportBounds);
-      cancelAnimationFrame(boundsFrameRef.current);
-      boundsFrameRef.current = 0;
+      // A re-created view must receive its bounds even when the rect is equal.
+      lastBoundsRef.current = null;
     };
   }, [pluginId, viewId, failed, reportBounds]);
 

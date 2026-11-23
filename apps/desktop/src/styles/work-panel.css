@@ -85,10 +85,13 @@
   flex-direction: column;
 }
 
+/* The whole hit area sits outside the dock: a docked plugin view (Browser) is a
+   native surface that composites above renderer content from the dock's left
+   edge, so any part of the handle inside the dock would never get the pointer. */
 .work-panel-resize {
   position: absolute;
   inset-block: 0;
-  left: -5px;
+  left: -10px;
   width: 10px;
   z-index: 30;
   cursor: col-resize;

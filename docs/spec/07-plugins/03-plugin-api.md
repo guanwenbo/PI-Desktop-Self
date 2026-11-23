@@ -1095,7 +1095,7 @@ hrefs (D330 / ADR 0168). Other schemes fail with `INVALID_ARGUMENT`.
 pi.browser.reveal(): Promise<void>
 pi.browser.navigate(input: { url?: string; path?: string }): Promise<BrowserState | null>
 pi.browser.action(input: { action: "back" | "forward" | "reload" | "stop" }): Promise<void>
-pi.browser.setBounds(hole: { x: number; y: number; width: number; height: number }): Promise<unknown>
+pi.browser.setBounds(hole: { x: number; y: number; width: number; height: number; viewportWidth?: number; viewportHeight?: number }): Promise<unknown>
 pi.browser.setVisible(visible: boolean | { visible: boolean }): Promise<void>
 pi.browser.getState(): Promise<BrowserState | null>
 pi.browser.openExternal(): Promise<void>
@@ -1127,7 +1127,11 @@ Each resource tab retains its own page. Agent navigation executes immediately
 in the calling session's connected page, even when its panel is hidden or a
 different session is visible. It never returns or navigates another session's page.
 `setBounds` is content-relative to the calling plugin view and is clamped so
-the guest cannot cover chat/composer. `cdp` is deny-by-default; cookie,
+the guest cannot cover chat/composer. When the hole also carries the calling
+page's `viewportWidth` / `viewportHeight` (CSS pixels at measurement time), the
+host keeps the hole's distance to each viewport edge, so the guest follows a
+plugin view resize before the page reports a new hole; without them the hole is
+placed as an absolute rect. `cdp` is deny-by-default; cookie,
 storage, target, and network-interception methods fail with
 `PERMISSION_DENIED`. Session identity for agent calls comes from the in-flight
 `plugins.execute` `sessionId`, not from plugin arguments (D333 / ADR 0170).

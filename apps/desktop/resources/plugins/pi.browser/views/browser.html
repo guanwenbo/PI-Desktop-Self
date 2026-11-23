@@ -253,6 +253,10 @@
           y: Math.round(rect.y),
           width: Math.round(rect.width),
           height: Math.round(rect.height),
+          // The host keeps the hole's edge distances against this viewport, so
+          // the guest follows a panel resize before this page relays out.
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight,
         };
         void bridge.invoke("browser.setBounds", hole);
         void bridge.invoke("browser.setVisible", { visible: started && hole.width > 0 && hole.height > 0 });

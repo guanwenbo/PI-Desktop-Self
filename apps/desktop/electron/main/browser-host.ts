@@ -66,6 +66,56 @@ export function scaleGuestHole(hole: BrowserRect, scale: unknown): BrowserRect {
   };
 }
 
+/**
+ * A chrome-reported guest hole. `viewportWidth` / `viewportHeight` are the
+ * chrome page's own viewport (CSS pixels) at the moment it measured the hole.
+ * They are optional so a chrome that predates them keeps absolute placement.
+ */
+export type BrowserGuestHole = BrowserRect & {
+  viewportWidth?: number;
+  viewportHeight?: number;
+};
+
+/**
+ * Re-anchor a measured hole to the chrome's current size.
+ *
+ * The chrome only reports a new hole after its own page has relaid out, one
+ * IPC round trip behind the work panel resize. Keeping the hole's distance to
+ * each viewport edge lets the guest follow the chrome bounds immediately, so
+ * widening the panel no longer exposes an empty strip until the chrome
+ * catches up. `viewport` is the chrome viewport in the same pixel space as
+ * the hole.
+ */
+export function anchorGuestHole(
+  hole: BrowserGuestHole,
+  viewport: { width: number; height: number },
+): BrowserRect {
+  const measuredWidth = Number(hole.viewportWidth);
+  const measuredHeight = Number(hole.viewportHeight);
+  if (!(measuredWidth > 0) || !(measuredHeight > 0)) {
+    return { x: hole.x, y: hole.y, width: hole.width, height: hole.height };
+  }
+  const right = measuredWidth - (hole.x + hole.width);
+  const bottom = measuredHeight - (hole.y + hole.height);
+  return {
+    x: hole.x,
+    y: hole.y,
+    width: viewport.width - hole.x - right,
+    height: viewport.height - hole.y - bottom,
+  };
+}
+
+function asGuestHole(value: unknown): BrowserGuestHole | null {
+  const rect = asRect(value);
+  if (!rect) return null;
+  const record = value as Record<string, unknown>;
+  const viewportWidth = Number(record.viewportWidth);
+  const viewportHeight = Number(record.viewportHeight);
+  const usable = (n: number) => Number.isFinite(n) && n > 0;
+  if (!usable(viewportWidth) || !usable(viewportHeight)) return rect;
+  return { ...rect, viewportWidth, viewportHeight };
+}
+
 function asRect(value: unknown): BrowserRect | null {
   if (!value || typeof value !== "object") return null;
   const record = value as Record<string, unknown>;
@@ -174,7 +224,7 @@ export class BrowserHost {
   private active: BrowserPage | null = null;
   private window: BrowserWindow | null = null;
   private chrome: ChromeSurface | null = null;
-  private hole: BrowserRect | null = null;
+  private hole: BrowserGuestHole | null = null;
   private holePluginId: string | null = null;
 
   constructor(deps: BrowserHostDeps) { this.deps = deps; }
@@ -357,7 +407,7 @@ export class BrowserHost {
   }
 
   setGuestHole(pluginId: string, hole: unknown): BrowserRect | null {
-    this.hole = asRect(hole);
+    this.hole = asGuestHole(hole);
     this.holePluginId = pluginId;
     this.applyGuest();
     return this.guestBounds();
@@ -642,10 +692,15 @@ export class BrowserHost {
 
   private guestBounds(): BrowserRect | null {
     if (!this.chrome?.visible || !this.hole || this.holePluginId !== this.chrome.pluginId) return null;
-    return clampGuestBounds(
-      this.chrome.bounds,
-      scaleGuestHole(this.hole, this.chrome.scale),
-    );
+    const { bounds, scale } = this.chrome;
+    // The chrome viewport in its own CSS pixels, so the anchored hole and the
+    // measured one share a pixel space before the zoom conversion.
+    const factor = Number(scale) > 0 && Number.isFinite(Number(scale)) ? Number(scale) : 1;
+    const anchored = anchorGuestHole(this.hole, {
+      width: bounds.width / factor,
+      height: bounds.height / factor,
+    });
+    return clampGuestBounds(bounds, scaleGuestHole(anchored, scale));
   }
 
   private applyGuest(): void {

@@ -1610,7 +1610,19 @@ export type PluginHostApi = {
     reveal: () => Promise<void>;
     navigate: (input: { url?: string; path?: string }) => Promise<unknown>;
     action: (input: { action: "back" | "forward" | "reload" | "stop" }) => Promise<void>;
-    setBounds: (hole: { x: number; y: number; width: number; height: number }) => Promise<unknown>;
+    /**
+     * Place the guest page in a hole of the calling view. Pass the page's own
+     * `viewportWidth` / `viewportHeight` to keep the hole anchored to the
+     * view's edges while the view resizes.
+     */
+    setBounds: (hole: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      viewportWidth?: number;
+      viewportHeight?: number;
+    }) => Promise<unknown>;
     setVisible: (visible: boolean | { visible: boolean }) => Promise<void>;
     getState: () => Promise<unknown>;
     openExternal: () => Promise<void>;

@@ -147,6 +147,9 @@ test("Browser ships as an ordinary plugin over the public CDP API", () => {
   assert.match(browserMain, /pi\.browser\.(navigate|snapshot|cdp)/);
   assert.match(browserView, /pluginBridge/);
   assert.match(browserView, /browser\.setBounds/);
+  // The host anchors the guest to the chrome's edges from this viewport.
+  assert.match(browserView, /viewportWidth: window\.innerWidth/);
+  assert.match(browserView, /viewportHeight: window\.innerHeight/);
   assert.doesNotMatch(browserView, /require\(|ipcRenderer|webview/);
 });
 

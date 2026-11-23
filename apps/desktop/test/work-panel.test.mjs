@@ -486,6 +486,9 @@ test("work panel separator exposes internal panel width resizing", () => {
   assert.match(panelSource, /workPanelWidthBounds\(/);
   assert.match(panelSource, /data-work-panel-resizing/);
   assert.match(globalStyles, /\.work-panel-resize \{[^}]*width:\s*10px;/s);
+  // The hit area stays outside the dock: a native plugin view (Browser)
+  // composites above the renderer from the dock's left edge.
+  assert.match(globalStyles, /\.work-panel-resize \{[^}]*left:\s*-10px;/s);
   assert.match(globalStyles, /touch-action:\s*none/);
   assert.match(globalStyles, /\.work-panel-resize:focus-visible/);
   // Same short grip as the sidebar: 32px, centered, no full-height rail.

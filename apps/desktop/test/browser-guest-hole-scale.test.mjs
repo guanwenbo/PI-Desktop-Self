@@ -3,7 +3,7 @@ import { register } from "node:module";
 import test from "node:test";
 
 register(new URL("./helpers/ts-import-hooks.mjs", import.meta.url));
-const { BrowserHost, scaleGuestHole } = await import(
+const { BrowserHost, anchorGuestHole, scaleGuestHole } = await import(
   "../electron/main/browser-host.ts"
 );
 
@@ -120,4 +120,55 @@ test("the guest is placed under the chrome at the app's type scale", async () =>
     width: 400,
     height: 562,
   });
+});
+/**
+ * The chrome reports its hole only after its own page relaid out, a round trip
+ * behind the work panel. A hole that carries the chrome viewport keeps its
+ * edge distances, so the guest follows the new chrome bounds at once.
+ */
+test("anchorGuestHole keeps a viewport-relative hole's edge distances", () => {
+  const hole = { x: 0, y: 36, width: 400, height: 564, viewportWidth: 400, viewportHeight: 600 };
+  assert.deepEqual(anchorGuestHole(hole, { width: 640, height: 600 }), {
+    x: 0,
+    y: 36,
+    width: 640,
+    height: 564,
+  });
+  assert.deepEqual(anchorGuestHole(hole, { width: 300, height: 500 }), {
+    x: 0,
+    y: 36,
+    width: 300,
+    height: 464,
+  });
+});
+
+test("anchorGuestHole keeps a legacy absolute hole unchanged", () => {
+  const hole = { x: 0, y: 36, width: 400, height: 564 };
+  assert.deepEqual(anchorGuestHole(hole, { width: 640, height: 900 }), hole);
+});
+
+test("widening the chrome widens the guest before the chrome reports again", async () => {
+  const { host, panes } = harness();
+  const surface = (width, scale) =>
+    host.setChromeSurface({
+      pluginId: "pi.browser",
+      viewId: "browser",
+      visible: true,
+      bounds: { ...VIEW, width },
+      scale,
+    });
+  surface(400);
+  host.setChromeSession("session", "tab");
+  await host.navigate({ url: "/page.html" }, "session");
+  host.setGuestHole("pi.browser", {
+    x: 0, y: 30, width: 400, height: 570, viewportWidth: 400, viewportHeight: 600,
+  });
+  assert.deepEqual(panes.at(-1).bounds, { x: 100, y: 50, width: 400, height: 570 });
+  surface(640);
+  assert.deepEqual(panes.at(-1).bounds, { x: 100, y: 50, width: 640, height: 570 });
+  surface(300);
+  assert.deepEqual(panes.at(-1).bounds, { x: 100, y: 50, width: 300, height: 570 });
+  // At 125% the chrome viewport is 512 CSS px wide for 640 DIP.
+  surface(640, 1.25);
+  assert.deepEqual(panes.at(-1).bounds, { x: 100, y: 57, width: 640, height: 562 });
 });

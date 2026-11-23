@@ -95,7 +95,25 @@ globalThis.pluginViewBoundsProbe = async () => {
   if (Math.round(initial.width) !== Math.round(moved.width)) {
     throw new Error("fixture changed surface width: " + JSON.stringify({ initial, moved }));
   }
-  return { initial, moved };
+
+  // A work panel resize is a React layout commit: the native view must receive
+  // the new width in that same commit, not one animation frame later.
+  calls.length = 0;
+  host.style.flexBasis = "420px";
+  host.style.width = "420px";
+  flushSync(() => root.render(view()));
+  const resized = boundsCalls().at(-1);
+  if (!resized || Math.round(resized.width) !== 420) {
+    throw new Error("resize was not reported in the layout commit: " + JSON.stringify(boundsCalls()));
+  }
+  // An unchanged rect is not sent again.
+  calls.length = 0;
+  flushSync(() => root.render(view()));
+  await nextFrame();
+  if (boundsCalls().length !== 0) {
+    throw new Error("unchanged bounds were re-sent: " + JSON.stringify(boundsCalls()));
+  }
+  return { initial, moved, resized };
 };
 `;
 

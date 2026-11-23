@@ -118,7 +118,7 @@ test("the native surface stays visible while a plugin tab uses the native menu",
     /useLayoutEffect\(\(\) => \{\s*reportBounds\(\);\s*\}\)/s,
   );
   assert.match(viewTabSource, /new ResizeObserver\(reportBounds\)/);
-  assert.match(viewTabSource, /void api\.pluginViewSetBounds\(\{/);
+  assert.match(viewTabSource, /void api\.pluginViewSetBounds\(bounds\)/);
 });
 
 test("an unknown icon token degrades instead of rendering plugin markup", () => {
@@ -318,6 +318,6 @@ test("docked views follow the app's type scale and the window zoom", () => {
   assert.match(viewHostSource, /scale: this\.viewZoom\(\)/);
   assert.match(
     browserHostSource,
-    /scaleGuestHole\(this\.hole, this\.chrome\.scale\)/,
+    /scaleGuestHole\(anchored, scale\)/,
   );
 });
