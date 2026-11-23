@@ -1,3 +1,4 @@
+import { appendLocalFileReferenceContext } from "@pi-desktop/shared";
 import { buildJobTools } from "./background-job-tools.js";
 import {
   MAX_MUTATION_RECOVERY_FAILURES, BASH_PATCH_FAILURE_KEY,
@@ -173,6 +174,7 @@ import { withExplicitRequired } from "./tool-schema.js";
 import { buildSessionContext } from "./session-context.js";
 import {
   collectMessageFileOperations,
+  executedToolCallIdsInEntries,
   prepareCompaction,
 } from "./pi-runtime-compaction-plan.js";
 import { compact } from "./pi-runtime-compaction-summary.js";
@@ -239,6 +241,7 @@ import {
   effectiveModelContextWindow,
   estimateOutputCapInputTokens,
   requestTranscript,
+  truncateTextWithinOutputCap,
 } from "./output-cap.js";
 import {
   composeSubagentSystemPrompt,
@@ -379,9 +382,10 @@ function promptText(input: RuntimePrompt): string {
   const references = (input.attachments ?? [])
     .map((attachment) => sessionReferenceBlock(attachment))
     .filter((block): block is string => block !== null);
-  return references.length
+  const text = references.length
     ? `${input.text}\n\n${references.join("\n\n")}`.trim()
     : input.text;
+  return appendLocalFileReferenceContext(text, input.attachments ?? []);
 }
 
 /** One provider image block for an attachment whose bytes crossed this turn. */
@@ -437,6 +441,7 @@ function runtimeAttachmentFromMessage(
     kind: attachment.kind,
     ...(attachment.mimeType ? { mimeType: attachment.mimeType } : {}),
     ...(attachment.size !== undefined ? { size: attachment.size } : {}),
+    ...(attachment.localReference ? { localReference: attachment.localReference } : {}),
     ...(attachment.text ? { text: attachment.text } : {}),
     // Recorded placement: the message content names this image at that spot, so
     // the restored prompt keeps the block there too.
@@ -1591,11 +1596,6 @@ function appendToolProgress(current: string, chunk: string): string {
   return `${head}${TOOL_PROGRESS_TRUNCATION_MARKER}${tail}`;
 }
 
-/** Bound a checkpoint message's text, naming the cut the way pi's tail does. */
-function truncateTextForCheckpoint(text: string, maxChars: number): string {
-  return truncateTextWithMarker(text, maxChars, CHECKPOINT_TRUNCATION_MARKER);
-}
-
 /**
  * Flatten a user message to plain text so it can be truncated at a token
  * budget. Images and other non-text blocks are named rather than kept: a
@@ -1616,11 +1616,20 @@ function truncateUserMessageForCheckpoint(
   message: UserMessage,
   tokenBudget: number,
 ): UserMessage {
+  const text = userMessageTextForCheckpoint(message);
+  // Same ASCII ceiling as before (budget * 3.5). CJK is then shrunk to the
+  // output-cap estimate, which charges about one token per character.
+  const ceiling = Math.max(
+    1,
+    Math.floor(tokenBudget * ESTIMATED_TEXT_CHARS_PER_TOKEN),
+  );
   return {
     ...message,
-    content: truncateTextForCheckpoint(
-      userMessageTextForCheckpoint(message),
-      Math.max(1, Math.floor(tokenBudget * ESTIMATED_TEXT_CHARS_PER_TOKEN)),
+    content: truncateTextWithinOutputCap(
+      text,
+      tokenBudget,
+      CHECKPOINT_TRUNCATION_MARKER,
+      ceiling,
     ),
   };
 }
@@ -1639,7 +1648,15 @@ function selectRetainedUserMessages(
   let remaining = Math.max(0, maxTokens);
   for (let index = candidates.length - 1; index >= 0 && remaining > 0; index -= 1) {
     const message = candidates[index];
-    const tokens = estimateTokens(message);
+    // pi-ai's chars/3.5 estimate under-counts Han, kana, and Hangul, so a long
+    // CJK message looks like it fits and is kept whole. The output-cap
+    // estimate is the one the next request is gated on.
+    const tokens = Math.max(
+      estimateTokens(message),
+      estimateOutputCapInputTokens({
+        messages: [{ role: "user", content: message.content }],
+      }),
+    );
     if (tokens <= remaining) {
       selected.push(message);
       remaining -= tokens;
@@ -2199,7 +2216,7 @@ export class DesktopAgentRuntime {
     const runtimeApiKey = providerRequestKey(this.provider);
 
     this.transcriptHistory = [...(opts.history ?? [])];
-    this.fullEntries = this.historyToEntries(this.transcriptHistory);
+    this.fullEntries = this.historyToEntries(this.transcriptHistory, opts.compaction?.throughMessageId);
     this.uniqueToolCalls = createToolCallIdentity(this.fullEntries.map((entry) => entry.message));
     this.activeCompaction = opts.compaction;
     this.delegationChains.hydrate(
@@ -3205,7 +3222,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
    * turns after a restart. Losing either (the pre-D120 tool behavior)
    * collapsed a reseeded session to bare chat text. Failed assistant turns
    * stay transcript-only. */
-  private historyToEntries(history: UiMessage[]): MessageEntry[] {
+  private historyToEntries(history: UiMessage[], compactionThroughMessageId?: string): MessageEntry[] {
     const api = apiBindingForProviderModel(this.provider).api;
     const deepSeekCompletionsReplay =
       api === "openai-completions" &&
@@ -3233,7 +3250,16 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     let toolCarrier: AssistantMessage | undefined;
     // Function-call signatures of the carrier's row, restored by call id.
     let carrierToolSignatures = new Map<string, string>();
+    let compactedCarrier: AssistantMessage | undefined;
+    let previousRowId: string | undefined;
     for (const m of orderSystemRows(history)) {
+      // A carrier before this boundary is removed by context compaction. Tool
+      // rows after it must reconstruct their calls on a surviving carrier.
+      if (compactionThroughMessageId && previousRowId === compactionThroughMessageId) {
+        compactedCarrier = toolCarrier;
+        toolCarrier = undefined;
+      }
+      previousRowId = m.id;
       // Subagent rows belong to the transcript and to review, never to the
       // parent's model context (ADR 0062): the parent only ever saw the `Task`
       // report, and replaying a delegate's messages would both contradict that
@@ -3247,6 +3273,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
         append(m.id, this.systemJournal.restore(m));
       } else if (m.role === "user") {
         toolCarrier = undefined;
+        compactedCarrier = undefined;
         const attachments = (m.attachments ?? []).map((attachment) =>
           runtimeAttachmentFromMessage(
             attachment,
@@ -3266,6 +3293,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
         append(m.id, { role: "user", content, timestamp });
       } else if (m.role === "assistant") {
         toolCarrier = undefined;
+        compactedCarrier = undefined;
         // Failed provider responses belong in the transcript for diagnosis,
         // but must never become model context on the next turn.
         if (m.status === "error" || m.isError || m.error) continue;
@@ -3331,15 +3359,16 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           toolCarrier = {
             role: "assistant",
             content: [],
-            api,
-            provider: this.model.provider,
-            model: this.model.id,
+            api: compactedCarrier?.api ?? api,
+            provider: compactedCarrier?.provider ?? this.model.provider,
+            model: compactedCarrier?.model ?? this.model.id,
             usage: usageToPi(undefined),
             stopReason: "toolUse",
             timestamp,
           };
           append(`${m.id}:carrier`, toolCarrier);
-          carrierToolSignatures = new Map();
+          if (!compactedCarrier) carrierToolSignatures = new Map();
+          compactedCarrier = undefined;
         }
         const thoughtSignature = carrierToolSignatures.get(m.toolCallId);
         toolCarrier.content.push({
@@ -3355,6 +3384,8 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     }
     return entries.filter(
       (entry) =>
+        // An empty call-only boundary still anchors the persisted checkpoint.
+        entry.id === compactionThroughMessageId ||
         entry.message.role !== "assistant" || entry.message.content.length > 0,
     );
   }
@@ -4719,6 +4750,13 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       // a graceful Stop does.
       endTurn: () => {
         this.gracefulStopRequested = true;
+      },
+      failTurn: (failure) => {
+        this.terminateParentTurn();
+        this.gracefulStopRequested = true;
+        const error = { ...classifyAgentError(new Error(failure.message)), code: failure.code, retriable: false };
+        this.finalizeCurrentAssistant("error", error);
+        this.emit({ type: "error", error });
       },
     });
   }
@@ -7552,14 +7590,20 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     // pi records file operations for `messagesToSummarize` and, on a split
     // turn, `turnPrefixMessages`. The tail is summarized too — including the
     // suffix a split left uncollected — so copy the sets and record it there.
-    // The sets pi returned stay unchanged.
+    // The sets pi returned stay unchanged. The tail's own collection obeys
+    // the executed-call contract those guarded slices follow: a mid-batch
+    // Stop leaves trailing calls with no result row and failed calls keep
+    // an error row — either way the call never touched its file. The
+    // lookup spans the whole transcript because a tail call's result row
+    // can sit anywhere in it.
     const fileOps: CompactionPreparation["fileOps"] = {
       read: new Set(preparation.fileOps.read),
       written: new Set(preparation.fileOps.written),
       edited: new Set(preparation.fileOps.edited),
     };
+    const executedCallIds = executedToolCallIdsInEntries(this.fullEntries);
     for (const message of preparation.retainedTail) {
-      collectMessageFileOperations(message, fileOps);
+      collectMessageFileOperations(message, fileOps, executedCallIds);
     }
     const latestUser = messagesToSummarize
       .filter((message): message is UserMessage => message.role === "user")
@@ -9214,6 +9258,10 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
             modelId: this.provider.modelId,
             providerId: this.provider.id,
             responseModelId: concreteResponseModel(event.message, this.provider.modelId),
+            // Tool-call truncation is recovered by Pi; annotate only a visible
+            // text answer, without turning the settled run into an error.
+            outputTruncated: !failed && !aborted && stopReason === "length" &&
+              Boolean(responseText.trim()) && !messageRequestsTools(event.message) || undefined,
             ...(usage ? { usage } : {}),
             ...(responseDurationMs !== undefined ? { responseDurationMs } : {}),
             ...(streamMs !== undefined ? { modelStreamDurationMs } : {}),
@@ -9834,11 +9882,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       next.onPayload = async (payload, payloadModel) => {
         const base = await options.onPayload?.(payload, payloadModel);
         const current = base ?? payload;
-        const replaced = await runner.emit<unknown>(
-          "before_provider_request",
-          { type: "before_provider_request", payload: current },
-          (_acc, value) => value,
-        );
+        const replaced = await runner.emitBeforeProviderRequest(current);
         return replaced ?? base;
       };
     }

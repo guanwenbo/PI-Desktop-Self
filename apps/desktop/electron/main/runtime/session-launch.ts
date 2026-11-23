@@ -1,28 +1,5 @@
 import { join } from "node:path";
 import {
-  GEN_UI_DIRECTORY_NAME,
-  ErrorCodes as SharedErrorCodes,
-  isActiveInProject,
-  isCommandShellCatalog,
-  JEV_API_KEY_SECRET_REF,
-  allowInsecureUserEndpoints,
-  imageGenerationBindings,
-  isImageGenerationModel,
-  isSafeUserEndpointUrl,
-  normalizeJevEndpoint,
-  normalizeMode,
-  trustedExtensionAgentKeyFromProviderId,
-  type CommandShellCatalog,
-  type JevEndpoint,
-  type McpServerRecord,
-  type ModelBinding,
-  type Mode,
-  type Risk,
-  type SessionThinkingLevel,
-  type UserSkillRecord,
-  type UserSubagentRecord,
-} from "@pi-desktop/shared";
-import {
   capabilitiesFromModelConfig,
   clampThinkingLevel,
   loadCustomSystemPrompt,
@@ -31,23 +8,47 @@ import {
   modelConfigWithBinding,
   optionalProviderHeaders,
   resolveSubagentProviders,
-  visionFromModelConfig,
   type UserSubagentDocument,
+  visionFromModelConfig,
 } from "@pi-desktop/agent-runtime";
+import {
+  allowInsecureUserEndpoints,
+  type CommandShellCatalog,
+  GEN_UI_DIRECTORY_NAME,
+  imageGenerationBindings,
+  isActiveInProject,
+  isCommandShellCatalog,
+  isImageGenerationModel,
+  isImageOnlyChatModel,
+  isSafeUserEndpointUrl,
+  JEV_API_KEY_SECRET_REF,
+  type JevEndpoint,
+  type McpServerRecord,
+  type Mode,
+  type ModelBinding,
+  normalizeJevEndpoint,
+  normalizeMode,
+  type Risk,
+  type SessionThinkingLevel,
+  ErrorCodes as SharedErrorCodes,
+  trustedExtensionAgentKeyFromProviderId,
+  type UserSkillRecord,
+  type UserSubagentRecord,
+} from "@pi-desktop/shared";
+import { getActiveRemoteHostsBoot } from "../bootstrap/remote-hosts";
 import { builtinSkills, effectiveDisabledBuiltinSkills, VISUALIZE_SKILL_ID } from "../builtin-skills";
-import { OAUTH_AUTH_KIND, type VendorOAuth } from "../oauth";
+import type { Logger } from "../logger";
 import {
   catalogModelConfigFor,
   type ModelsDevCatalog,
 } from "../models-dev-catalog";
-import type { Logger } from "../logger";
+import { OAUTH_AUTH_KIND, type VendorOAuth } from "../oauth";
 import type { PluginRuntime } from "../plugin-runtime";
+import { loadRemoteWorkspaceInstructions } from "../remote/remote-workspace-instructions.js";
+import type { LoadedSkillDocument } from "../skill-document";
 import type { UserMcpRuntime } from "../user-mcp";
 import type { RuntimeState } from "./context";
 import type { RuntimeProvider } from "./provider-catalog";
-import type { LoadedSkillDocument } from "../skill-document";
-import { getActiveRemoteHostsBoot } from "../bootstrap/remote-hosts";
-import { loadRemoteWorkspaceInstructions } from "../remote/remote-workspace-instructions.js";
 
 const ErrorCodes = {
   ...SharedErrorCodes,
@@ -118,7 +119,9 @@ export function createSessionLaunchRuntime({
         projectPath: projectPath ?? null,
       });
       const servers = result.servers ?? [];
-      userMcp.setRecords(servers);
+      // Each workspace keeps its own active list; refreshing this one must not
+      // take another project's servers away from a turn running there.
+      userMcp.setRecords(servers, projectPath ?? null);
       return servers;
     } catch (error) {
       if (!isHostUnavailable(error)) {
@@ -404,15 +407,6 @@ export function createSessionLaunchRuntime({
         errorCode: ErrorCodes.MODEL_NOT_CONFIGURED,
       });
     }
-    if (isImageGenerationModel(
-      imageGenerationBindings(settings.imageGenerationModels, settings.imageGeneration),
-      provider.id,
-      modelId,
-    )) {
-      throw Object.assign(new Error("The image model cannot be used for conversation; select a chat model"), {
-        errorCode: ErrorCodes.MODEL_NOT_CONFIGURED,
-      });
-    }
     // The authenticated collection owns a vendor account's available model IDs
     // and wire endpoint. models.dev owns metadata; one account can span multiple
     // wire APIs and gateway catalogs.
@@ -448,6 +442,21 @@ export function createSessionLaunchRuntime({
     const modelConfig = storedModel
       ? modelConfigWithBinding(catalogModelConfig, storedModel)
       : catalogModelConfig;
+    // Only a pure image-generation endpoint is rejected: a model the user
+    // marked for image generation that also supports conversation keeps its
+    // chat eligibility (#2253). The catalog row (or a catalog miss on a custom
+    // provider) owns the modalities answer; an unknown custom model stays
+    // chat-eligible.
+    if (isImageOnlyChatModel(
+      imageGenerationBindings(settings.imageGenerationModels, settings.imageGeneration),
+      provider.id,
+      modelId,
+      modelConfig,
+    )) {
+      throw Object.assign(new Error("The image model cannot be used for conversation; select a chat model"), {
+        errorCode: ErrorCodes.MODEL_NOT_CONFIGURED,
+      });
+    }
     const thinkingCapabilities = capabilitiesFromModelConfig(modelConfig);
     const thinkingLevel = clampThinkingLevel(
       thinkingCapabilities,
