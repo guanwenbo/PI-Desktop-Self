@@ -478,6 +478,13 @@ fn a_parent_may_run_more_workers_than_the_old_fixed_cap_but_workers_cannot_recur
     let dir = tempfile::tempdir().unwrap();
     let db = Database::open(&dir.path().join("pi.sqlite")).unwrap();
     let parent = session(&db, "Parent");
+    // This fork keeps a host backstop on top of ADR 0237, so a fan-out wider
+    // than the default four is configured rather than unconditional.
+    db.set_setting(
+        "app",
+        &json!({"sessionCollaboration":{"maxWorkersPerParent":16,"maxWorkersPerPlugin":32}}),
+    )
+    .unwrap();
     let mut children = Vec::new();
     for index in 0..10 {
         let created = spawn(
@@ -491,8 +498,8 @@ fn a_parent_may_run_more_workers_than_the_old_fixed_cap_but_workers_cannot_recur
         .unwrap();
         children.push(created["sessionId"].as_str().unwrap().to_string());
     }
-    // The host records who created each worker and leaves the ceiling to the
-    // orchestrating plugin instead of refusing the fifth one.
+    // The host records who created each worker; the widened ceiling above is
+    // what lets ten through instead of refusing the fifth one.
     assert_eq!(children.len(), 10);
     for child in &children {
         assert_eq!(
@@ -559,4 +566,49 @@ fn a_restart_reports_an_interrupted_delivery_to_its_sender_once() {
     recover(&db).unwrap();
     assert_eq!(receipt(&db), 1);
     assert_eq!(turn_count(&db, &child), 1);
+}
+
+
+#[test]
+fn worker_concurrency_backstop_defaults_and_follows_settings() {
+    let dir = tempfile::tempdir().unwrap();
+    let db = Database::open(&dir.path().join("pi.sqlite")).unwrap();
+    let parent = session(&db, "Parent");
+
+    // Defaults keep the ceiling the host enforced before ADR 0237.
+    assert_eq!(
+        worker_ceiling(&db, "maxWorkersPerParent", DEFAULT_MAX_WORKERS_PER_PARENT),
+        4
+    );
+    assert_eq!(
+        worker_ceiling(&db, "maxWorkersPerPlugin", DEFAULT_MAX_WORKERS_PER_PLUGIN),
+        16
+    );
+
+    for index in 0..DEFAULT_MAX_WORKERS_PER_PARENT {
+        spawn(
+            &db,
+            &json!({"sourceSessionId":parent,"pluginId":"pi.session-orchestrator",
+                "content":"Review the change","idempotencyKey":format!("limit-{index}")}),
+        )
+        .unwrap();
+    }
+    let refused = spawn(
+        &db,
+        &json!({"sourceSessionId":parent,"pluginId":"pi.session-orchestrator",
+            "content":"Review the change","idempotencyKey":"limit-over"}),
+    )
+    .expect_err("the fifth worker must hit the backstop");
+    assert!(refused.to_string().contains("LIMIT_EXCEEDED"), "{refused}");
+
+    // Raising the setting widens the fan-out without a rebuild.
+    db.set_setting(
+        "app",
+        &json!({"sessionCollaboration":{"maxWorkersPerParent":8}}),
+    )
+    .unwrap();
+    assert_eq!(
+        worker_ceiling(&db, "maxWorkersPerParent", DEFAULT_MAX_WORKERS_PER_PARENT),
+        8
+    );
 }

@@ -105,6 +105,23 @@ fn send_record(db: &Database, input: &Value, target: &str, kind: &str) -> Result
     Ok(message)
 }
 
+/// Default ceiling on concurrently active workers. These are the values the
+/// host enforced before ADR 0237 moved fan-out width to the orchestrating
+/// plugin; they stay as a backstop and as the default of the setting below.
+const DEFAULT_MAX_WORKERS_PER_PARENT: i64 = 4;
+const DEFAULT_MAX_WORKERS_PER_PLUGIN: i64 = 16;
+
+/// Reads `app.sessionCollaboration.<key>`, falling back to `default` when the
+/// setting is absent, not an integer, or not positive.
+fn worker_ceiling(db: &Database, key: &str, default: i64) -> i64 {
+    db.get_setting("app")
+        .ok()
+        .flatten()
+        .and_then(|value| value.get("sessionCollaboration")?.get(key)?.as_i64())
+        .filter(|limit| *limit > 0)
+        .unwrap_or(default)
+}
+
 fn spawn(db: &Database, input: &Value) -> Result<Value> {
     let source = string(input, "sourceSessionId", 256)?;
     let plugin = string(input, "pluginId", 256)?;
@@ -128,6 +145,22 @@ fn spawn(db: &Database, input: &Value) -> Result<Value> {
     )?;
     if is_worker {
         return Err(anyhow!("PERMISSION_DENIED: workers may message existing sessions but cannot create further workers"));
+    }
+    // ADR 0237 gives fan-out width to the orchestrating plugin, but this fork
+    // ships no orchestrator that enforces a ceiling, so the host keeps a
+    // backstop. Both limits are settings, so widening the fan-out needs no
+    // rebuild, and the defaults match the pre-ADR 0237 behaviour.
+    let per_parent = worker_ceiling(db, "maxWorkersPerParent", DEFAULT_MAX_WORKERS_PER_PARENT);
+    let per_plugin = worker_ceiling(db, "maxWorkersPerPlugin", DEFAULT_MAX_WORKERS_PER_PLUGIN);
+    let (parent_active, plugin_active): (i64, i64) = db.conn().query_row(
+        "SELECT COALESCE(SUM(l.created_by_session_id=?1),0),COUNT(*) FROM session_collaboration_links l
+        WHERE l.plugin_id=?2 AND (EXISTS(SELECT 1 FROM turns t WHERE t.session_id=l.session_id AND t.status='running')
+        OR EXISTS(SELECT 1 FROM session_collaboration_messages m WHERE m.target_session_id=l.session_id AND m.status IN ('queued','running')))",
+        params![source, plugin],
+        |row| Ok((row.get(0)?, row.get(1)?)),
+    )?;
+    if parent_active >= per_parent || plugin_active >= per_plugin {
+        return Err(anyhow!("LIMIT_EXCEEDED: active worker limit reached"));
     }
     let parent = sessions::get_session_with_options(
         db,
