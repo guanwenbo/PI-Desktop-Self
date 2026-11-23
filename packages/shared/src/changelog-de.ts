@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const deEntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "Das Arbeitsbereich-Panel lässt sich bei geöffnetem Browser wieder flüssig skalieren: Der Trenner ist auf seiner ganzen Breite greifbar, und die Webseite folgt dem Panelrand sofort, statt mit einem leeren Streifen hinterherzuhinken.",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "Übernimmt 272 Upstream-Commits und behebt 86 Fehler, unter anderem bei der Lebensdauer des Plugin-Hosts, veralteten Sitzungslesevorgängen, Läufen, die nach dem Stoppen weiter aktiv erschienen, Kompaktierungszusammenfassungen und Clone-Timeouts.",

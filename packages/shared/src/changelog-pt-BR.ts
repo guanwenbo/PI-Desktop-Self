@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const ptBREntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "Redimensionar o painel de trabalho com o navegador aberto voltou a ser fluido: o divisor pode ser agarrado em toda a sua largura e a página web acompanha a borda do painel na hora, sem ficar para trás com uma faixa vazia.",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "Integra 272 commits upstream e corrige 86 defeitos, incluindo o ciclo de vida do host de plugins, leituras de sessão desatualizadas, execuções que continuavam ativas após parar, resumos de compactação e tempos limite de clone.",

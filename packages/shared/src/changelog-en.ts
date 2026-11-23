@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const enEntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "Resizing the work panel while the Browser is open is smooth again: the divider can be grabbed along its full width, and the web page follows the panel edge immediately instead of lagging behind with an empty strip.",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "Syncs 272 upstream commits and fixes 86 defects, including plugin host lifetime, stale session reads, runs that kept showing as active after stopping, compaction summaries, and clone timeouts.",

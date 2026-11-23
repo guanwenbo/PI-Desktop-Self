@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const zhTWEntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "使用內建瀏覽器時拖曳工作面板恢復順暢：分隔條整條都能按住，網頁會立即跟隨面板邊緣，不再延遲並露出空白。",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "同步上游 272 個提交，修復 86 處缺陷，涵蓋外掛宿主生命週期、工作階段選取髒讀、停止後仍顯示執行中、壓縮摘要與複製逾時等。",

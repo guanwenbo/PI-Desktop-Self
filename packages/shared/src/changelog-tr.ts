@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const trEntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "Tarayıcı açıkken çalışma panelini yeniden boyutlandırmak yine akıcı: ayırıcı tüm genişliği boyunca tutulabiliyor ve web sayfası boş bir şerit bırakıp geride kalmak yerine panel kenarını hemen izliyor.",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "272 upstream commit'i birleştirir ve eklenti ana sürecinin yaşam döngüsü, bayat oturum okumaları, durdurulduktan sonra etkin görünen çalışmalar, sıkıştırma özetleri ve klon zaman aşımları dahil 86 hatayı düzeltir.",

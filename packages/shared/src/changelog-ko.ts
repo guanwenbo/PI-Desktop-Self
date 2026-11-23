@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const koEntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "브라우저를 연 채 작업 패널 크기를 조절해도 다시 매끄럽습니다. 구분선 전체 폭을 잡을 수 있고, 웹 페이지가 빈 여백을 남기며 뒤처지지 않고 패널 가장자리를 즉시 따라갑니다.",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "업스트림 커밋 272개를 반영하고 플러그인 호스트 수명, 오래된 세션 읽기, 중지 후에도 실행 중으로 보이던 상태, 압축 요약, 클론 타임아웃 등 86건의 결함을 고쳤습니다.",

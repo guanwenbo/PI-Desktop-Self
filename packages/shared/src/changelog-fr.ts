@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const frEntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "Redimensionner le panneau de travail avec le navigateur ouvert est de nouveau fluide : le séparateur se saisit sur toute sa largeur et la page web suit immédiatement le bord du panneau au lieu de traîner avec une bande vide.",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "Intègre 272 commits amont et corrige 86 défauts, dont la durée de vie de l'hôte de plugins, les lectures de session obsolètes, les exécutions encore affichées actives après l'arrêt, les résumés de compaction et les délais de clonage.",

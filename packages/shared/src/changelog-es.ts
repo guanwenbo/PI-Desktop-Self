@@ -2,6 +2,12 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const esEntries: ChangelogEntry[] = [
   {
+    version: "0.27.1",
+    highlights: [
+      "Redimensionar el panel de trabajo con el navegador abierto vuelve a ser fluido: el divisor se puede agarrar en todo su ancho y la página web sigue el borde del panel al instante, sin quedarse atrás con una franja vacía.",
+    ],
+  },
+  {
     version: "0.27.0",
     highlights: [
       "Integra 272 commits upstream y corrige 86 defectos, entre ellos la vida del host de plugins, lecturas de sesión obsoletas, ejecuciones que seguían activas tras detenerse, resúmenes de compactación y tiempos de espera de clonación.",
