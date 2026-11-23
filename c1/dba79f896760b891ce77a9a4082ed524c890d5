@@ -1,0 +1,1790 @@
+.github/workflows/ci.yml
+  h_b98c004121ae66 171,174-178
+.github/workflows/windows-native-snap.yml
+  h_b98c004121ae66 1-115
+AGENTS.md
+  h_b98c004121ae66 3,253-272
+CLAUDE.md
+  h_b98c004121ae66 3,108-125
+Cargo.toml
+  h_b98c004121ae66 9-18
+README.md
+  h_b98c004121ae66 3,32,40,328,336,389,397,409,417,747
+README.zh-CN.md
+  h_b98c004121ae66 3,33,105,329,337,390,398,410,418,748
+apps/desktop/electron.vite.config.ts
+  h_b98c004121ae66 45-79,82,96-100,102-104
+apps/desktop/electron/main/agent-host-bridge.ts
+  h_b98c004121ae66 146,286-311,313-324
+apps/desktop/electron/main/bootstrap/window.ts
+  h_b98c004121ae66 42-47,203,206,286-295,297-298,423,469,511,516,712,723,730,740-742,807,938,1676,1687,1909
+apps/desktop/electron/main/composer-clipboard-directories.ts
+  h_b98c004121ae66 103,120
+apps/desktop/electron/main/composer-file-references.ts
+  h_b98c004121ae66 1-69
+apps/desktop/electron/main/composer-paste.ts
+  h_b98c004121ae66 90
+apps/desktop/electron/main/git-clone.ts
+  h_b98c004121ae66 2-3,28-35,40,42,44,51-52,57,60-64,66,68-74,88,93-121,162-163,170
+apps/desktop/electron/main/ipc/agent-ipc.ts
+  h_b98c004121ae66 5,56,116-120,198-206,211,215,236-239,242-250,393,395,403,405,546,579,621-623,665,671-675,690-714,716-733,740-756,758,760-766,861
+apps/desktop/electron/main/ipc/composer-ipc.ts
+  h_b98c004121ae66 128,132
+apps/desktop/electron/main/ipc/market-ipc.ts
+  h_b98c004121ae66 49-73
+apps/desktop/electron/main/ipc/mcp-ipc.ts
+  h_b98c004121ae66 37-47,75-76,78,89,108,119,130,149,163-166,220
+apps/desktop/electron/main/ipc/session-ipc.ts
+  h_b98c004121ae66 13,242-250,252,429-457
+apps/desktop/electron/main/ipc/workspace-ipc.ts
+  h_b98c004121ae66 4,600,602,612,620-623
+apps/desktop/electron/main/mcp-oauth.ts
+  h_b98c004121ae66 486-493,525,549,647,650-662
+apps/desktop/electron/main/persistence-outbox.ts
+  h_b98c004121ae66 1,305-362,366-376,390-398
+apps/desktop/electron/main/plan-ui-probe.ts
+  h_b98c004121ae66 286
+apps/desktop/electron/main/plugin-host-process.mjs
+  h_b98c004121ae66 20-21,30-78,80,83-95,99-106,108-111,133-148,803-827,830-833,854-858,866-867,872-876,884-885,890-892,894-898,901-905
+apps/desktop/electron/main/plugin-runtime.ts
+  h_b98c004121ae66 344-351,586-606,2754-2758,5040-5114,5949,6008,6017
+apps/desktop/electron/main/prompt-attachments.ts
+  h_b98c004121ae66 21,24,252-263,368,379-380
+apps/desktop/electron/main/runtime/goal-start.ts
+  h_b98c004121ae66 1-19
+apps/desktop/electron/main/runtime/mode-catalog.ts
+  h_b98c004121ae66 7-9,30-33,158-162,199,224,227,229-231,250
+apps/desktop/electron/main/runtime/mode-runs.ts
+  h_b98c004121ae66 25,53,116-118,131-132,141,143-145,148,150-164,171,188-192,196,208-228,236-240
+apps/desktop/electron/main/runtime/plans.ts
+  h_b98c004121ae66 275-285
+apps/desktop/electron/main/runtime/session-launch.ts
+  h_b98c004121ae66 3-16,18,22,24,28-30,33-34,38,40,45,47-48,122-124,445-459
+apps/desktop/electron/main/services/plugin-services.ts
+  h_b98c004121ae66 63,553-556,752,762-767
+apps/desktop/electron/main/services/plugin-session-project.ts
+  h_b98c004121ae66 1-25
+apps/desktop/electron/main/services/session-collaboration.ts
+  h_b98c004121ae66 65-76,128-132,153,161-177,311-314,351
+apps/desktop/electron/main/session-collaboration-control.ts
+  h_b98c004121ae66 20
+apps/desktop/electron/main/transcribe-native-library.ts
+  h_b98c004121ae66 1-93
+apps/desktop/electron/main/user-mcp.ts
+  h_b98c004121ae66 66-67,93-103,113-120,122-135,138-142,151-157,161-173,177,207,211-223,225,244,273-278,302,308-309,311,317,323-324,327,335,369-371,376,378,392,395,419-421,437-445,528-531,598,635,637-652
+apps/desktop/electron/main/voice-service.ts
+  h_b98c004121ae66 12,79-81
+apps/desktop/electron/main/window-native-behavior.ts
+  h_b98c004121ae66 1-2,4-16,18-51,54-80
+apps/desktop/electron/main/window-native-corners.ts
+  h_b98c004121ae66 5,49
+apps/desktop/electron/main/window-native-handle.ts
+  h_b98c004121ae66 1-14
+apps/desktop/electron/main/window-native-snap.ts
+  h_b98c004121ae66 1-48
+apps/desktop/package.json
+  h_b98c004121ae66 73,108-112,299-300
+apps/desktop/resources/models.dev/api.json
+  h_b98c004121ae66 1
+apps/desktop/src/capture/capture-rig.ts
+  h_b98c004121ae66 63,517,629-648,1206
+apps/desktop/src/components/Composer.tsx
+  h_b98c004121ae66 16,19,352-354,417-424
+apps/desktop/src/components/PlanApprovalBar.tsx
+  h_b98c004121ae66 12,56-61,69,78,80
+apps/desktop/src/components/Sidebar.tsx
+  h_b98c004121ae66 1344-1350,1404-1407
+apps/desktop/src/components/TaskDock.tsx
+  h_b98c004121ae66 41-44,124,207
+apps/desktop/src/components/TodoDock.tsx
+  h_b98c004121ae66 70,77-78,93
+apps/desktop/src/components/plugins/PluginSettingsSheet.tsx
+  h_b98c004121ae66 40-42,65,71-77,135
+apps/desktop/src/components/remote/RemoteProjectGroups.tsx
+  h_b98c004121ae66 4-8,15-20,24-29,39-43,47-57,59-137
+apps/desktop/src/components/settings/ModelConfigPage.tsx
+  h_b98c004121ae66 13,17,79-83,88-97,105,167,186-188,190-195,205,233-259,273
+apps/desktop/src/components/settings/SubagentEditorSheet.tsx
+  h_b98c004121ae66 12,584-585,596-610
+apps/desktop/src/components/settings/SubagentFallbackModels.tsx
+  h_b98c004121ae66 1,3-4,23-34,38
+apps/desktop/src/components/settings/default-model.ts
+  h_b98c004121ae66 10-16,27,34,36-45,119,123,141,144,161,168,171-172
+apps/desktop/src/components/settings/subagent-models.ts
+  h_b98c004121ae66 8-12,107-108,122,164-165,172-173
+apps/desktop/src/components/settings/useVendorAccounts.ts
+  h_b98c004121ae66 62
+apps/desktop/src/features/app/AppShell.tsx
+  h_b98c004121ae66 28,107-109
+apps/desktop/src/features/app/useAppShellRuntime.tsx
+  h_b98c004121ae66 954-956
+apps/desktop/src/features/chat/composer/ComposerToolbar.tsx
+  h_b98c004121ae66 253-255
+apps/desktop/src/features/chat/composer/editor.ts
+  h_b98c004121ae66 42-43,63-64,290,320,360-366
+apps/desktop/src/features/chat/composer/hooks/useComposerAttachments.ts
+  h_b98c004121ae66 292,295,322-323
+apps/desktop/src/features/chat/composer/hooks/useComposerImagePreview.ts
+  h_b98c004121ae66 101-103
+apps/desktop/src/features/chat/composer/hooks/useComposerModelMenu.ts
+  h_b98c004121ae66 10,23,292-297,300-301
+apps/desktop/src/features/chat/composer/image-attachments.ts
+  h_b98c004121ae66 4
+apps/desktop/src/features/chat/composer/model.ts
+  h_b98c004121ae66 62-63
+apps/desktop/src/features/chat/transcript/AssistantTurnParts.tsx
+  h_b98c004121ae66 2,22,44-46
+apps/desktop/src/features/chat/transcript/hooks/useTranscriptHistoryPaging.ts
+  h_b98c004121ae66 8-13,17,41,115-116,126-128,141-155
+apps/desktop/src/features/chat/transcript/hooks/useTranscriptScroll.ts
+  h_b98c004121ae66 242-244,255
+apps/desktop/src/features/modes/ModeRunElapsed.tsx
+  h_b98c004121ae66 1,3,5-6,8-9,11-15,17-25
+apps/desktop/src/features/modes/ModeRunStatusBar.tsx
+  h_b98c004121ae66 1,11,18,116-120,154-156,159-161,164-166,169-171
+apps/desktop/src/features/modes/ModesSettingsPage.tsx
+  h_b98c004121ae66 39-42,54-56,108,114,116-118,131,141-154,217,241,243-245,255
+apps/desktop/src/features/modes/mode-run-elapsed.ts
+  h_b98c004121ae66 1-42
+apps/desktop/src/features/modes/mode-run-model.ts
+  h_b98c004121ae66 36,70,72-73
+apps/desktop/src/features/modes/modes-api.ts
+  h_b98c004121ae66 75
+apps/desktop/src/features/modes/modes-settings-model.ts
+  h_b98c004121ae66 34,36-42
+apps/desktop/src/features/plugins/InstalledPluginsPanel.tsx
+  h_b98c004121ae66 6,100-105,204-214
+apps/desktop/src/features/plugins/MarketLoadMore.tsx
+  h_b98c004121ae66 1-62
+apps/desktop/src/features/plugins/MarketplacePanel.tsx
+  h_b98c004121ae66 1,5-6,23-24,26-31,42,48,51-86,88-90,92,96-99,101,105-117,150,157-160,276-287
+apps/desktop/src/features/plugins/PluginDetailSheet.tsx
+  h_b98c004121ae66 117-129
+apps/desktop/src/features/plugins/browse-state.ts
+  h_b98c004121ae66 2,4,6-12,18-19,24,30-31,36
+apps/desktop/src/features/plugins/market-paging.ts
+  h_b98c004121ae66 1-70
+apps/desktop/src/features/plugins/useMarketBrowse.ts
+  h_b98c004121ae66 1-187
+apps/desktop/src/features/plugins/usePluginsPage.ts
+  h_b98c004121ae66 7,54-65,67-83,168-174,183-184,187,260-261,450-451,665,782-783,786-791
+apps/desktop/src/lib/api.ts
+  h_b98c004121ae66 80-81,1146,1150,1626-1628
+apps/desktop/src/lib/assistant-turns.ts
+  h_b98c004121ae66 311,313-317
+apps/desktop/src/lib/composer-draft-cache.ts
+  h_b98c004121ae66 24-25,37-38,47-48,81-82
+apps/desktop/src/lib/composer-input-history.ts
+  h_b98c004121ae66 47-48
+apps/desktop/src/lib/composer-models.ts
+  h_b98c004121ae66 4,20-48,70-77,79-80
+apps/desktop/src/lib/composer-smart-stop.ts
+  h_b98c004121ae66 26-27
+apps/desktop/src/lib/fast-mode-command.ts
+  h_b98c004121ae66 46
+apps/desktop/src/lib/markdown-blocks.ts
+  h_b98c004121ae66 4,34
+apps/desktop/src/lib/maximized-window-chrome.ts
+  h_b98c004121ae66 1-54
+apps/desktop/src/lib/plan-approval-preferences.ts
+  h_b98c004121ae66 1,9-16
+apps/desktop/src/lib/plan-mode-state.ts
+  h_b98c004121ae66 7
+apps/desktop/src/lib/remote-project-catalog.ts
+  h_b98c004121ae66 1-5,9-17,19-22,26-27,30-37,48-53,55-62,64-67,74-85
+apps/desktop/src/lib/session-model.ts
+  h_b98c004121ae66 2-7,36,38,41-42,46-49,53-58,71,77,91,140,147,158
+apps/desktop/src/lib/session-transcript.ts
+  h_b98c004121ae66 12-13,46,56-57
+apps/desktop/src/lib/subagent-topology.ts
+  h_b98c004121ae66 405-406
+apps/desktop/src/lib/transcript-reading-anchor.ts
+  h_b98c004121ae66 1-90
+apps/desktop/src/lib/transcript-turn-id.ts
+  h_b98c004121ae66 1-8,10
+apps/desktop/src/pages/PluginsPage.tsx
+  h_b98c004121ae66 30,65,141-142
+apps/desktop/src/stores/app-store.ts
+  h_b98c004121ae66 189
+apps/desktop/src/stores/helpers/planning-projection.ts
+  h_b98c004121ae66 1,30-31,37,39-40
+apps/desktop/src/stores/helpers/store-helpers.ts
+  h_b98c004121ae66 40,46-47,67
+apps/desktop/src/stores/runtime/catalog-runtime.ts
+  h_b98c004121ae66 15-16,22-37,46,68,90
+apps/desktop/src/stores/runtime/session-coordination.ts
+  h_b98c004121ae66 293
+apps/desktop/src/stores/runtime/session-runtime.ts
+  h_b98c004121ae66 28,59,138,271,291,328,412
+apps/desktop/src/stores/slices/catalog-slice.ts
+  h_b98c004121ae66 7,10,47,67-80,84,86-89,124,131-133,156-165,205-207,209-211,213-217
+apps/desktop/src/stores/slices/events-slice.ts
+  h_b98c004121ae66 44,181,234,598,642
+apps/desktop/src/stores/slices/interaction-slice.ts
+  h_b98c004121ae66 25-33,150-156,159-163,165,171-178,181-182,184
+apps/desktop/src/stores/slices/project-slice.ts
+  h_b98c004121ae66 592-603
+apps/desktop/src/stores/slices/queue-slice.ts
+  h_b98c004121ae66 54,67,84-95,163-164,188,201,425-426,500,512
+apps/desktop/src/stores/slices/session-slice.ts
+  h_b98c004121ae66 266,500-504,575-590,605,613-615,617-621,642,646-647,860-862
+apps/desktop/src/stores/slices/transcript-slice.ts
+  h_b98c004121ae66 11,492-495,515,517,520,526,535-561,585-591,694
+apps/desktop/src/styles/chat-shell.css
+  h_b98c004121ae66 32,37,444,544
+apps/desktop/src/styles/chrome.css
+  h_b98c004121ae66 30,63,195,304,326,598,633,647,680,756,791,815,910,1005,1311,1353,1401,1492,1501-1508
+apps/desktop/src/styles/composer-image-preview.css
+  h_b98c004121ae66 15
+apps/desktop/src/styles/generated-images.css
+  h_b98c004121ae66 109
+apps/desktop/src/styles/live-voice-widget.css
+  h_b98c004121ae66 37,54
+apps/desktop/src/styles/messages.css
+  h_b98c004121ae66 2293-2299,2642,2710,2725,2727,2733-2755,3005,3012
+apps/desktop/src/styles/modes.css
+  h_b98c004121ae66 30,53-64,69-72,83-85
+apps/desktop/src/styles/overlays.css
+  h_b98c004121ae66 206,516
+apps/desktop/src/styles/plugin-launcher.css
+  h_b98c004121ae66 14
+apps/desktop/src/styles/plugins.css
+  h_b98c004121ae66 80,1000-1100,1489,1735
+apps/desktop/src/styles/sessions.css
+  h_b98c004121ae66 308-320,323-324,330,333,337,348-349,352,354,358-359,361,365-372,374,379,384-386,389-390,392-412,427-429,431-435
+apps/desktop/src/styles/settings.css
+  h_b98c004121ae66 126
+apps/desktop/src/styles/sidebar-threads.css
+  h_b98c004121ae66 46-55,385-386,389,393-397,401,403,405,408-409,417-418,421-425,428-436,446-447,452,458,461,465-467,469,478,482,484,487,492-493,497
+apps/desktop/src/styles/work-panel.css
+  h_b98c004121ae66 153
+apps/desktop/test/after-saved-chat-default.test.mjs
+  h_b98c004121ae66 1-189
+apps/desktop/test/agent-compact-session-operation.test.mjs
+  h_b98c004121ae66 1-272
+apps/desktop/test/assistant-turns.test.mjs
+  h_b98c004121ae66 552-572
+apps/desktop/test/background-tasks-dock-render.test.mjs
+  h_b98c004121ae66 71,197-221
+apps/desktop/test/builtin-commands.test.mjs
+  h_b98c004121ae66 7,50,53,56
+apps/desktop/test/composer-agent-mention.test.mjs
+  h_b98c004121ae66 27-32
+apps/desktop/test/composer-clipboard-directories.test.mjs
+  h_b98c004121ae66 206-208
+apps/desktop/test/composer-directory-paste.test.mjs
+  h_b98c004121ae66 52,54-55,149-160
+apps/desktop/test/composer-file-reference-draft.test.mjs
+  h_b98c004121ae66 1-18,20-23,25-57
+apps/desktop/test/composer-file-references.test.mjs
+  h_b98c004121ae66 1-43,45-58,60-102
+apps/desktop/test/composer-image-preview-focus.test.mjs
+  h_b98c004121ae66 1-67
+apps/desktop/test/composer-inline-image-chips.test.mjs
+  h_b98c004121ae66 20
+apps/desktop/test/composer-input-history.test.mjs
+  h_b98c004121ae66 82-96
+apps/desktop/test/composer-paste-files.test.mjs
+  h_b98c004121ae66 104
+apps/desktop/test/composer-send-state.test.mjs
+  h_b98c004121ae66 70
+apps/desktop/test/composer-stop-rejection.test.mjs
+  h_b98c004121ae66 1-29,32-97
+apps/desktop/test/custom-mode-dispatch.test.mjs
+  h_b98c004121ae66 1-71,73-79,81-104
+apps/desktop/test/default-model-display.test.mjs
+  h_b98c004121ae66 200-201,214-218,313,315-317,319,322-327
+apps/desktop/test/empty-assistant-persistence.test.mjs
+  h_b98c004121ae66 159-166
+apps/desktop/test/extensions-page.test.mjs
+  h_b98c004121ae66 121,132-133,144-146
+apps/desktop/test/fixtures/subagent-connector-layout.html
+  h_b98c004121ae66 1-5,7-10,13-71
+apps/desktop/test/fs-index-git-deadline.test.mjs
+  h_b98c004121ae66 11,36,38-40,42-43
+apps/desktop/test/git-clone.test.mjs
+  h_b98c004121ae66 3,9,273-377
+apps/desktop/test/image-conversation-selection.test.mjs
+  h_b98c004121ae66 5,9-91,93,97-114,116-147,150-163,166,168-276,279-346,348
+apps/desktop/test/interactive-response-retry.test.mjs
+  h_b98c004121ae66 1-78
+apps/desktop/test/markdown-cjk-emphasis.test.mjs
+  h_b98c004121ae66 1-38
+apps/desktop/test/markdown-math-rendering.test.mjs
+  h_b98c004121ae66 51-63
+apps/desktop/test/market-browse-render.test.mjs
+  h_b98c004121ae66 1-168
+apps/desktop/test/market-browse-user-path.test.mjs
+  h_b98c004121ae66 1-73,75-261
+apps/desktop/test/market-review-ipc.test.mjs
+  h_b98c004121ae66 169-212
+apps/desktop/test/maximized-window-chrome.test.mjs
+  h_b98c004121ae66 1-3,5-36,38-97
+apps/desktop/test/mcp-oauth.test.mjs
+  h_b98c004121ae66 1030-1087
+apps/desktop/test/mcp-project-isolation.test.mjs
+  h_b98c004121ae66 1-171
+apps/desktop/test/mode-definitions-renderer.test.mjs
+  h_b98c004121ae66 156-163,258-264
+apps/desktop/test/mode-definitions-user-path.test.mjs
+  h_b98c004121ae66 41-42,60-63,95-99,106-107,110-111,179,181-183,268-269,277-289,312,446-451,458,464
+apps/desktop/test/mode-planning-approval.test.mjs
+  h_b98c004121ae66 1-61
+apps/desktop/test/mode-run-elapsed.test.mjs
+  h_b98c004121ae66 1-166
+apps/desktop/test/mode-runs-main.test.mjs
+  h_b98c004121ae66 65-66,80,112-126,130-132,166-179,193-205,225,297-298,310-324,328-329,332-337,457-488
+apps/desktop/test/mode-session-create.test.mjs
+  h_b98c004121ae66 1-69
+apps/desktop/test/model-discovery-retry.test.mjs
+  h_b98c004121ae66 1-7,9,11-21,23-25,27-39,41-42,44-46,48-52,54-64,66-75,77-89,91-100,102-107
+apps/desktop/test/native-pi-sessions.test.mjs
+  h_b98c004121ae66 50,164-166,175-180,186-194
+apps/desktop/test/native-stop-refresh-failure.test.mjs
+  h_b98c004121ae66 1-31
+apps/desktop/test/packaging-footprint.test.mjs
+  h_b98c004121ae66 3,6-7,280-283,290-349
+apps/desktop/test/persistence-outbox-atomic-clear.test.mjs
+  h_b98c004121ae66 1-70
+apps/desktop/test/persistence-outbox.test.mjs
+  h_b98c004121ae66 3,294-415,811,817,828-837
+apps/desktop/test/plan-approval-permission.test.mjs
+  h_b98c004121ae66 1-122
+apps/desktop/test/plan-approval-settings.test.mjs
+  h_b98c004121ae66 33,42-43
+apps/desktop/test/plan-renderer-flow.test.mjs
+  h_b98c004121ae66 46-52
+apps/desktop/test/plugin-desktop-control.test.mjs
+  h_b98c004121ae66 14-15,20-22,31-42,53-70,80-81,101-105,107-111,114-118,131-135,138-142,153-157,159-167,170-174,176-180,186-189,196-197,199-202,205-223,230-233,246-247,249-251,269-273,281-284,288-289,296-518
+apps/desktop/test/plugin-detail-metadata.test.mjs
+  h_b98c004121ae66 1-38,40-96,98-105,107-114
+apps/desktop/test/plugin-host-lifetime.test.mjs
+  h_b98c004121ae66 1-163
+apps/desktop/test/plugin-host-parent-kill-acceptance.mjs
+  h_b98c004121ae66 1-31,33-35,37-43,45-49,51-60,62-80,82-83,85-123,125-140,142-149,151-158,160-174,176-226
+apps/desktop/test/plugin-reviews-surface.test.mjs
+  h_b98c004121ae66 3-4,38,42-45,48
+apps/desktop/test/plugin-settings-json-roundtrip.test.mjs
+  h_b98c004121ae66 1-18,20-32,34-36,38-48
+apps/desktop/test/plugin-settings-json-user-path.test.mjs
+  h_b98c004121ae66 1-20,22-90,92-145
+apps/desktop/test/plugin-settings.test.mjs
+  h_b98c004121ae66 31-49
+apps/desktop/test/plugin-view-refresh-order.test.mjs
+  h_b98c004121ae66 1-46
+apps/desktop/test/provider-model-config.test.mjs
+  h_b98c004121ae66 258,370-371,402,416-419
+apps/desktop/test/provider-refresh-remote-identity.test.mjs
+  h_b98c004121ae66 1-38
+apps/desktop/test/queue-pending-actions.test.mjs
+  h_b98c004121ae66 44,114,171,229,289
+apps/desktop/test/queued-turn-finalization.test.mjs
+  h_b98c004121ae66 37,134,403-431
+apps/desktop/test/recent-models.test.mjs
+  h_b98c004121ae66 8,11,36-37,49-50,53,57-80
+apps/desktop/test/remote-project-session.test.mjs
+  h_b98c004121ae66 6-15,19-26,29-36,40-48,51-65,75-105,112-117,124-131,136-138,144-147,156-158,177-179,183-196,201-213,220-230,234-235,237-258,262-266,268-273,275-277,281-283,289-292,303-306,308-310,317-319
+apps/desktop/test/session-delete-running-guard.test.mjs
+  h_b98c004121ae66 1-7,9-21,23-171
+apps/desktop/test/session-draft-materialization.test.mjs
+  h_b98c004121ae66 49,114-153
+apps/desktop/test/session-runtime-updates.test.mjs
+  h_b98c004121ae66 232-251
+apps/desktop/test/session-select-stale-read.test.mjs
+  h_b98c004121ae66 1-9,11-41,43-63,65-77,79-98,100-120,122-136,138-184
+apps/desktop/test/session-switch-performance.test.mjs
+  h_b98c004121ae66 76-79,82
+apps/desktop/test/settings-general.test.mjs
+  h_b98c004121ae66 595
+apps/desktop/test/stop-navigation-running-state.test.mjs
+  h_b98c004121ae66 1-51
+apps/desktop/test/subagent-editor-presets.test.mjs
+  h_b98c004121ae66 98,119
+apps/desktop/test/subagent-models.test.mjs
+  h_b98c004121ae66 26,338,374-454
+apps/desktop/test/subagent-topology.test.mjs
+  h_b98c004121ae66 436-437
+apps/desktop/test/transcribe-native-library.test.mjs
+  h_b98c004121ae66 1-96
+apps/desktop/test/transcript-reading-anchor.test.mjs
+  h_b98c004121ae66 1-21
+apps/desktop/test/user-mcp.test.mjs
+  h_b98c004121ae66 100-112,351-463
+apps/desktop/test/utility-navigation.test.mjs
+  h_b98c004121ae66 107
+apps/desktop/test/window-menu.test.mjs
+  h_b98c004121ae66 260
+apps/desktop/test/window-native-behavior.test.mjs
+  h_b98c004121ae66 1-131
+apps/desktop/test/window-native-snap-evidence.test.mjs
+  h_b98c004121ae66 1-51
+apps/desktop/test/window-native-snap.test.mjs
+  h_b98c004121ae66 1-36,38-46,48-70,72-77
+apps/desktop/test/window-resize.test.mjs
+  h_b98c004121ae66 13
+apps/desktop/test/window-topmost-lifecycle.test.mjs
+  h_b98c004121ae66 12-13,16-18,36,56,65-66
+apps/desktop/test/work-panel.test.mjs
+  h_b98c004121ae66 508-509,514
+apps/pi-host/src/host-operations.ts
+  h_b98c004121ae66 8-12,18,23-28,35-40,44-46,48-58,62-66,83-86,91-93,95-98,100-103,105-106,114-118,120-131,137-139,151-153,157-158,161-165,172-173,179-181,183-188,199-201,204-205,209-211,215-218,223-227,241-242,250-251,256-258,264-266,272-278,284-291,293-297,299-308,318-320,324-331,333-334,339-344,362-364,376-378
+crates/host-core/src/background_tasks.rs
+  h_b98c004121ae66 375,388-392,394,402-407
+crates/host-core/src/background_tasks/jobs.rs
+  h_b98c004121ae66 6,31-35,39,111-140
+crates/host-core/src/db.rs
+  h_b98c004121ae66 10,18-19,21,30,33,85-88
+crates/host-core/src/db/completion_report_migration.rs
+  h_b98c004121ae66 1-76
+crates/host-core/src/db/completion_report_migration_tests.rs
+  h_b98c004121ae66 1,3,5-210
+crates/host-core/src/db/legacy_goal_migration.rs
+  h_b98c004121ae66 1-25
+crates/host-core/src/db/mode_run_elapsed_migration.rs
+  h_b98c004121ae66 1-52
+crates/host-core/src/db/mode_runs_migration.rs
+  h_b98c004121ae66 160
+crates/host-core/src/db/repositories.rs
+  h_b98c004121ae66 151-152,224-227,299-314
+crates/host-core/src/db/schema_rebuild.rs
+  h_b98c004121ae66 1-23
+crates/host-core/src/db/session_mode_migration.rs
+  h_b98c004121ae66 1-63
+crates/host-core/src/db/session_mode_migration_tests.rs
+  h_b98c004121ae66 1-224
+crates/host-core/src/mode_runs.rs
+  h_b98c004121ae66 15,25-27,64-69
+crates/host-core/src/mode_runs/budget.rs
+  h_b98c004121ae66 1-2
+crates/host-core/src/mode_runs/completion_report.rs
+  h_b98c004121ae66 1-127
+crates/host-core/src/mode_runs/completion_report_tests.rs
+  h_b98c004121ae66 1-493
+crates/host-core/src/mode_runs/edit_tests.rs
+  h_b98c004121ae66 49,167,169-170
+crates/host-core/src/mode_runs/elapsed_tests.rs
+  h_b98c004121ae66 1-445
+crates/host-core/src/mode_runs/engine.rs
+  h_b98c004121ae66 15,26-28,104-127,135-145,151-153,156,176,193-194,199,204-207,249,351-352,425-427,536-537,605,638-642
+crates/host-core/src/mode_runs/gates.rs
+  h_b98c004121ae66 12,245-247,249-254,271,275-281,289-306
+crates/host-core/src/mode_runs/model.rs
+  h_b98c004121ae66 64,74,84,90-91,143-148,180-183,187-189,279-284
+crates/host-core/src/mode_runs/policy.rs
+  h_b98c004121ae66 41,63-64,66,114-126,137-141,151-155
+crates/host-core/src/mode_runs/repository.rs
+  h_b98c004121ae66 16-17,51,82-86,114-115,143-148,165-171,177-200,208-209,234-239,246-247,319-322,324-327,330-331,338-342
+crates/host-core/src/mode_runs/tests.rs
+  h_b98c004121ae66 162
+crates/host-core/src/plugin_sessions.rs
+  h_b98c004121ae66 279
+crates/host-core/src/plugins.rs
+  h_b98c004121ae66 23,38
+crates/host-core/src/plugins/install.rs
+  h_b98c004121ae66 43
+crates/host-core/src/plugins/manifest.rs
+  h_b98c004121ae66 60,82-113,156-226
+crates/host-core/src/plugins/market_browse.rs
+  h_b98c004121ae66 1-864
+crates/host-core/src/plugins/marketplace.rs
+  h_b98c004121ae66 115-118,272,278-309,312-316,343,371-389,419-421,428-433,437-438,609,701-729
+crates/host-core/src/plugins/marketplace/catalog.rs
+  h_b98c004121ae66 10
+crates/host-core/src/plugins/model.rs
+  h_b98c004121ae66 268,271-273,419,425,435,443,449,454-457,459,463,465,467,473,475,477,481,483-487,531-627
+crates/host-core/src/plugins/registry.rs
+  h_b98c004121ae66 227-253,330,473-480
+crates/host-core/src/plugins/reviews.rs
+  h_b98c004121ae66 594-602,609-611,613,638,640-641,655-656,660,670-678,683
+crates/host-core/src/plugins/tests.rs
+  h_b98c004121ae66 2587-2763
+crates/host-core/src/rpc/market_browse_rpc.rs
+  h_b98c004121ae66 1-8,10,12-13,15-17,19-34,36-65
+crates/host-core/src/rpc/market_browse_rpc_tests.rs
+  h_b98c004121ae66 1-300
+crates/host-core/src/rpc/mod.rs
+  h_b98c004121ae66 6,14,18-19,22-29,2073,2781,2808,2810,2950,5724
+crates/host-core/src/rpc/modes_rpc.rs
+  h_b98c004121ae66 85-86,88-96,99-103
+crates/host-core/src/rpc/modes_rpc_tests.rs
+  h_b98c004121ae66 421-625
+crates/host-core/src/rpc/session_display.rs
+  h_b98c004121ae66 1-103
+crates/host-core/src/rpc/session_mode_create_tests.rs
+  h_b98c004121ae66 1-99
+crates/host-core/src/rpc/session_mode_migration_tests.rs
+  h_b98c004121ae66 1-461
+crates/host-core/src/rpc/window_corner_rpc.rs
+  h_b98c004121ae66 7,20,32,42,62
+crates/host-core/src/rpc/window_owner.rs
+  h_b98c004121ae66 1-79
+crates/host-core/src/rpc/window_snap_rpc.rs
+  h_b98c004121ae66 1-2,4,6-114
+crates/host-core/src/session_collaboration/mod.rs
+  h_b98c004121ae66 119-122
+crates/host-core/src/session_collaboration/settlement.rs
+  h_b98c004121ae66 49-82,105,233-236,242-254
+crates/host-core/src/session_collaboration/tests.rs
+  h_b98c004121ae66 165-187,475-562
+crates/host-core/src/sessions.rs
+  h_b98c004121ae66 13-14,195-196,248-250,466-468,577-579,674,724-727,770,828,1505-1514,1535-1538,1543-1549,1565-1566,1579-1580,1582-1584,2124-2126,3669-3675,3721-3737,3747-3797,4010-4022,4663,5630,6043-6066,6073,6448-6485,6491,6646,7969-7970,8061-8062,8113-8114,8126
+crates/host-core/src/sessions/history_mutations.rs
+  h_b98c004121ae66 129-132
+crates/host-core/src/sessions/history_mutations/tests.rs
+  h_b98c004121ae66 122-148
+crates/host-core/src/tools/mod.rs
+  h_b98c004121ae66 32-33,231-233,253-276
+crates/host-core/src/tools/process_group.rs
+  h_b98c004121ae66 1,3-21,23-88
+crates/host-core/src/transcripts.rs
+  h_b98c004121ae66 44-46,50,298,330,366-371,436-444,1151-1156,1163-1168,1237-1242,1251-1255,1285-1286,1402-1403,1797-1950
+crates/host-core/src/transcripts/binary_integrity.rs
+  h_b98c004121ae66 130-134
+crates/host-core/src/transcripts/binary_integrity_tests.rs
+  h_b98c004121ae66 48-86
+crates/host-core/src/transcripts/binary_storage.rs
+  h_b98c004121ae66 11-17,21-23,26-37,664-671,673-674
+crates/host-core/src/transcripts/suffix.rs
+  h_b98c004121ae66 1-37,40-87,89-97,99-121
+crates/host-core/src/transcripts/suffix_tests.rs
+  h_b98c004121ae66 1-3,5,7-17,19-21,23-32,34-39,41-55,57-66,68-71
+crates/host-core/src/turn_queue.rs
+  h_b98c004121ae66 37-38,56,96,110,156,190-191,205-206,217,396,400-419
+docs/.vitepress/config.mts
+  h_b98c004121ae66 37-42,44-47,55,57-64,94-103,107,114,126,144,152
+docs/README.md
+  h_b98c004121ae66 4-5,16-34
+docs/adr/0001-use-electron.md
+  h_b98c004121ae66 8-9,13-15,19-20,24
+docs/adr/0002-use-pi-agent-harness.md
+  h_b98c004121ae66 8-9,13-15,19-20,24-25
+docs/adr/0003-agent-in-main-process.md
+  h_b98c004121ae66 8-9,11,13-15,19-20
+docs/adr/0004-no-gateway-in-mvp.md
+  h_b98c004121ae66 8-9,13-15,19-21
+docs/adr/0005-user-installable-plugin-system.md
+  h_b98c004121ae66 9-11,15-17,21-23
+docs/adr/0006-plugin-marketplace-postponed.md
+  h_b98c004121ae66 8-10,14-18,22-24
+docs/adr/0007-plugin-package-format.md
+  h_b98c004121ae66 8-9,13-16,20-21,23,25-26
+docs/adr/0008-plugin-runtime-isolation-target.md
+  h_b98c004121ae66 8-10,14-20,22-23,27-32,34,36-37
+docs/adr/0009-english-first-globalization.md
+  h_b98c004121ae66 8-9,13-17,21-22
+docs/adr/0010-rust-backend-host-core.md
+  h_b98c004121ae66 8-10,14-19,23-24
+docs/adr/0011-host-rpc-and-storage-defaults.md
+  h_b98c004121ae66 6,10-12,16-20,24-26
+docs/adr/0012-universal-provider-model-coverage.md
+  h_b98c004121ae66 5,9-12,16-19,23-33
+docs/adr/0013-compact-settings-directory.md
+  h_b98c004121ae66 8-11,16-21,25-29,33-36
+docs/adr/0014-host-owned-storage-schema-v2.md
+  h_b98c004121ae66 5,9-14,18-26,31-34,38-41
+docs/adr/0015-responsive-settings-content.md
+  h_b98c004121ae66 8-10,14-16,18-20,24-27,31-35
+docs/adr/0016-sidebar-organization-and-multi-project-tabs.md
+  h_b98c004121ae66 9-15,21-25,29-34,38-42,45-47,51-55,59-62
+docs/adr/0017-remove-composer-workspace-context-rail.md
+  h_b98c004121ae66 8-12,16-17,19-21,24,28-30,35-40
+docs/adr/0018-end-to-end-thinking-mode.md
+  h_b98c004121ae66 8-13,17-19,27-36,38-39,43-46,50-53
+docs/adr/0019-work-panel-subsystems.md
+  h_b98c004121ae66 5,10-12,16-26,30-31,35-38
+docs/adr/0020-configuration-provider-studio.md
+  h_b98c004121ae66 5,9-11,15-20,24-26,30-32
+docs/adr/0021-platform-application-chrome.md
+  h_b98c004121ae66 5,9-14,20-30,34-40,44-47
+docs/adr/0022-application-update-delivery.md
+  h_b98c004121ae66 5,9-12,16-51,55-60
+docs/adr/0023-independent-conversation-session-fork.md
+  h_b98c004121ae66 9-15,19,21-40,44-50,54-58
+docs/adr/0024-composer-commands-and-file-references.md
+  h_b98c004121ae66 6,10-13,15,17-20,22-23,27-49,51,53-59,63-66
+docs/adr/0025-menu-free-windows-linux-chrome.md
+  h_b98c004121ae66 9-12,16-23,27-32,36-38
+docs/adr/0026-project-archive-in-settings.md
+  h_b98c004121ae66 5-7,11-14,18-27,31-32,34-35,39-42
+docs/adr/0027-pi-model-catalog-authority.md
+  h_b98c004121ae66 8-12,17-29,33-38,42-44
+docs/adr/0028-session-scoped-work-panel-contexts.md
+  h_b98c004121ae66 9-14,18-19,21-24,26-31,33-35,39-41,45-48
+docs/adr/0029-separate-window-and-panel-resize-ownership.md
+  h_b98c004121ae66 3-4,6,10-15,19-28,31-32,36-41,45-48
+docs/adr/0030-turn-boundary-context-checkpoint-compaction.md
+  h_b98c004121ae66 3-4,6,10-15,19-41,45-53,57-59
+docs/adr/0031-icon-free-composer-prompt-row.md
+  h_b98c004121ae66 5,9-12,16-22,27-28,32-35
+docs/adr/0032-reserve-native-width-for-the-docked-work-panel.md
+  h_b98c004121ae66 14-17,19-21,25-26,29-30,32-44,46-50,52-54,58-64,68-73
+docs/adr/0033-internal-dock-work-panel.md
+  h_b98c004121ae66 13-17,19-20,22-25,30-43,47-54,58-62
+docs/adr/0034-merge-command-palette-into-global-search.md
+  h_b98c004121ae66 7,11-15,19-26,30-35,39-42
+docs/adr/0035-surface-os-locale-via-preload.md
+  h_b98c004121ae66 5,9-13,17-25,29-32,36-37
+docs/adr/0036-settings-ia-ai-and-shortcuts-tabs.md
+  h_b98c004121ae66 5,9-12,16-25,29-34,38-40
+docs/adr/0037-project-instruction-chain.md
+  h_b98c004121ae66 11-13,19-35,39-45,49-52
+docs/adr/0038-plugin-mcp-bridge.md
+  h_b98c004121ae66 5,9-14,18,20-46,50-57,61-66
+docs/adr/0039-plugin-skills-activation-and-devkit.md
+  h_b98c004121ae66 5,9-12,16-30,34-40,44-47
+docs/adr/0040-plugin-resident-services-and-message-bus.md
+  h_b98c004121ae66 10-14,18-30,34-39,43-46
+docs/adr/0041-bounded-host-runtime-and-persistence-outbox.md
+  h_b98c004121ae66 8-11,15-29,33-41,44
+docs/adr/0042-message-scoped-inline-review-cards.md
+  h_b98c004121ae66 5,10-11,15-17,21-25
+docs/adr/0043-message-owned-review-snapshots-and-rollback.md
+  h_b98c004121ae66 7-8,12-17,21,23-40,44-45,47-48,52-58
+docs/adr/0044-session-bound-project-instruction-preflight.md
+  h_b98c004121ae66 5,9-12,16-23,27-31
+docs/adr/0045-bash-inherits-user-login-path.md
+  h_b98c004121ae66 5-6,9-13,17-23,28-38
+docs/adr/0046-categorized-process-logs.md
+  h_b98c004121ae66 5,9-13,17-24,28-36
+docs/adr/0047-context-usage-inspector.md
+  h_b98c004121ae66 3,5,9-11,15-31,33-35,39-44,48-49
+docs/adr/0048-lazy-per-turn-tool-activation.md
+  h_b98c004121ae66 3,8-12,16-32,36-41,45-48
+docs/adr/0049-context-compaction-failure-recovery.md
+  h_b98c004121ae66 7-11,15-19,23-36,40-43,47-50
+docs/adr/0050-bounded-provider-stream-recovery.md
+  h_b98c004121ae66 3-4,9-14,19,21-26,28-29,31-34,38-44,48-51
+docs/adr/0051-host-rpc-stdio-resource-isolation.md
+  h_b98c004121ae66 8-15,19-21,23-31,35-40,44-48
+docs/adr/0052-plan-operating-state-and-approval-boundary.md
+  h_b98c004121ae66 5,9-13,17-22,24-29,33-36
+docs/adr/0053-plan-checkpoint-artifact-and-execution-epoch.md
+  h_b98c004121ae66 5,10-14,20-26,30-35,39-50,54-62,66-68,72-74,78-82,86-90,93-98
+docs/adr/0054-selectable-command-shell-catalog.md
+  h_b98c004121ae66 5,9-12,18-26,30-35,39-44,48-52,56-66
+docs/adr/0055-agent-only-mode.md
+  h_b98c004121ae66 3-4,6,10-15,19-29
+docs/adr/0056-extension-activation-scope.md
+  h_b98c004121ae66 5,9-14,22-46,50-62,66-70,74-82,86-94,98-103
+docs/adr/0057-permission-gated-external-paths-and-portable-search.md
+  h_b98c004121ae66 8-12,19-25,29-36,40-45,49-52
+docs/adr/0058-extensions-page-density-and-button-contrast.md
+  h_b98c004121ae66 3-5,9-12,16-22,26-34
+docs/adr/0059-composer-clipboard-files-in-session-scratch.md
+  h_b98c004121ae66 3-4,6,10,12-15,19-44,48-51,53,55-57
+docs/adr/0060-regenerate-branch-archive-under-the-rpc-lock.md
+  h_b98c004121ae66 11-17,21,23-39,41-51,55-67
+docs/adr/0061-imperceptible-background-context-compaction.md
+  h_b98c004121ae66 5,9-15,19-60,64-70,74-76
+docs/adr/0062-bounded-subagents-behind-a-task-tool.md
+  h_b98c004121ae66 8-9,13-19,25-30,34-38,42-47,51-57,61-67,72-77,81-84,86,88-94,96,98-101
+docs/adr/0063-subagent-management-ui.md
+  h_b98c004121ae66 10-13,19-21,26-28,32-35,39-40,44-47
+docs/adr/0064-codex-parity-context-compaction.md
+  h_b98c004121ae66 6,10-15,20-50,52-54,56-57,61-70,74-76,78-80,84-89,93,95-98
+docs/adr/0065-smooth-shell-layout-and-stream-feedback.md
+  h_b98c004121ae66 9-14,18-20,22-25,27-30,34-38,42-45
+docs/adr/0066-empty-home-direct-bottom-composer.md
+  h_b98c004121ae66 10-13,17-23,27-29,33-36
+docs/adr/0067-chatgpt-inspired-empty-home-starters.md
+  h_b98c004121ae66 5,9-10,14-16,20-22
+docs/adr/0068-work-panel-keyboard-entry.md
+  h_b98c004121ae66 8,11,15-18,22-29,33-37,39,41-44
+docs/adr/0069-recoverable-native-tool-path-errors.md
+  h_b98c004121ae66 11-17,21-36,39-42,46-50,52,54-57
+docs/adr/0070-separate-composer-file-reference-display-from-prompt.md
+  h_b98c004121ae66 9-14,19-37,39-40,45-54
+docs/adr/0071-apple-inspired-global-corner-hierarchy.md
+  h_b98c004121ae66 9-15,19-28,32-35,37,39-42
+docs/adr/0072-global-plugin-launcher.md
+  h_b98c004121ae66 3-4,6,10-14,18-33,37-40,42,44-46
+docs/adr/0073-next-turn-composer-configuration-and-stopped-throughput.md
+  h_b98c004121ae66 6,10-14,18-31,35-40,42,44-47
+docs/adr/0074-native-notification-permission-for-plugins.md
+  h_b98c004121ae66 8-13,17-24,26,28-33,35,37-40
+docs/adr/0075-manual-development-plugin-reload.md
+  h_b98c004121ae66 8-10,14-17,19-21,25-27,29,31-33
+docs/adr/0076-windows-reserved-global-shortcut-fallback.md
+  h_b98c004121ae66 5,9-10,15-19,23-24
+docs/adr/0077-asktool-interactive-multi-question-flow.md
+  h_b98c004121ae66 3-4,11-13,17-26,28-29,31,33-35
+docs/adr/0078-cross-platform-tray-resident-minimize.md
+  h_b98c004121ae66 5,9-11,15-24,28-32,34,36-39
+docs/adr/0079-vitepress-documentation-site.md
+  h_b98c004121ae66 3-4,8-10,14-22,24,26-30,32,34-37
+docs/adr/0080-prewarm-global-plugin-launcher.md
+  h_b98c004121ae66 3-5,10-11,15-22,24,26-28,30,32-35
+docs/adr/0081-host-owned-plugin-panel-chrome.md
+  h_b98c004121ae66 9-13,17-27,31-36,40-42
+docs/adr/0082-localized-plugin-panel-chrome.md
+  h_b98c004121ae66 3,7-9,13-18,22-25
+docs/adr/0083-custom-global-ui-font.md
+  h_b98c004121ae66 5,9-12,18-22,26-28,32-35,40-41,45-51,55-58
+docs/adr/0084-deferred-new-task-session-creation.md
+  h_b98c004121ae66 3-5,9-12,16-24,28-31,33,35-36
+docs/adr/0085-work-panel-shortcut-toggle.md
+  h_b98c004121ae66 3-5,7,11-15,19-29,33-36,38,40-42
+docs/adr/0086-macos-regular-activation-policy.md
+  h_b98c004121ae66 5,9-15,19-20,22-26,28-31,37-39,43-47
+docs/adr/0087-line-anchored-edit-contract.md
+  h_b98c004121ae66 8,12-18,24-28,31,36-40,45-49,53-57,61-64,68-72,76-84,88-91
+docs/adr/0088-declared-file-scope-for-plugins.md
+  h_b98c004121ae66 5,9-18,24-29,33-37,41-46,50-52,56-58,62-64,68-81
+docs/adr/0089-proactive-background-subagent-delegation.md
+  h_b98c004121ae66 6-7,11-15,19-20,24-30,34-36,40-42,46-51,55-56,60-69,71-75,79-86
+docs/adr/0090-user-configurable-close-behavior-close-to-tray.md
+  h_b98c004121ae66 5,9-14,18-41,43,45-49,51,53-56
+docs/adr/0091-rate-limit-same-turn-retry.md
+  h_b98c004121ae66 5,9-14,18-38,42-47,51-54
+docs/adr/0092-plugin-owned-panel-surface.md
+  h_b98c004121ae66 9-13,17-26,30-34,38-41
+docs/adr/0093-plugin-panel-strict-drag-band.md
+  h_b98c004121ae66 9-12,16-30,34-36,40-43
+docs/adr/0094-single-instance-per-data-directory.md
+  h_b98c004121ae66 9-15,19-25,30-34,38-42,46-52,56-59
+docs/adr/0095-vendor-account-oauth-login.md
+  h_b98c004121ae66 9-17,22-26,29-32,34-42,44-52,56-62,66-71
+docs/adr/0096-flat-settings-directory-and-marketplace-context.md
+  h_b98c004121ae66 14-17,22-25,27-33,37-40,44-49
+docs/adr/0097-place-global-defaults-under-ai-settings.md
+  h_b98c004121ae66 9-12,16-23,29,33-35
+docs/adr/0098-multiple-vendor-oauth-accounts.md
+  h_b98c004121ae66 5,10-15,19-33,37-41,45-48
+docs/adr/0099-titled-settings-navigation-clusters.md
+  h_b98c004121ae66 9-11,15-17,24-25,29-32,36-38
+docs/adr/0100-builtin-subagents-inherit-parent-permission-mode.md
+  h_b98c004121ae66 9-13,17-24,28-31,33,35-37
+docs/adr/0101-model-aware-image-attachments.md
+  h_b98c004121ae66 6-7,11-15,19-34,38-43,45,47-49
+docs/adr/0102-publisher-owned-plugin-source-and-git-hosted-artifacts.md
+  h_b98c004121ae66 3-6,8,12-20,27-30,34-45,49-52,57-60,65-66,77-91
+docs/adr/0103-compact-context-usage-summary.md
+  h_b98c004121ae66 9-12,16-25,29-40
+docs/adr/0104-plugin-contributed-work-panel-views.md
+  h_b98c004121ae66 5,9-13,17-37,41-55
+docs/adr/0105-files-as-a-bundled-plugin.md
+  h_b98c004121ae66 8,12-15,19-24,28-30
+docs/adr/0106-core-five-builtin-commands.md
+  h_b98c004121ae66 5,9-12,16-21,23-27,31-32,36,38-40
+docs/adr/0107-atomic-viewing-context-for-task-notifications.md
+  h_b98c004121ae66 5,9-14,18-26,30-34
+docs/adr/0108-remove-built-in-interactive-terminal.md
+  h_b98c004121ae66 17-21,25-37,41-45,47,49-54
+docs/adr/0109-open-files-with-the-os-associated-application.md
+  h_b98c004121ae66 5,9-13,17-27,31-36,38,40-43
+docs/adr/0110-plugin-panel-chrome-spacing-contract.md
+  h_b98c004121ae66 7,11-14,18-24,28-30
+docs/adr/0111-reveal-files-in-file-manager.md
+  h_b98c004121ae66 5,9-11,15-22,26-29
+docs/adr/0112-agent-capability-management-roots-and-settings-ia.md
+  h_b98c004121ae66 10-13,19-23,27-30,34-36,40-41,45-48,52-57
+docs/adr/0113-immediate-empty-session-slot-and-deduplication.md
+  h_b98c004121ae66 6,11-16,20-27,29-32,36-39,41,45-48
+docs/adr/0114-provider-model-bindings-and-thinking-configuration.md
+  h_b98c004121ae66 5,9-12,16-29,34-35
+docs/adr/0115-plugin-clipboard-history-is-host-owned.md
+  h_b98c004121ae66 9-14,18-25,29-33
+docs/adr/0116-opencode-go-provider-preset.md
+  h_b98c004121ae66 9-11,16-28,32-35
+docs/adr/0117-windows-taskbar-native-minimize.md
+  h_b98c004121ae66 5,9-13,17-23,27-30
+docs/adr/0118-renderer-owned-queued-prompts.md
+  h_b98c004121ae66 9-12,16-24,28-33
+docs/adr/0119-event-driven-subagent-timeouts.md
+  h_b98c004121ae66 5-6,10-12,16-32,34,36-40,42,44-47
+docs/adr/0120-bounded-session-history-windows.md
+  h_b98c004121ae66 5,9-13,17-18,20-32,34,36-40,42,44-46
+docs/adr/0121-one-shot-composer-prompt-enhancement.md
+  h_b98c004121ae66 9-10,14-17,21-23
+docs/adr/0122-reserve-native-width-while-work-panel-visible.md
+  h_b98c004121ae66 5,10-12,16-21,23
+docs/adr/0123-native-taskbar-minimize-controls.md
+  h_b98c004121ae66 5,9-11,15-21,25-27,31-34
+docs/adr/0124-temporary-session-scratch-workspace.md
+  h_b98c004121ae66 5,9-12,16-36,40-49
+docs/adr/0125-renderer-derived-brand-marks-and-minified-output.md
+  h_b98c004121ae66 9-15,19-27,29-31,35-45
+docs/adr/0126-agent-capability-workbench.md
+  h_b98c004121ae66 9-15,19-40,44-51
+docs/adr/0127-transcript-layout-index-and-identity-truncation.md
+  h_b98c004121ae66 5,9-17,21-30,32-34,36-41,45-47,49-58
+docs/adr/0128-bounded-transient-provider-retry.md
+  h_b98c004121ae66 5,9-14,18-33,37-41,45-48
+docs/adr/0129-idle-watchdog-bounds-silence.md
+  h_b98c004121ae66 6,10-15,19-27,29-30,32,34-38,40,42-45
+docs/adr/0130-bounded-mounted-transcript-window.md
+  h_b98c004121ae66 5,10-16,18,20,22-24,26,28-30,32,34-54,56-75,79-93
+docs/adr/0131-large-text-paste-session-reference.md
+  h_b98c004121ae66 9-13,17-28,32-38,42-44,46,48-51
+docs/adr/0132-attribute-cross-display-window-moves-to-the-user.md
+  h_b98c004121ae66 3,5,9-15,19-31,35-42,46-49
+docs/adr/0133-models-dev-primary-catalog-with-pi-fallback.md
+  h_b98c004121ae66 9-13,17-40,44-52,56-59
+docs/adr/0134-models-dev-sole-model-metadata-source.md
+  h_b98c004121ae66 3-5,7,12-16,21-45,49-55,60-63
+docs/adr/0135-retry-unchanged-edited-prompts.md
+  h_b98c004121ae66 11-12,16-22,27-29,33-36
+docs/adr/0136-active-task-boundary-across-compaction.md
+  h_b98c004121ae66 10-12,16-24,28,30-32,36-39
+docs/adr/0137-retained-session-panes.md
+  h_b98c004121ae66 5,12-17,21-24,27,29-51,53-54,58-65,67,69-72
+docs/adr/0138-subagent-peer-messaging.md
+  h_b98c004121ae66 5,12-15,19-22,26-31
+docs/adr/0140-peer-tool-consolidation.md
+  h_b98c004121ae66 8-9,11-15,20-23,27-31
+docs/adr/0141-sidebar-width-resize.md
+  h_b98c004121ae66 8-10,14-18,22-24,26,28-29
+docs/adr/0142-allow-non-loopback-http-mcp.md
+  h_b98c004121ae66 9-14,19-27,31-35
+docs/adr/0143-user-renamable-session-titles.md
+  h_b98c004121ae66 5,9-11,15-18,21-24,28-37
+docs/adr/0144-user-configurable-thinking-level-overrides.md
+  h_b98c004121ae66 9-13,17-19,21-26,30-33,38-41
+docs/adr/0145-native-macos-intel-release-lane.md
+  h_b98c004121ae66 5,9-13,17-28,33-36,38,40-43
+docs/adr/0146-separate-work-panel-and-chat-resize-ownership.md
+  h_b98c004121ae66 10-11,15-22
+docs/adr/0147-a2a-protocol-stack.md
+  h_b98c004121ae66 6-9,13-15,19-24,28-30,32
+docs/adr/0148-explicitly-disable-keyboard-shortcuts.md
+  h_b98c004121ae66 5,9-11,15-22,26-28,30-31
+docs/adr/0149-calm-transcript-running-status-motion.md
+  h_b98c004121ae66 6,10-13,17,19-28,33-35,39-42
+docs/adr/0150-inline-svg-empty-home-agent-mark.md
+  h_b98c004121ae66 5,9-10,14-16,20-21
+docs/adr/0151-internal-work-panel-dock.md
+  h_b98c004121ae66 3-5,7,11-16,20-23,26-34,38-43,45,47-50
+docs/adr/0152-eight-frame-empty-home-mascot-gif.md
+  h_b98c004121ae66 5,10-13,18-23,25,27-29,31,33-36
+docs/adr/0153-inflight-reply-checkpoint.md
+  h_b98c004121ae66 5-6,10-16,21-44,48-51,54,56-59
+docs/adr/0154-reveal-new-task-empty-destination.md
+  h_b98c004121ae66 9-13,17-25,29-33
+docs/adr/0155-zhipu-endpoint-presets.md
+  h_b98c004121ae66 5,9-13,17-18,28-35,39-42
+docs/adr/0156-simplify-add-provider-common-path.md
+  h_b98c004121ae66 5,9-11,15-20,24-25
+docs/adr/0157-main-owned-github-issue-feedback.md
+  h_b98c004121ae66 10-12,16-25,29-30,34
+docs/adr/0158-approval-card-focus-and-remembered-mode.md
+  h_b98c004121ae66 10-13,17-24,28-31,35-38
+docs/adr/0159-plugin-generated-settings-and-local-shortcuts.md
+  h_b98c004121ae66 8-11,15-22,26-28
+docs/adr/0160-shipped-locale-registry-and-language-picker.md
+  h_b98c004121ae66 9-11,15-23,28-30,34-36
+docs/adr/0161-searchable-theme-picker.md
+  h_b98c004121ae66 9-11,15-20,22-24,28-30
+docs/adr/0162-cross-session-a2a-addressing.md
+  h_b98c004121ae66 5,13-15,19-24,28-30
+docs/adr/0163-transcript-file-reference-chips.md
+  h_b98c004121ae66 9-12,16-23,27-35
+docs/adr/0164-parent-cross-conversation-a2a.md
+  h_b98c004121ae66 7,11-14,18-21,23,25-27
+docs/adr/0165-withdraw-a2a-peer-stack.md
+  h_b98c004121ae66 5,12-18,22,25-29,32-36,39-40,44-50
+docs/adr/0166-parent-judged-subagent-lifetime.md
+  h_b98c004121ae66 5,9-13,17-25,29-30,32-33,35,37-40
+docs/adr/0167-agent-chosen-bash-timeout.md
+  h_b98c004121ae66 10-13,18-23,27-29
+docs/adr/0168-main-owned-open-external-allowlist.md
+  h_b98c004121ae66 5,9-13,17-21,25-26,30-31
+docs/adr/0169-classified-file-preview-and-live-workspace-events.md
+  h_b98c004121ae66 5,10-13,18-29,33,35-36,38,40-43
+docs/adr/0170-work-panel-browser-as-bundled-plugin.md
+  h_b98c004121ae66 14-16,18-20,25-26,28-43,47-52,54,56-60
+docs/adr/0171-host-owned-completed-turn-token-history.md
+  h_b98c004121ae66 5,9-13,17-25,29,31,35-36
+docs/adr/0172-contained-in-chat-image-display.md
+  h_b98c004121ae66 5,10-14,18-28,32-35,37,39
+docs/adr/0173-plugin-owned-token-usage-dashboard.md
+  h_b98c004121ae66 5,10-12,16-21,23-26,31-32,36-37
+docs/adr/0174-plugin-host-owned-completion-and-session-context.md
+  h_b98c004121ae66 11-13,15-20,24-49,53-67
+docs/adr/0175-live-agent-activity-status.md
+  h_b98c004121ae66 8-12,16-25,29-34
+docs/adr/0176-per-provider-user-agent.md
+  h_b98c004121ae66 3,5,9-11,15-24,28-30
+docs/adr/0177-user-configurable-outbound-proxy.md
+  h_b98c004121ae66 5,9-16,20-47,51-58,62-63
+docs/adr/0178-per-provider-custom-headers.md
+  h_b98c004121ae66 5-6,11-15,19-40,44-49
+docs/adr/0179-import-model-configuration.md
+  h_b98c004121ae66 7,11-14,18-30,32-46,50-55,60-61
+docs/adr/0180-custom-reading-font-size.md
+  h_b98c004121ae66 5,9-13,17-28,32-35,39-41
+docs/adr/0181-main-owned-picker-capabilities.md
+  h_b98c004121ae66 5,9-13,17-24,28-37
+docs/adr/0182-traditional-chinese-shell-locale.md
+  h_b98c004121ae66 9-11,15-21,26-28,32-33
+docs/adr/0183-p0-international-shell-locales.md
+  h_b98c004121ae66 9-11,15-19,23-25,29-30
+docs/adr/0184-composer-context-usage-inspector.md
+  h_b98c004121ae66 5,9-11,15-26,30-37
+docs/adr/0185-korean-shell-locale.md
+  h_b98c004121ae66 5,9-11,15-21,25-28,32-33
+docs/adr/0186-session-auto-title-summary.md
+  h_b98c004121ae66 8-10,14-20,22,24-26
+docs/adr/0187-focus-aware-native-task-notifications.md
+  h_b98c004121ae66 5,9-12,16-21,25-26,28,30-31
+docs/adr/0188-preserve-distinct-import-credentials.md
+  h_b98c004121ae66 9-14,18-26,30-35
+docs/adr/0189-parent-fatal-error-aborts-leftover-delegates.md
+  h_b98c004121ae66 5,9-13,17-35,39-41,43,45-46
+docs/adr/0190-host-gated-large-file-and-drop-access.md
+  h_b98c004121ae66 8-11,15-22,24-25,29-32,36-38
+docs/adr/0191-label-both-macos-release-architectures.md
+  h_b98c004121ae66 3-4,6,10-13,18-24,28-30,32,34-36
+docs/adr/0192-model-alias.md
+  h_b98c004121ae66 9-12,16-25,32-33,37,39-40
+docs/adr/0193-last-request-context-occupancy.md
+  h_b98c004121ae66 11-14,18-24,28-31,33,35-36
+docs/adr/0194-subagent-thinking-parameter-omission.md
+  h_b98c004121ae66 9-11,15-20,24-26
+docs/adr/0195-viewport-fixed-work-panel-toggle.md
+  h_b98c004121ae66 7,12-14,18-28,32,34-36,40-43
+docs/adr/0196-retry-cause-in-active-turn-status.md
+  h_b98c004121ae66 6,10-13,17-22,27-30,34-37
+docs/adr/0197-windows-portable-exe.md
+  h_b98c004121ae66 9-13,17-25,29-40
+docs/adr/0198-quiet-interval-activity-phases.md
+  h_b98c004121ae66 5,9-12,16-27,31-37,41-44
+docs/adr/0200-plugin-owned-session-api.md
+  h_b98c004121ae66 3-4,6,10-14,18-41,45-49,51,53-55
+docs/adr/0201-plugin-project-ids-and-session-refresh.md
+  h_b98c004121ae66 5,9-13,17-27,31-36
+docs/adr/0202-effective-subagent-thinking-metadata.md
+  h_b98c004121ae66 5,9-13,17-24,28-32
+docs/adr/0203-local-mcp-control-plane.md
+  h_b98c004121ae66 9-13,17-31,35-41
+docs/adr/0204-unsigned-macos-first-launch-helper.md
+  h_b98c004121ae66 3-5,7-8,12-16,20-21,23-24,26-31,35-38,40,42-45
+docs/adr/0205-remote-agent-control-boundary.md
+  h_b98c004121ae66 5-6,10-16,20-39,43-49,53-63,67-75,79-93
+docs/adr/0206-ten-provider-retries-and-progress-status.md
+  h_b98c004121ae66 3-4,6,10-16,20-25,27-38,42-48,52-55
+docs/adr/0207-three-mutation-recovery-failures.md
+  h_b98c004121ae66 9-11,16-17,19-22,26-30,34-36,39,41-43
+docs/adr/0208-plugin-desktop-control-native-consent.md
+  h_b98c004121ae66 5,9-14,18-28,32-35
+docs/adr/0209-powershell-7-selectable-windows-shell.md
+  h_b98c004121ae66 7,11-15,22-23,27-31,35-38,42-47,51-65
+docs/adr/0210-subagent-output-token-cap.md
+  h_b98c004121ae66 5,9-15,19-35,39-44
+docs/adr/0211-plan-safe-plugin-actions.md
+  h_b98c004121ae66 5,8,12-18,24-28,32-34,38-40,44-48,52-56,60-62,66-73,77-82,86-90
+docs/adr/0212-remove-diagnostic-timing-log-streams.md
+  h_b98c004121ae66 11-12,16-22,26-30
+docs/adr/0213-persist-host-owned-turn-queue.md
+  h_b98c004121ae66 6,10-13,17-34,38-41,43,45-48
+docs/adr/0214-trusted-extensions.md
+  h_b98c004121ae66 5,9-14,19-22,24-26,28-34,38-41,43-46,48,50-53
+docs/adr/0215-agent-extensions-as-plugin-contribution.md
+  h_b98c004121ae66 7,11-14,18-29,33-36,40-42
+docs/adr/0216-truncate-regenerates-under-the-rpc-lock.md
+  h_b98c004121ae66 5,10-14,18-26,30-33,35-40
+docs/adr/0217-host-stdout-sender-must-not-outlive-serve.md
+  h_b98c004121ae66 5,9-14,18-25,27,29-30,34,36-44
+docs/adr/0218-effective-image-input-overrides.md
+  h_b98c004121ae66 9-13,17-25,29-38
+docs/adr/0219-user-invoked-skills-in-composer.md
+  h_b98c004121ae66 5,9-12,16-27,31-34,36,38-39
+docs/adr/0220-windows-work-panel-toolbar.md
+  h_b98c004121ae66 15-17,21-26,30-32,34,36-39
+docs/adr/0221-canonical-thinking-level-values.md
+  h_b98c004121ae66 3,5,10-12,16-21,25-27
+docs/adr/0222-composer-native-file-folder-drops.md
+  h_b98c004121ae66 10-13,18-26,28,30-34,36,38-41
+docs/adr/0223-context-usage-display-preference.md
+  h_b98c004121ae66 5-6,10-14,18-29,33-35,37,39-42
+docs/adr/0224-right-panel-tab-strip.md
+  h_b98c004121ae66 5,10-11,15-27,31-40
+docs/adr/0225-restore-deferred-tools-from-effective-session-context.md
+  h_b98c004121ae66 10-13,17,19-26,30-33,37-39
+docs/adr/0226-reserve-chat-width-for-composer-controls.md
+  h_b98c004121ae66 3,5,9-12,16-21,25-27
+docs/adr/0227-project-group-manual-ordering.md
+  h_b98c004121ae66 6,10-12,16-22,26-29
+docs/adr/0228-long-press-project-title-reorder.md
+  h_b98c004121ae66 3,5,9-11,15-21,25-26
+docs/adr/0229-press-and-move-project-title-reorder.md
+  h_b98c004121ae66 6,10-12,16-22,26-28
+docs/adr/0230-skill-ships-with-the-agent-core-tool-set.md
+  h_b98c004121ae66 9-15,20-22,24-27,31-34,36-37,41-44
+docs/adr/0231-ideographic-comma-opens-the-slash-menu.md
+  h_b98c004121ae66 9-13,17-22,26-29,32,34-36
+docs/adr/0232-macos-dmg-text-only-opening-guidance.md
+  h_b98c004121ae66 6,10-13,17-24,26,28-30
+docs/adr/0233-renderer-owned-multi-folder-project-creation.md
+  h_b98c004121ae66 3-4,6,10-13,17-26,30-40
+docs/adr/0234-project-owned-memory-context.md
+  h_b98c004121ae66 8-10,14-19,23-33
+docs/adr/0235-domain-facades-and-architecture-budgets.md
+  h_b98c004121ae66 8-12,16-28,30,34-37,41-44
+docs/adr/0236-restore-archived-project-on-session-import.md
+  h_b98c004121ae66 8-11,15-21,25-33
+docs/adr/0237-session-orchestrator-as-a-plugin.md
+  h_b98c004121ae66 11-16,20,22-39,43-50
+docs/adr/0238-three-column-width-priority.md
+  h_b98c004121ae66 3-6,8,12-16,20-49,53-59,62,64-67
+docs/adr/0239-session-collaboration-messages.md
+  h_b98c004121ae66 11-13,17-49,53-63
+docs/adr/0240-independent-session-discovery-and-navigable-projections.md
+  h_b98c004121ae66 10-13,18-29,31,33-35,37,39-43,45,47-48
+docs/adr/0241-vendored-updatable-file-view-plugin.md
+  h_b98c004121ae66 13-20,25-31,33-44,48-55,59-62
+docs/adr/0242-delta-only-streaming-updates.md
+  h_b98c004121ae66 5,9-15,19-33,37-40,45-47
+docs/adr/0243-skill-market-public-https-catalog.md
+  h_b98c004121ae66 5,10-15,19-30,34-39
+docs/adr/0244-imported-extension-dependency-boundary.md
+  h_b98c004121ae66 5-6,11-12,14-15,19-40,45-48
+docs/adr/0245-mcp-market-public-network-boundary.md
+  h_b98c004121ae66 9-14,18-35,40-43,45,47-49
+docs/adr/0246-subagent-opt-in-parent-tool-inherit.md
+  h_b98c004121ae66 9-14,18-40,44-49,51,53-56
+docs/adr/0247-git-clone-public-hostname.md
+  h_b98c004121ae66 5,9-13,17-23,27-30
+docs/adr/0248-plugin-theme-assets-and-window-background.md
+  h_b98c004121ae66 3-5,9-12,16,20-27,31-38,42-47,51-54
+docs/adr/0249-chatgpt-style-logical-project-groups.md
+  h_b98c004121ae66 9-13,19-36,40-45,47,49-52
+docs/adr/0250-structured-bounded-redacted-process-logs.md
+  h_b98c004121ae66 3-4,8-10,15-29,33-38,42-43
+docs/adr/0251-project-delete-with-owned-sessions.md
+  h_b98c004121ae66 5,9-14,19-20,22-38,42-48,52-55
+docs/adr/0252-plugin-host-turn-end-event.md
+  h_b98c004121ae66 5-10,14-21,27-43,49-52,56-59
+docs/adr/0253-remove-subagent-turn-limit.md
+  h_b98c004121ae66 5-6,13-18,22,24,27-37,40-41,45-60
+docs/adr/0254-native-pi-session-continuation.md
+  h_b98c004121ae66 10-14,18-45,49-58,62-83,87-101
+docs/adr/0255-theme-assets-by-absolute-path.md
+  h_b98c004121ae66 3,5,10-16,20-31,35-41,43,45-47
+docs/adr/0256-deepseek-reasoning-across-compaction.md
+  h_b98c004121ae66 13-17,22-35,39-43,47-50
+docs/adr/0257-plugin-real-time-capabilities.md
+  h_b98c004121ae66 3,7-11,15-35,39-46,50-53
+docs/adr/0258-trusted-extension-custom-agents.md
+  h_b98c004121ae66 10-14,18-29,31-32,36-40,42,44-46
+docs/adr/0259-plugin-declared-providers.md
+  h_b98c004121ae66 6-7,11-16,20-25,27-52,56-61,65-69
+docs/adr/0260-plugin-runtime-theme-apis.md
+  h_b98c004121ae66 5,9-13,19-23,27-33,37-40,44-48
+docs/adr/0261-plugin-appearance-extensions.md
+  h_b98c004121ae66 9-12,16-27,31-33
+docs/adr/0262-chat-file-refs-open-in-the-file-view.md
+  h_b98c004121ae66 13-18,22-51,53-62,66-87
+docs/adr/0263-project-folder-roots-for-plugin-views.md
+  h_b98c004121ae66 3-5,13-19,23-29,31-44,48-54,56,58-61
+docs/adr/0264-host-mediated-actions-follow-the-browsed-folder.md
+  h_b98c004121ae66 3-5,9-14,18-31,35-39,41,43-46
+docs/adr/0265-turn-queue-priority-block-and-row-actions.md
+  h_b98c004121ae66 10-16,21-24,27-45,47-55,57-65,67,69-73
+docs/adr/0266-plugin-fs-root-follows-the-calling-session.md
+  h_b98c004121ae66 3-5,9,13-18,22-25,27-32,34-37,41-45,49-52,54,56-59
+docs/adr/0267-plugin-labels-follow-the-app-language.md
+  h_b98c004121ae66 3-5,9,13-18,22-34,38-42,46-47
+docs/adr/0268-remove-quotes-annotations-and-side-chats.md
+  h_b98c004121ae66 3-4,6,10-17,21-43,47-62
+docs/adr/0269-capability-level-transfer.md
+  h_b98c004121ae66 5,10-15,21-25,29-34,36,38-41,45-48,52-56,60-66
+docs/adr/0270-builtin-subagents-can-be-disabled.md
+  h_b98c004121ae66 9-14,18-29,33-34,36-39,43-46
+docs/adr/0271-provider-transport-rebuild.md
+  h_b98c004121ae66 5-6,10-20,24-33,35-41,45-50,55-63
+docs/adr/0272-connection-time-public-network-route.md
+  h_b98c004121ae66 5,9-16,20-23,25-36,40-46,50-55
+docs/adr/0273-git-checkout-create-project-source.md
+  h_b98c004121ae66 3,8-11,15-23,27-28,30-37
+docs/adr/0274-development-plugin-permission-review.md
+  h_b98c004121ae66 11-17,21-35,39-45
+docs/adr/0275-plugin-panel-floating-widget.md
+  h_b98c004121ae66 5,9-14,18-36,40-45
+docs/adr/0276-official-plugin-channel-and-backup-channels.md
+  h_b98c004121ae66 3-5,13-20,26,28-32,36-51,55-64,68-72,77-78,82-103,107-114,118-123
+docs/adr/0277-draggable-chat-content-width.md
+  h_b98c004121ae66 5-6,10-14,18-32,36-40,42,44-46
+docs/adr/0278-canonical-application-id.md
+  h_b98c004121ae66 6,10-14,18-26,30-33,35,37-38
+docs/adr/0279-resumable-subagent-delegations.md
+  h_b98c004121ae66 11-12,17-21,25-27,31-33,37-40,44-50,54-59,63-66,70-71,75-79,83-86,90-93,97-98,102-104,108-111,115-117,121-124,126-127
+docs/adr/0280-plugin-owned-ui-localizes-from-host-locale.md
+  h_b98c004121ae66 3-5,9,13-16,20-30,34-35,39-42
+docs/adr/0281-host-speech-capability.md
+  h_b98c004121ae66 10-12,16-22,24-27,31-34
+docs/adr/0282-compaction-summary-retry-and-sizing.md
+  h_b98c004121ae66 5-7,14-18,22-37,41-46,50-53
+docs/adr/0283-remote-mcp-oauth.md
+  h_b98c004121ae66 5,9-14,18-34,38-43,47-53,57-62
+docs/adr/0284-headless-runtime-boundary.md
+  h_b98c004121ae66 13-17,19-24,29-59,63-69,71,73-78
+docs/adr/0285-racp-ws-transport.md
+  h_b98c004121ae66 5,9-12,16-45,52-54,56,58-61
+docs/adr/0286-remote-host-desktop-kernel.md
+  h_b98c004121ae66 7,11-16,20-23,25-57,59,61-66,70-75
+docs/adr/0287-host-rendered-plugin-scenic-settings-surfaces.md
+  h_b98c004121ae66 9-12,16-22,26-28
+docs/adr/0288-package-local-theme-assets.md
+  h_b98c004121ae66 10-13,17-18,20-23,25-26,30-32
+docs/adr/0289-signed-macos-github-releases.md
+  h_b98c004121ae66 11-17,21-44,48-53,55,57,59
+docs/adr/0290-resizable-sidebar-collapse-threshold.md
+  h_b98c004121ae66 8,12-16,20-31,35-38,43-46
+docs/adr/0291-remove-speech-settings-ui.md
+  h_b98c004121ae66 6,10-17,21-28,30-32,34-39,43-48,50,52-55
+docs/adr/0292-ssh-remote-host-bootstrap.md
+  h_b98c004121ae66 14-15,19-28,32-41,45-47,49-66,68-72,74,76-85,90-104
+docs/adr/0293-ssh-password-authentication.md
+  h_b98c004121ae66 3-4,6,10-15,19-49,53-67
+docs/adr/0294-project-archive-list-inspector.md
+  h_b98c004121ae66 5,10-14,18-29,33-38
+docs/adr/0295-session-thinking-parameter-omission.md
+  h_b98c004121ae66 6,10-15,19-29,33-37
+docs/adr/0296-macos-signed-dmg-two-icon-install.md
+  h_b98c004121ae66 11-13,17-24,28-30
+docs/adr/0297-provider-hosted-web-search-adapter-capability.md
+  h_b98c004121ae66 8-14,18-62,66-72
+docs/adr/0298-remove-bundled-fonts.md
+  h_b98c004121ae66 5-7,9,13-16,20-29,33-47
+docs/adr/0299-subagent-context-budget.md
+  h_b98c004121ae66 7,13-20,24-76,80-85
+docs/adr/0300-host-owned-encrypted-portable-configuration-sync.md
+  h_b98c004121ae66 6-9,13-18,22-38,41-45,49-64
+docs/adr/0301-explicit-append-only-webdav-compatibility-mode.md
+  h_b98c004121ae66 9-12,16-28
+docs/adr/0302-compaction-fallback-recent-window-and-chunked-summary.md
+  h_b98c004121ae66 8,12-19,23-41,43,47-53,57-60
+docs/adr/0303-skill-package-resource-limits.md
+  h_b98c004121ae66 9,13-21,25-32,36-43,47-50
+docs/adr/0304-user-supplied-endpoint-trust.md
+  h_b98c004121ae66 9-15,19-40,44-51,55-60
+docs/adr/0305-scheduled-task-execution-settings.md
+  h_b98c004121ae66 9-13,17-31,35-40,44-47
+docs/adr/0306-portuguese-brazil-shell-locale.md
+  h_b98c004121ae66 9-12,16-24,28-31,35-37
+docs/adr/0307-pi-ai-api-key-provider-sync.md
+  h_b98c004121ae66 5,9-13,17-34,38-42,46-48
+docs/adr/0308-remove-pull-requests-destination.md
+  h_b98c004121ae66 8-12,18-19,23-27
+docs/adr/0309-remove-macos-first-launch-artifacts.md
+  h_b98c004121ae66 5-7,12-14,18-21,26-27
+docs/adr/0310-local-permission-approvals-without-deadline.md
+  h_b98c004121ae66 10-13,17-23,27-30
+docs/adr/0311-live-work-workspace-admission-guard.md
+  h_b98c004121ae66 9-11,16-19,23-26
+docs/adr/0312-session-scoped-todo-checklist.md
+  h_b98c004121ae66 9-11,15-25
+docs/adr/0313-live-voice-default-session-target.md
+  h_b98c004121ae66 9-12,16-25,29-32
+docs/adr/0315-live-voice-spoken-asktool-answers.md
+  h_b98c004121ae66 5-6,10-14,18-34,36,38-43,45,47-51
+docs/adr/0316-live-voice-docked-widget.md
+  h_b98c004121ae66 5,9-15,19-33,37-43,47-49
+docs/adr/0317-windows-borderless-window-resize.md
+  h_b98c004121ae66 5,10-14,18-24,26-27,29-32,34,36-42,46-48
+docs/adr/0318-linux-arm64-release-lane.md
+  h_b98c004121ae66 5,9-14,18-23,25-31,33-36,40-46,48,50-53
+docs/adr/0319-settings-inline-imports.md
+  h_b98c004121ae66 12-14,18-21,26-27
+docs/adr/0320-plugin-oauth-provider-callbacks.md
+  h_b98c004121ae66 6-8,12-17,21-39,44-57
+docs/adr/0321-skill-market-direct-dns-pinning.md
+  h_b98c004121ae66 10-14,18-27,31-35,39-43
+docs/adr/0322-plugin-providers-in-add-service.md
+  h_b98c004121ae66 6,10-13,17-18,20-30,34-38,40,42-45
+docs/adr/0323-plugin-owned-session-titles.md
+  h_b98c004121ae66 7-9,13-17,21-38,43-48,52-55
+docs/adr/0324-plugin-owned-composer-prompt-enhancement.md
+  h_b98c004121ae66 9-14,18-31,35-40,42,44-47
+docs/adr/0325-windows-window-corner-compositing.md
+  h_b98c004121ae66 9,11-13,17-30,32,34-39,41,43-46
+docs/adr/0326-verified-ssh-host-installation.md
+  h_b98c004121ae66 5-6,10-13,18-34,36-62
+docs/adr/0327-remote-host-version-realignment.md
+  h_b98c004121ae66 9-16,20-40,42,44,46-52,56-61
+docs/adr/0328-browser-arbitrary-local-files.md
+  h_b98c004121ae66 5,9-13,17-25,29-35
+docs/adr/0329-session-worktree-isolation.md
+  h_b98c004121ae66 10-13,17-54,58-63,65,67-71
+docs/adr/0330-open-html-files-in-work-panel-browser-from-plugins.md
+  h_b98c004121ae66 8,12-15,19-29,33-36,40-43
+docs/adr/0331-plugin-session-follow-and-work-panel-reveal.md
+  h_b98c004121ae66 7,12-16,18,20,22-25,27,29-32,34,36-39,41,43-44,46,48-49,51-60,62-66
+docs/adr/0332-macos-opaque-window-surface.md
+  h_b98c004121ae66 5-6,10-17,21-39,43-49,53-58
+docs/adr/0333-plugin-composer-suggestion.md
+  h_b98c004121ae66 7,11-18,23-45,49-56,60-65
+docs/adr/0334-openai-fast-mode.md
+  h_b98c004121ae66 7,11-16,21-40,44-46,48-55
+docs/adr/0337-stable-prompt-prefix-across-delegation.md
+  h_b98c004121ae66 5,10-17,21-40,44-51,53,55-57
+docs/adr/0338-user-supplied-startup-animation.md
+  h_b98c004121ae66 5,9-15,19-37,41-55
+docs/adr/0339-chat-file-refs-open-absolute-files-outside-managed-roots.md
+  h_b98c004121ae66 5,11-18,22-40,44-51,55-58
+docs/adr/0340-plugin-session-all-scope.md
+  h_b98c004121ae66 7-8,12-18,22-37,39-45,49-59,63-68
+docs/adr/0341-explicit-reviewed-file-actions.md
+  h_b98c004121ae66 9-13,18-19,21-33,38-47
+docs/adr/0342-os-computer-use-capability.md
+  h_b98c004121ae66 19-32,37-49,51-57,59-125,129-132,134-149,153-164,166-170
+docs/adr/0343-plugin-launcher-local-apps.md
+  h_b98c004121ae66 7,11-16,20-29,31-42,46-61
+docs/adr/0344-computer-use-whole-desktop-grant.md
+  h_b98c004121ae66 3,5,9-15,19-42,46-52,56-59
+docs/adr/0345-one-settings-destination-one-subject.md
+  h_b98c004121ae66 14-28,32-33,44-61,64-72,76-79,81-82,84-103
+docs/adr/0346-composer-agent-mentions.md
+  h_b98c004121ae66 11-15,19-37,41-45
+docs/adr/README.md
+  h_b98c004121ae66 19-23,135,421-424
+docs/adr/active-turn-steering.md
+  h_b98c004121ae66 9,11-12,16-29,31-32,34,36-41
+docs/adr/append-only-review-state.md
+  h_b98c004121ae66 10-13,17-22,24-27,31-34,38-42,46-48
+docs/adr/asktool-draft-survives-session-switch.md
+  h_b98c004121ae66 10-14,18-26,30-35
+docs/adr/browser-background-lifecycle.md
+  h_b98c004121ae66 10-14,18-19,22-28,30-32,34-39,41-43,45,47-50,52,54-57
+docs/adr/chinese-docs-entry-points-only.md
+  h_b98c004121ae66 1-40
+docs/adr/chronological-system-transcript.md
+  h_b98c004121ae66 13,15,19-77
+docs/adr/composer-local-file-references.md
+  h_b98c004121ae66 1-35
+docs/adr/composer-mcp-invocations.md
+  h_b98c004121ae66 9-11,15-41
+docs/adr/composer-pasted-directory-references.md
+  h_b98c004121ae66 9-11,15-24,28-32
+docs/adr/custom-storage-location.md
+  h_b98c004121ae66 9-12,16-27,29,31-36,38,40-43
+docs/adr/device-local-project-lists-in-config-sync.md
+  h_b98c004121ae66 9-11,15-22,26-31,33,35-38
+docs/adr/floating-annotation-index.md
+  h_b98c004121ae66 5-6,10-11,15-23,25,27-28
+docs/adr/gen-ui-inline-visualization.md
+  h_b98c004121ae66 8-14,20-24,28-36,40-45,49-61,65-66,70-77,81-87,91-94
+docs/adr/global-sidebar-pins.md
+  h_b98c004121ae66 5,10-12,16-26,30-33
+docs/adr/host-file-batch-admission.md
+  h_b98c004121ae66 9-17,22-63,67-72
+docs/adr/image-generation-capability.md
+  h_b98c004121ae66 5-6,11-13,17-39
+docs/adr/local-agent-remote-workspace-tools.md
+  h_b98c004121ae66 10-13,18-31,35-43,45,47-50
+docs/adr/lossless-tool-image-storage.md
+  h_b98c004121ae66 10-11,15-22,26-31
+docs/adr/mcp-tool-approval-risk.md
+  h_b98c004121ae66 10-14,18-24,28-31,35-36
+docs/adr/message-quotes-and-side-chats.md
+  h_b98c004121ae66 7,11-15,19-25,29-34,36,38-39
+docs/adr/mode-definitions.md
+  h_b98c004121ae66 5-8,10,14-19,25-35,47-48,58,67-68,72-112,119-121,123,128-135,139-145,154,161-173,177-193,197-201,205-208
+docs/adr/model-reasoning-effort-override.md
+  h_b98c004121ae66 9-12,17-22,26-28,32-35
+docs/adr/models-dev-catalog-authority.md
+  h_b98c004121ae66 3,8-10,14-20,24-26,30-31
+docs/adr/parallel-read-batches.md
+  h_b98c004121ae66 3-4,9-12,16-27,31-36
+docs/adr/pi-ai-core-0991-authority.md
+  h_b98c004121ae66 9-13,17-24,26-29,31,33-40,44-46
+docs/adr/plan-approval-session-permission.md
+  h_b98c004121ae66 1-32
+docs/adr/plan-tool-declarations-and-execution-denials.md
+  h_b98c004121ae66 11-13,17-20,22-27,31-37,39-40
+docs/adr/plugin-fetch-redirect-policy.md
+  h_b98c004121ae66 8-11,15-19,24-27
+docs/adr/plugin-projects-list.md
+  h_b98c004121ae66 11-14,19-21,23-27,31-38
+docs/adr/plugin-remote-workspace-reads.md
+  h_b98c004121ae66 9-13,17-31,35-43
+docs/adr/provider-display-order.md
+  h_b98c004121ae66 8-10,14-20,22,24-27,29,31-34
+docs/adr/provider-metadata-client-certificate-retry.md
+  h_b98c004121ae66 9-13,17-27,31-36,40-43
+docs/adr/provider-system-certificates.md
+  h_b98c004121ae66 5,9-14,18-39,43-45
+docs/adr/registry-header-variable-spelling.md
+  h_b98c004121ae66 9-13,17-30,34-39
+docs/adr/remote-project-home-workflow.md
+  h_b98c004121ae66 5,9-13,17-28,30,32-35,39-42
+docs/adr/remote-provider-import.md
+  h_b98c004121ae66 8-10,14-21,23,25-30,32,34-36
+docs/adr/response-annotations.md
+  h_b98c004121ae66 8-9,13-15,19-27,31-35,37
+docs/adr/retained-browser-pages-per-tab.md
+  h_b98c004121ae66 9-12,16-28,32-36
+docs/adr/s3-only-configuration-backup-sync.md
+  h_b98c004121ae66 9-14,18-31,35-41,43,45-47
+docs/adr/scheduled-desktop-automations.md
+  h_b98c004121ae66 8-11,15-42,46-52,56-57
+docs/adr/session-content-search.md
+  h_b98c004121ae66 5,9-13,17-45,48-55,58-74
+docs/adr/sidebar-layout-recovery.md
+  h_b98c004121ae66 5,9-10,14-20,24-26
+docs/adr/steering-local-tool-interruption.md
+  h_b98c004121ae66 3,5,9-10,14-20,24-26
+docs/adr/subagent-model-fallback.md
+  h_b98c004121ae66 9-11,15-49
+docs/adr/subagent-model-opt-in.md
+  h_b98c004121ae66 9-13,17-38,42-46
+docs/adr/tool-abort-abandons-host-call.md
+  h_b98c004121ae66 3-6,11-18,22-33,39-43,47-50
+docs/adr/transcript-reading-ownership.md
+  h_b98c004121ae66 9-13,17-28,32-38,40,42-43
+docs/adr/tray-session-shortcuts.md
+  h_b98c004121ae66 9-12,16-36,40-45
+docs/adr/trusted-extension-operation-ownership.md
+  h_b98c004121ae66 8-11,15-22,26-31
+docs/adr/turn-process-and-thinking-display.md
+  h_b98c004121ae66 11-14,18-53,55-123,127-139
+docs/adr/windows-native-snap-without-frame-insets.md
+  h_b98c004121ae66 1,3-5,7-50
+docs/implementation/live-work-evidence.md
+  h_b98c004121ae66 7-8,294-295
+docs/plugin-plan/AGENTS.md
+  h_b98c004121ae66 24-27,36-39
+docs/plugin-plan/host-api/agent.html
+  h_b98c004121ae66 2,8,50-55,61,63-65,68-69,73-75,77,117,133,148,153,155-156,160,163-320
+docs/plugin-plan/host-api/app.html
+  h_b98c004121ae66 2,8,50-55,61,63-66,69-70,74-78,107-108,115-116,120,124,126-128,132,135-347
+docs/plugin-plan/host-api/audio.html
+  h_b98c004121ae66 2,8,50-55,61,63-72,75-76,80-202,204-538,572,590,601,605,607-608,612,615-870
+docs/plugin-plan/host-api/browser.html
+  h_b98c004121ae66 2,8,50-55,61,63-75,78-79,83-85,87-89,93,99,103-420,423-424,427,429-432,436-437,442,447-525,530,535,537-538,542,545-1095
+docs/plugin-plan/host-api/bus.html
+  h_b98c004121ae66 2,8,50-55,61,63-64,67-68,72-74,76-158,185,201,211,215,217,221,224-234
+docs/plugin-plan/host-api/clipboard.html
+  h_b98c004121ae66 2,8,50-55,61,63-65,68-69,73-75,77,104,120,129,134,136,140,143-303
+docs/plugin-plan/host-api/commands.html
+  h_b98c004121ae66 2,8,50-55,61,63-64,67-68,72-74,76,110,126,136,140,142-143,147,150-231
+docs/plugin-plan/host-api/desktop.html
+  h_b98c004121ae66 2,8,50-55,61,63-64,67-68,72-74,76,99,115,125,130,132,136,139-215
+docs/plugin-plan/host-api/events.html
+  h_b98c004121ae66 2,8,50-55,61,63-64,67-68,72-115,117-149,174,190,194,198,200-201,205,208-223
+docs/plugin-plan/host-api/fs.html
+  h_b98c004121ae66 2,8,50-55,61,63-73,76-77,81-123,125-165,197,213,223,227-308,310-311,315,318-523,525-977
+docs/plugin-plan/host-api/index.html
+  h_b98c004121ae66 64,70,82-85,94-97,106-110,119-120,129-130,139-145,154,163,172-173,182-191,200-202,211-221,230-232,241,250-257,266,275-276,285-286,295-297,306,315-327,336-339,348-349,358-360
+docs/plugin-plan/host-api/keyboard.html
+  h_b98c004121ae66 2,8,50-55,61,63-65,68-69,73-117,119-156,191,209,223,228,230-232,236,239-325
+docs/plugin-plan/host-api/models.html
+  h_b98c004121ae66 2,8,50-55,61,63,66-67,71-73,75,111,119,126,130,132,136,139-150
+docs/plugin-plan/host-api/module.html
+  h_b98c004121ae66 2,8,50-55,61,63-65,68-69,73-90,92-99,101-150,183,199,203,208,210,214,217-245,247-299
+docs/plugin-plan/host-api/net.html
+  h_b98c004121ae66 2,8,50-55,61,63-66,69-70,74-76,78,108,125,136,141,147,150-411
+docs/plugin-plan/host-api/plugin.html
+  h_b98c004121ae66 2,8,50-55,61,63-67,70-71,75-198,200,230,238,242,246,248,252,255-412
+docs/plugin-plan/host-api/project.html
+  h_b98c004121ae66 2,8,50-55,61,63,66-67,71-73,75,101,117,128,132,134-135,139,142-152
+docs/plugin-plan/host-api/services.html
+  h_b98c004121ae66 2,8,50-55,61,63-64,67-68,72-74,76,106,122,132,136,138,142,145-224
+docs/plugin-plan/host-api/session.html
+  h_b98c004121ae66 2,8,50-55,61,63-70,73-74,78-129,131-351,397,413,425,430,432-433,437,440-817
+docs/plugin-plan/host-api/shell.html
+  h_b98c004121ae66 2,8,50-55,61,63,66-67,71-75,98-99,114-115,125,130,132-133,137,140-150
+docs/plugin-plan/host-api/speech.html
+  h_b98c004121ae66 2,8,50-55,61,63-64,67-68,72-74,76,111,127,137,142,144,148,151-231
+docs/plugin-plan/host-api/themes.html
+  h_b98c004121ae66 2,8,50-55,61,63-66,69-70,74-294,325-326,334-335,346,350,352-353,357,360-370
+docs/plugin-plan/host-api/ui.html
+  h_b98c004121ae66 2,8,50-55,61,63-69,72-73,77-425,450-451,467-468,477,482,484-485,489,492-568
+docs/plugin-plan/host-api/usage.html
+  h_b98c004121ae66 2,8,50-55,61,63,66-67,71-73,75,124,142,152,156,158-159,163,166-181
+docs/plugin-plan/host-api/workspace.html
+  h_b98c004121ae66 2,8,50-55,61,63,66-67,71-73,75,96,105,109,113,115-116,120,123-133
+docs/plugin-plan/index.html
+  h_b98c004121ae66 149
+docs/plugin-plan/runtime/session-context/data-flow.html
+  h_b98c004121ae66 166
+docs/plugin-plan/runtime/session-model/data-flow.html
+  h_b98c004121ae66 140
+docs/project/README.md
+  h_b98c004121ae66 1,3-5,9-12
+docs/project/pi-0991-adoption.md
+  h_b98c004121ae66 5,91
+docs/project/windows-native-snap-evidence/.gitattributes
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/.gitignore
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/baseline/host-stderr.txt
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/baseline/native-rpc.jsonl
+  h_b98c004121ae66 1-2
+docs/project/windows-native-snap-evidence/2b52999879a6/baseline/probe.log
+  h_b98c004121ae66 1-4
+docs/project/windows-native-snap-evidence/2b52999879a6/baseline/ready.json
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/baseline/result.json
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/baseline/stdout.txt
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/candidate/host-stderr.txt
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/candidate/native-rpc.jsonl
+  h_b98c004121ae66 1-34
+docs/project/windows-native-snap-evidence/2b52999879a6/candidate/probe.log
+  h_b98c004121ae66 1-27
+docs/project/windows-native-snap-evidence/2b52999879a6/candidate/ready.json
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/candidate/result.json
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/candidate/stdout.txt
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/2b52999879a6/manifest.json
+  h_b98c004121ae66 1-38
+docs/project/windows-native-snap-evidence/2b52999879a6/runner.log
+  h_b98c004121ae66 1-7
+docs/project/windows-native-snap-evidence/2b52999879a6/source.json
+  h_b98c004121ae66 1-26
+docs/project/windows-native-snap-evidence/2b52999879a6/summary.json
+  h_b98c004121ae66 1-57
+docs/project/windows-native-snap-evidence/38c5a5bd77ef/baseline.json
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/38c5a5bd77ef/candidate.json
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-evidence/38c5a5bd77ef/manifest.json
+  h_b98c004121ae66 1-15,17
+docs/project/windows-native-snap-evidence/38c5a5bd77ef/stdout.txt
+  h_b98c004121ae66 1
+docs/project/windows-native-snap-replay.md
+  h_b98c004121ae66 1-141
+docs/scripts/check-docs.mjs
+  h_b98c004121ae66 345-347
+docs/scripts/check-locales.mjs
+  h_b98c004121ae66 34-41,45-46,52,57-60,63,108-109
+docs/scripts/check-locales.test.mjs
+  h_b98c004121ae66 19,22-23,27-52,62-63
+docs/spec/00-baseline.md
+  h_b98c004121ae66 3-6,9-11,218-219
+docs/spec/02-architecture/03-repo-structure.md
+  h_b98c004121ae66 50-52,54-56
+docs/spec/02-architecture/04-documentation-site.md
+  h_b98c004121ae66 5-6,18-19,22-25,40-42,57-58,74-76,85-87
+docs/spec/03-runtime/01-ipc-protocol.md
+  h_b98c004121ae66 3-14,559-562,2375,2382,2389-2407,2424
+docs/spec/03-runtime/02-agent-runtime.md
+  h_b98c004121ae66 148-160,233-236,495-504,651-654,672-677,711-713,1530,1532-1539,2055-2057,2064-2069,2082-2084
+docs/spec/03-runtime/03-tools-and-permissions.md
+  h_b98c004121ae66 330-334,875-889,899-906,1057-1060
+docs/spec/03-runtime/04-data-storage.md
+  h_b98c004121ae66 1,1989-1994,2143-2217
+docs/spec/03-runtime/06-host-rpc-protocol.md
+  h_b98c004121ae66 333-335,827-830,1227-1228,1619-1620,1643-1644,1646,1663-1703
+docs/spec/03-runtime/11-provider-model-system.md
+  h_b98c004121ae66 91-95
+docs/spec/03-runtime/21-image-generation.md
+  h_b98c004121ae66 16
+docs/spec/04-ux/03-permission-ux.md
+  h_b98c004121ae66 157-161,193-194
+docs/spec/04-ux/07-ui-design-system.md
+  h_b98c004121ae66 3-15
+docs/spec/04-ux/08-component-spec.md
+  h_b98c004121ae66 3-10,2310-2312,2701-2706,2998-3003,3061-3065,3145-3167,3378-3381,3467-3471,3532
+docs/spec/04-ux/09-interaction-patterns.md
+  h_b98c004121ae66 1670-1679,1995-2024
+docs/spec/06-delivery/06-release-runbook.md
+  h_b98c004121ae66 297,320,343
+docs/spec/06-delivery/README.md
+  h_b98c004121ae66 10-11
+docs/spec/06-delivery/e2e/conversation.md
+  h_b98c004121ae66 1-105,109,126-222,224-236,238-302,304-346,348-374,376-460,462-510,512-594,596-721,723-947,950-1321,1323-1460,1462-1630,1632-1706,1715-2137,2139-2312,2315-2490,2492-3864,3866-4208,4253-4612,4618-4624,4627-4630,4641-4683,4695-4696,4705,4707-4708,4710,4712-4892
+docs/spec/06-delivery/e2e/live-and-remote.md
+  h_b98c004121ae66 1-742
+docs/spec/06-delivery/e2e/plans-goals-automation.md
+  h_b98c004121ae66 1-784
+docs/spec/06-delivery/e2e/release-and-platform.md
+  h_b98c004121ae66 1-1345
+docs/spec/06-delivery/e2e/ui-shell.md
+  h_b98c004121ae66 1-3689
+docs/spec/06-delivery/plugin-reviews-test-plan.md
+  h_b98c004121ae66 221,260,274,276
+docs/spec/07-plugins/02-plugin-manifest-schema.md
+  h_b98c004121ae66 635-647,686-692
+docs/spec/07-plugins/03-plugin-api.md
+  h_b98c004121ae66 1014-1029
+docs/spec/07-plugins/07-plugin-marketplace.md
+  h_b98c004121ae66 310-329,524-527,550-553,562-566,614-648,714
+docs/spec/07-plugins/12-plugin-ipc-and-host-services.md
+  h_b98c004121ae66 101
+docs/spec/07-plugins/13-plugin-permissions-matrix.md
+  h_b98c004121ae66 43
+docs/spec/07-plugins/15-plugin-center.md
+  h_b98c004121ae66 128
+docs/spec/07-plugins/16-trusted-extensions.md
+  h_b98c004121ae66 330,351-354
+docs/spec/08-meta/decisions-log.md
+  h_b98c004121ae66 9-12,21,27-39,46,48,50,52-54,56-58,60,87,89-91,105-109,111-113,115-125,127-140,142-144,146,148-152,154,206-207,214,276-283,302-312,314-320,323-325,327,332,334-335,337-338,341,345,353,364-379,392-410,412-413,415,418,421-429,431-438,445,447,467,480-481,484,486,488-492,494,514-515,517-518,524-527,675-678,680-682,696-698,700-704,717-722,747,749-758,762,765-768,783,785-790,806-807,809,813-816,889-910,914-923,926,977-980,984-987,991-993,1012-1016,1021-1024,1028-1031,1048-1051,1074-1078,1082-1085,1089-1092,1096-1099,1103-1106,1110-1114,1118-1122,1126-1129,1133-1137,1141-1144,1160,1164-1167,1247-1251,1255-1259,1263-1266,1270-1273,1305-1308,1312-1316,1320-1324,1328-1332,1336-1339,1364-1367,1371-1374,1378-1382,1386-1390,1394-1398,1402-1405,1409-1412,1416-1418,1422-1425,1429-1432,1465-1469,1473-1476,1505-1509,1540-1544,1610-1614,1618-1621,1625-1629,1633-1637,1641-1644,1648-1651,1655-1658,1662-1666,1670-1673,1677-1680,1684-1687,1691-1694,1698-1701,1705-1707,1711-1715,1718-1721,1725-1729,1733-1737,1741-1744,1748-1751,1755-1757,1761-1765,1769-1773,1777-1779,1783-1785,1789-1793,1810-1813,1817-1820,1824-1828,1832-1836,1840-1844,1886-1890,1894-1898,1902-1906,1958-1962,2050-2053,2057-2060,2064-2068,2072-2076,2080-2084,2102-2106,2110-2114,2118-2121,2125-2128,2145-2148,2152-2155,2207-2210,2214-2217,2221-2224,2228-2231,2235-2238,2242-2245,2339,2342-2346,2410-2414,2489-2493,2497-2500,2535-2538,2542-2545,2549-2552,2556-2559,2563-2566,2570-2573,2577-2580,2584-2587,2613-2616,2620-2623,2627-2630,2634-2637,2641-2644,2648-2651,2655-2658,2676-2679,2683-2686,2690-2693,2697-2700,2704-2707,2711-2714,2718-2721,2725-2728,2732-2735,2739-2742,2746-2749,2753-2756,2760-2763,2786-2789,2793-2796,2800-2803,2807-2810,2814-2817,2821-2824,2828-2831,2835-2838,2842-2845,2849-2853,2857-2860,2864-2865,2875-2876,2879-2882,2886-2889,2893-2896,2900-2903,2907-2910,2914-2917,2921-2925,2928-2932,2936-2939,2943-2946,2950-2951,2953,2957-2961,2964-2967,2988-2991,2995-2998,3002-3005,3009-3012,3016-3019,3027-3030,3034-3037,3041-3045,3063-3066,3084-3085,3087,3091-3094,3100-3103,3109-3114,3117-3120,3124-3127,3131-3133,3137-3138,3142-3145,3149-3152,3156-3159,3163-3166,3170-3173,3177-3181,3185-3189,3193-3194,3198-3200,3204-3206,3210-3212,3216-3220,3224-3226,3230-3231,3235-3237,3241-3242,3246-3248,3254-3257,3261-3264,3268-3269,3286-3289,3308-3309,3313-3316,3320-3323,3327-3329,3333-3336,3340-3343,3347-3350,3354-3355,3357,3361-3364,3370-3372,3409-3413,3454,3457-3460,3464-3467,3471-3475,3610-3613,3617-3619,3653-3657,3661-3662,3664,3668-3672,3816-3823,3827-3836,3840-3848,3852-3860,3864-3871,3875-3883,3887-3895,3899-3905,3917-3924,3928-3936,3940-3947,3995-4001,4005-4013,4017-4026,4138-4146,4322-4330,4334-4344,4364-4371,4393-4401,4405-4411,4445-4453,4514-4521,4549-4558,4615-4622,4626-4633,4637-4642,4644-4645,4649-4657,4661-4667,4671-4678,4736-4744,4764-4772,4776-4784,4804-4812,4815-4822,4841-4848,4865-4873,4877-4884,4915-4923,4956-4963,4995-5004,5008-5015,5019-5027,5235-5244,5268-5276,5280-5289,5293-5302,5306-5313
+docs/spec/NAV.md
+  h_b98c004121ae66 79-86
+docs/zh-CN/adr/index.md
+  h_b98c004121ae66 303,329
+docs/zh-CN/guide/index.md
+  h_b98c004121ae66 17-19,22
+docs/zh-CN/guide/screenshots.md
+  h_b98c004121ae66 8
+docs/zh-CN/plugin-development.md
+  h_b98c004121ae66 8,47,209,334,455,543,594,873,962,1061,1090,1212,1235-1241
+docs/zh-CN/spec/README.md
+  h_b98c004121ae66 5-6,23-35,37-40
+package.json
+  h_b98c004121ae66 75,109,124-125
+packages/agent-host/src/agent-host.ts
+  h_b98c004121ae66 105,474,476-477,490,542,562-563,569,1012,1085,1558
+packages/agent-host/src/ports.ts
+  h_b98c004121ae66 47,94
+packages/agent-runtime/src/agent-errors.test.ts
+  h_b98c004121ae66 769-835,949-1060
+packages/agent-runtime/src/agent-errors.ts
+  h_b98c004121ae66 54-65,68,79
+packages/agent-runtime/src/agent-messages.ts
+  h_b98c004121ae66 88-89
+packages/agent-runtime/src/background-job-tools.test.ts
+  h_b98c004121ae66 87-114,116-117,134-155,170-200
+packages/agent-runtime/src/background-job-tools.ts
+  h_b98c004121ae66 16,34-39,173,175
+packages/agent-runtime/src/compaction-restore-tool-pairs.test.ts
+  h_b98c004121ae66 1-162
+packages/agent-runtime/src/compaction-summary-input.test.ts
+  h_b98c004121ae66 16,18,125-152,292-320
+packages/agent-runtime/src/compaction-summary-input.ts
+  h_b98c004121ae66 11,81-136,144-147,149-151,252-254,274-297,318,329
+packages/agent-runtime/src/compaction-tail.test.ts
+  h_b98c004121ae66 3-7,105-116,251-256,269-301
+packages/agent-runtime/src/compaction-tail.ts
+  h_b98c004121ae66 32-35,58-89,95-96,102-108,111
+packages/agent-runtime/src/extensions/runner.test.ts
+  h_b98c004121ae66 163-197
+packages/agent-runtime/src/extensions/runner.ts
+  h_b98c004121ae66 572-590
+packages/agent-runtime/src/mode-completion-flow.test.ts
+  h_b98c004121ae66 1-5,7-20,22-96
+packages/agent-runtime/src/mode-definitions.test.ts
+  h_b98c004121ae66 147-172,176-177,188-203,205
+packages/agent-runtime/src/mode-definitions.ts
+  h_b98c004121ae66 7-11,110,201-220,237-241,245-246,249-250,252,257,259,268-271,273,288-289,298,300,306,315,321-322,327-379
+packages/agent-runtime/src/mode-prompts.ts
+  h_b98c004121ae66 37-38
+packages/agent-runtime/src/modes/complete-stage-tool.test.ts
+  h_b98c004121ae66 25,45,55,57,195-291
+packages/agent-runtime/src/modes/complete-stage-tool.ts
+  h_b98c004121ae66 16,21,38-42,77-78,81,95-96,102-119,122,199,207,222-226,230-240,246-247,249,258,268-270,274,295,310
+packages/agent-runtime/src/modes/completion-report.test.ts
+  h_b98c004121ae66 1-39
+packages/agent-runtime/src/modes/completion-report.ts
+  h_b98c004121ae66 1-61
+packages/agent-runtime/src/modes/mode-state.test.ts
+  h_b98c004121ae66 121-132
+packages/agent-runtime/src/modes/stage-brief.ts
+  h_b98c004121ae66 136,183-184
+packages/agent-runtime/src/output-cap.test.ts
+  h_b98c004121ae66 3-4,9,593-636
+packages/agent-runtime/src/output-cap.ts
+  h_b98c004121ae66 40,119-125,291-354
+packages/agent-runtime/src/output-truncation.test.ts
+  h_b98c004121ae66 1-4,6,8-19,21-46,48-62,64-72,74-84
+packages/agent-runtime/src/pi-file-ops.test.ts
+  h_b98c004121ae66 15,40-53,58-106,112,136,138-139,195-198,233-238,307-320,342-343,347,349,358-512,544-580
+packages/agent-runtime/src/pi-runtime-compaction-plan.ts
+  h_b98c004121ae66 152-156,170,173-215,220,226,241,257,320-330,332-334
+packages/agent-runtime/src/provider-binding.test.ts
+  h_b98c004121ae66 1708,1711,1756-1761,1775-1776,1781-1782,1784-1798,1801,1824
+packages/agent-runtime/src/provider-retry.test.ts
+  h_b98c004121ae66 21,29,1126-1129,1172-1213,1217-1222,1336-1375
+packages/agent-runtime/src/provider-retry.ts
+  h_b98c004121ae66 142-146,148-149,159-162
+packages/agent-runtime/src/reasoning-replay.test.ts
+  h_b98c004121ae66 29,143-150
+packages/agent-runtime/src/reasoning-replay.ts
+  h_b98c004121ae66 112-114,116,121-122
+packages/agent-runtime/src/request-usage.test.ts
+  h_b98c004121ae66 14-44
+packages/agent-runtime/src/runtime.test.ts
+  h_b98c004121ae66 6105-6130,8793-8794,8797,8799-8814,8816-8823,8907-8947,12824-12901
+packages/agent-runtime/src/runtime.ts
+  h_b98c004121ae66 1,177,244,385,388,444,1619-1625,1628-1632,1651-1659,2219,3225,3253-3254,3256-3262,3276,3296,3362-3364,3370-3371,3387-3388,4754-4760,7593-7598,7604,7606,9261-9264,9885
+packages/agent-runtime/src/session-affinity-flow.test.ts
+  h_b98c004121ae66 1-108
+packages/agent-runtime/src/session-affinity.test.ts
+  h_b98c004121ae66 151,154,424-426,465
+packages/agent-runtime/src/session-affinity.ts
+  h_b98c004121ae66 55,89-91,102-105
+packages/agent-runtime/src/subagent-context.test.ts
+  h_b98c004121ae66 20-27,55-66,259-296,377-435
+packages/agent-runtime/src/subagent-context.ts
+  h_b98c004121ae66 39,45-48,50,285-292,294-296,317-321,324-345,349-369,371-372,377-379,390,498,500,502-510
+packages/agent-runtime/src/tool-schema.test.ts
+  h_b98c004121ae66 14-40,79-270
+packages/agent-runtime/src/tool-schema.ts
+  h_b98c004121ae66 8-11,13,18-101,103,110-116,119,122-123,126
+packages/host-runtime/src/agent-sidecar.ts
+  h_b98c004121ae66 73-75
+packages/host-runtime/src/host-ports.test.ts
+  h_b98c004121ae66 3-9,36-43,85-179,181-182,209-214,216-224,227-238,247-249
+packages/host-runtime/src/host-ports.ts
+  h_b98c004121ae66 12-17,21-24,41-48,50-52,57-60,65-66,68-70,72-73,81-83,88-89,101-106,112-154,156-158,160-163,166-172,178-185,190-192,210,223-225,231-234,237-239,249-251,256-259,267-269,272-278,285-288,295-301,314-319
+packages/host-runtime/src/sidecar-mode-completion.test.ts
+  h_b98c004121ae66 1-2,4-7,9-66
+packages/i18n/src/locales/de/index.ts
+  h_b98c004121ae66 274,458,880,933-937,942,1033,2553-2565
+packages/i18n/src/locales/en/index.ts
+  h_b98c004121ae66 281,470,892,945-949,954,1043,2574-2586
+packages/i18n/src/locales/es/index.ts
+  h_b98c004121ae66 274,458,880,933-937,942,1033,2553-2565
+packages/i18n/src/locales/fr/index.ts
+  h_b98c004121ae66 274,458,880,933-937,942,1033,2553-2565
+packages/i18n/src/locales/ko/index.ts
+  h_b98c004121ae66 283,470,889,942-946,951,1040,2570-2582
+packages/i18n/src/locales/pt-BR/index.ts
+  h_b98c004121ae66 273,457,879,932-936,941,1030,2520-2532
+packages/i18n/src/locales/tr/index.ts
+  h_b98c004121ae66 283,470,889,942-946,951,1040,2564-2576
+packages/i18n/src/locales/zh-CN/index.ts
+  h_b98c004121ae66 276,463,885,938-942,947,1036,2548-2560
+packages/i18n/src/locales/zh-TW/index.ts
+  h_b98c004121ae66 276,463,885,938-942,947,1036,2548-2560
+packages/plugin-devkit/src/check.test.ts
+  h_b98c004121ae66 103-115
+packages/plugin-devkit/src/check.ts
+  h_b98c004121ae66 162-165,202-210,218
+packages/plugin-sdk/src/index.test.ts
+  h_b98c004121ae66 88-113
+packages/plugin-sdk/src/index.ts
+  h_b98c004121ae66 1759-1775
+packages/shared/src/background-jobs.ts
+  h_b98c004121ae66 7
+packages/shared/src/changelog-de.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-en.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-es.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-fr.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-ko.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-pt-BR.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-tr.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-zh-CN.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog-zh-TW.ts
+  h_b98c004121ae66 4-33
+packages/shared/src/changelog.test.ts
+  h_b98c004121ae66 37,45-46
+packages/shared/src/image-generation.ts
+  h_b98c004121ae66 48-89
+packages/shared/src/index.ts
+  h_b98c004121ae66 91
+packages/shared/src/local-file-references.ts
+  h_b98c004121ae66 1-13
+packages/shared/src/protocol.ts
+  h_b98c004121ae66 438
+packages/shared/src/types/agent.ts
+  h_b98c004121ae66 14-15,66-67,125,139
+packages/shared/src/types/composer.ts
+  h_b98c004121ae66 44,46-48
+packages/shared/src/types/marketplace.ts
+  h_b98c004121ae66 18,20-21,36-76
+packages/shared/src/types/messages.ts
+  h_b98c004121ae66 73,114-115,139-140
+packages/shared/src/types/mode-runs.ts
+  h_b98c004121ae66 17,19-20,29-36,49-50,56-59,142,144-148,159-162
+pnpm-lock.yaml
+  h_b98c004121ae66 334-336,3520-3528,3532-3534,3544-3562,4017-4026,7966-7977,7990-8003,8051-8069,8623-8633
+scripts/README.md
+  h_b98c004121ae66 56-57,69
+scripts/e2e-compaction-restore-tool-pairs.mjs
+  h_b98c004121ae66 1-9,11-15,17-25,27-124,126-128
+scripts/e2e-composer-paste.mjs
+  h_b98c004121ae66 6,19,55-57,75-80,100-102,113-123,136-162,311-312,325-327,355,357-363,440,453-465
+scripts/e2e-goal-completion.mjs
+  h_b98c004121ae66 1-242
+scripts/e2e-goal-layout.mjs
+  h_b98c004121ae66 1-148
+scripts/e2e-goal-live.mjs
+  h_b98c004121ae66 174,192
+scripts/e2e-goal-run-repairs.mjs
+  h_b98c004121ae66 1-132
+scripts/e2e-image-chat.mjs
+  h_b98c004121ae66 49-56,232-239,242-250,253-254,256,258-274,389
+scripts/e2e-installed-grid.mjs
+  h_b98c004121ae66 4,8
+scripts/e2e-legacy-goal-migration.mjs
+  h_b98c004121ae66 1-112
+scripts/e2e-mode-definitions.mjs
+  h_b98c004121ae66 6,11-16,82-153
+scripts/e2e-native-stop-refresh-failure.mjs
+  h_b98c004121ae66 1-71
+scripts/e2e-plan-ui.mjs
+  h_b98c004121ae66 17-19,25,33,1078,1277-1331,1509-1513,1671-1672
+scripts/e2e-plugin-id-collision.mjs
+  h_b98c004121ae66 1-123
+scripts/e2e-plugin-view-refresh-order.mjs
+  h_b98c004121ae66 1-77
+scripts/e2e-provider-refresh-remote-identity.mjs
+  h_b98c004121ae66 1-8,10-71
+scripts/e2e-remote-project-groups-journey.mjs
+  h_b98c004121ae66 1-710
+scripts/e2e-session-background-jobs.mjs
+  h_b98c004121ae66 31,61,105-130,177,189
+scripts/e2e-stop-navigation-running-state.mjs
+  h_b98c004121ae66 1-8,10-71
+scripts/e2e-transcript-anchor-repair.mjs
+  h_b98c004121ae66 1-49,51-98
+scripts/e2e-transcript-render.mjs
+  h_b98c004121ae66 299
+scripts/e2e-window-controls.mjs
+  h_b98c004121ae66 28-35,140,164,240,250,323-330,332-333,341-362
+scripts/e2e-window-native-behavior.mjs
+  h_b98c004121ae66 1-87
+scripts/e2e-window-snap.mjs
+  h_b98c004121ae66 1-75
+scripts/e2e/composer-paste.tsx
+  h_b98c004121ae66 40,42,44-45,51,164,253-299,764-765,773-774
+scripts/e2e/fixtures/goal-layout-store.ts
+  h_b98c004121ae66 1-9
+scripts/e2e/fixtures/window-snap/main.cjs
+  h_b98c004121ae66 1-129
+scripts/e2e/goal-layout.tsx
+  h_b98c004121ae66 1-250
+scripts/e2e/image-chat-model.mjs
+  h_b98c004121ae66 41
+scripts/e2e/installed-grid.tsx
+  h_b98c004121ae66 288,290-291,519-524,560
+scripts/e2e/native-stop-refresh-failure.tsx
+  h_b98c004121ae66 1-39
+scripts/e2e/plugin-view-refresh-order.tsx
+  h_b98c004121ae66 1-34
+scripts/e2e/probe-window-snap.cs
+  h_b98c004121ae66 1-266
+scripts/e2e/provider-refresh-remote-identity.tsx
+  h_b98c004121ae66 1-43
+scripts/e2e/run-window-snap.ps1
+  h_b98c004121ae66 1-117
+scripts/e2e/session-reading-position.tsx
+  h_b98c004121ae66 171-174,177-184
+scripts/e2e/stop-navigation-running-state.tsx
+  h_b98c004121ae66 1-47
+scripts/e2e/transcript-anchor-repair.tsx
+  h_b98c004121ae66 1-198
+scripts/e2e/transcript-render.tsx
+  h_b98c004121ae66 705-722,739
+scripts/publish-screenshots.py
+  h_b98c004121ae66 16,30
+tests/history-loading-scroll-test-cases.md
+  h_b98c004121ae66 71-101,236
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "c1dba79f896760b891ce77a9a4082ed524c890d5",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
