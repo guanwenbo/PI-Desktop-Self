@@ -1,0 +1,16 @@
+crates/host-core/src/session_collaboration/mod.rs
+  h_b98c004121ae66 108-124,149-164
+crates/host-core/src/session_collaboration/tests.rs
+  h_b98c004121ae66 481-487,501-502,570-614
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "70c1464bd7b23e952351b0b2b0ef6068bbdd466d",
+  "prompts": {},
+  "humans": {
+    "h_b98c004121ae66": {
+      "author": "gwbgwb <guanwenbo@jd.com>"
+    }
+  }
+}
