@@ -11242,6 +11242,10 @@ describe("DesktopAgentRuntime subagents", () => {
     expect(over.content[0].text).toContain(
       `${MAX} subagents are already running`,
     );
+    // The message names the running delegations so the model knows which one
+    // to converge or stop instead of retrying blind.
+    expect(over.content[0].text).toContain(`explorer(${ids[0]})`);
+    expect(over.content[0].text).toContain("TaskList");
     await expect(
       (runtime as any).agent.afterToolCall({ toolCall: { id: "task-over" } }),
     ).resolves.toEqual({ isError: true });

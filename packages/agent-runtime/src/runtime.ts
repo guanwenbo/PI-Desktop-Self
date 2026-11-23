@@ -5362,9 +5362,17 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           if (!current.ok) return this.subagentToolError(toolCallId, current.message);
         }
         if (this.runningDelegations().length >= MAX_SUBAGENT_CONCURRENCY) {
+          // Name the running delegations so the model can pick which one to
+          // converge or stop, instead of retrying blind.
+          const running = this.runningDelegations();
+          const shown = running
+            .slice(0, 5)
+            .map((record) => `${record.agentName}(${record.delegationId})`)
+            .join(", ");
+          const rest = running.length > 5 ? `, +${running.length - 5} more` : "";
           return this.subagentToolError(
             toolCallId,
-            `${MAX_SUBAGENT_CONCURRENCY} subagents are already running for this session. Wait for some with TaskWait or stop them with TaskStop before delegating more.`,
+            `${MAX_SUBAGENT_CONCURRENCY} subagents are already running for this session: ${shown}${rest}. Call TaskList for the full list, converge some with TaskWait, or stop them with TaskStop before delegating more.`,
           );
         }
         if (resumedProvider) provider = resumedProvider;
