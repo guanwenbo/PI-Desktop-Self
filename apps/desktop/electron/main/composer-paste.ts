@@ -76,6 +76,32 @@ function bytesOf(data: unknown): Uint8Array {
   throw new Error("clipboard file data is invalid");
 }
 
+function startsWith(bytes: Uint8Array, signature: number[], offset = 0): boolean {
+  return signature.every((byte, index) => bytes[offset + index] === byte);
+}
+
+/**
+ * Identify the raster format from the leading bytes. Clipboard metadata is not
+ * reliable: Chromium labels pasted images `image.png` regardless of their
+ * encoding, so a JPEG would otherwise be stored and sent as PNG.
+ */
+function sniffImageMimeType(bytes: Uint8Array): string | undefined {
+  if (startsWith(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return "image/png";
+  if (startsWith(bytes, [0xff, 0xd8, 0xff])) return "image/jpeg";
+  if (startsWith(bytes, [0x47, 0x49, 0x46, 0x38])) return "image/gif";
+  if (startsWith(bytes, [0x52, 0x49, 0x46, 0x46]) && startsWith(bytes, [0x57, 0x45, 0x42, 0x50], 8)) {
+    return "image/webp";
+  }
+  return undefined;
+}
+
+/** Replace an extension that contradicts the detected image format. */
+function withImageExtension(name: string, sniffedMimeType: string | undefined): string {
+  if (!sniffedMimeType || mimeTypeForPath(name) === sniffedMimeType) return name;
+  const extension = extname(name);
+  return `${name.slice(0, name.length - extension.length)}${MIME_EXTENSIONS[sniffedMimeType]}`;
+}
+
 function fileNameOf(name: unknown, mimeType: string, index: number): string {
   const normalized = typeof name === "string" ? name.replaceAll("\\", "/") : "";
   const leaf = basename(normalized)
@@ -134,13 +160,16 @@ export async function saveComposerPasteFiles(
       typeof file.mimeType === "string" && file.mimeType.trim()
         ? file.mimeType.trim().toLowerCase()
         : "application/octet-stream";
-    const mimeType = isSvgAttachment(suppliedMimeType, file.name)
-      ? SVG_MIME_TYPE
-      : suppliedMimeType;
+    // Detected image bytes override the clipboard's label so the stored
+    // extension and the MIME type sent to the model match the real encoding.
+    const sniffedMimeType = sniffImageMimeType(bytes);
+    const mimeType =
+      sniffedMimeType ??
+      (isSvgAttachment(suppliedMimeType, file.name) ? SVG_MIME_TYPE : suppliedMimeType);
     return {
       bytes,
       mimeType,
-      name: fileNameOf(file.name, mimeType, index),
+      name: withImageExtension(fileNameOf(file.name, mimeType, index), sniffedMimeType),
     };
   });
 

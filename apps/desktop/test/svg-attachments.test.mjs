@@ -233,7 +233,10 @@ test("existing non-SVG image metadata is not narrowed to a new provider allowlis
     const bytes = Buffer.concat([png, Buffer.from(`transport fixture: ${extension}`)]);
     const [saved] = await saveComposerPasteFiles(data, sessionId, [{ name: `fixture.${extension}`, mimeType, data: bytes }]);
     assert.equal(saved.kind, "image");
-    const [prepared] = await preparePromptAttachments(data, sessionId, undefined, [saved], true, "");
+    // Paste records the detected encoding; the prompt layer must still accept
+    // declared metadata from other sources (history, imports) unchanged.
+    assert.equal(saved.mimeType, "image/png");
+    const [prepared] = await preparePromptAttachments(data, sessionId, undefined, [{ ...saved, mimeType }], true, "");
     assert.equal(prepared.message.kind, "image");
     assert.equal(prepared.message.mimeType, mimeType);
     assert.deepEqual(Buffer.from(prepared.inlineData, "base64"), bytes);

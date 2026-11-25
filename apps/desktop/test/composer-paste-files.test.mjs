@@ -309,6 +309,39 @@ test("paste results separate display names from unique storage paths", async () 
   }
 });
 
+test("pasted image bytes decide the stored extension and MIME type", async () => {
+  // Chromium names clipboard images `image.png` whatever their encoding; a
+  // JPEG kept under that label fails image validation and model upload.
+  const { saveComposerPasteFiles } = await import(
+    "../electron/main/composer-paste.ts"
+  );
+  const jpeg = [0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46];
+  const png = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00];
+  const root = await mkdtemp(join(tmpdir(), "pi-composer-paste-sniff-"));
+  try {
+    const [labelledPng, labelledJpeg, unnamed] = await saveComposerPasteFiles(root, "session-sniff", [
+      { name: "image.png", mimeType: "image/png", data: new Uint8Array(jpeg).buffer },
+      { name: "photo.jpg", mimeType: "image/jpeg", data: new Uint8Array(png).buffer },
+      { mimeType: "", data: new Uint8Array(jpeg).buffer },
+    ]);
+
+    assert.equal(labelledPng.name, "image.jpg");
+    assert.equal(labelledPng.mimeType, "image/jpeg");
+    assert.equal(labelledPng.kind, "image");
+    assert.match(basename(labelledPng.path), /^pasted-.+-image\.jpg$/);
+    assert.deepEqual(Array.from(await readFile(labelledPng.path)), jpeg);
+
+    assert.equal(labelledJpeg.name, "photo.png");
+    assert.equal(labelledJpeg.mimeType, "image/png");
+
+    assert.equal(unnamed.name, "pasted-file-3.jpg");
+    assert.equal(unnamed.mimeType, "image/jpeg");
+    assert.equal(unnamed.kind, "image");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("large pasted text is preserved byte-for-byte in session scratch", async () => {
   const { saveComposerPasteFiles } = await import(
     "../electron/main/composer-paste.ts"
