@@ -5,6 +5,8 @@ import {
   omittedImageNotice,
   probeBase64ImageDimensions,
   probeImageDimensions,
+  sniffBase64ImageMimeType,
+  sniffImageMimeType,
 } from "./image-dimensions.js";
 
 function png(width: number, height: number): Uint8Array {
@@ -47,6 +49,27 @@ function riff(chunk: string, payload: number[]): Uint8Array {
 function base64(bytes: Uint8Array): string {
   return Buffer.from(bytes).toString("base64");
 }
+
+describe("image MIME sniffing", () => {
+  it("names the format from the signature bytes", () => {
+    expect(sniffImageMimeType(png(1, 1))).toBe("image/png");
+    expect(sniffImageMimeType(jpeg(1, 1))).toBe("image/jpeg");
+    expect(sniffImageMimeType(gif(1, 1))).toBe("image/gif");
+    expect(sniffImageMimeType(riff("VP8 ", []))).toBe("image/webp");
+  });
+
+  it("returns undefined for other content", () => {
+    expect(sniffImageMimeType(new TextEncoder().encode("plain text, not a png"))).toBeUndefined();
+    expect(sniffImageMimeType(new Uint8Array([0xff, 0xd8]))).toBeUndefined();
+    expect(sniffImageMimeType(new Uint8Array())).toBeUndefined();
+  });
+
+  it("reads the signature from a base64 payload", () => {
+    expect(sniffBase64ImageMimeType(base64(jpeg(1, 1)))).toBe("image/jpeg");
+    expect(sniffBase64ImageMimeType(base64(png(1, 1)))).toBe("image/png");
+    expect(sniffBase64ImageMimeType("%%%")).toBeUndefined();
+  });
+});
 
 describe("image dimension probe", () => {
   it("reads PNG, GIF, and JPEG headers", () => {

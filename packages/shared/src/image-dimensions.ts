@@ -109,17 +109,36 @@ function jpegDimensions(bytes: Uint8Array): ImageDimensions | undefined {
 }
 
 /**
+ * Raster MIME type from the leading signature bytes, or `undefined` for any
+ * other content. A file name or declared type is only metadata: a JPEG saved
+ * as `shot.png` must still travel as `image/jpeg`, because providers reject a
+ * media type that contradicts the bytes.
+ */
+export function sniffImageMimeType(bytes: Uint8Array): string | undefined {
+  if (ascii(bytes, 0, "\x89PNG\r\n\x1a\n")) return "image/png";
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
+  if (ascii(bytes, 0, "GIF8")) return "image/gif";
+  if (ascii(bytes, 0, "RIFF") && ascii(bytes, 8, "WEBP")) return "image/webp";
+  return undefined;
+}
+
+/**
  * Pixel size from a PNG, JPEG, GIF, or WebP header, or `undefined` when the
  * bytes are not a recognized image or the header is cut short.
  */
 export function probeImageDimensions(bytes: Uint8Array): ImageDimensions | undefined {
-  if (ascii(bytes, 0, "\x89PNG\r\n\x1a\n")) return pngDimensions(bytes);
-  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
-    return jpegDimensions(bytes);
+  switch (sniffImageMimeType(bytes)) {
+    case "image/png":
+      return pngDimensions(bytes);
+    case "image/jpeg":
+      return jpegDimensions(bytes);
+    case "image/gif":
+      return gifDimensions(bytes);
+    case "image/webp":
+      return webpDimensions(bytes);
+    default:
+      return undefined;
   }
-  if (ascii(bytes, 0, "GIF8")) return gifDimensions(bytes);
-  if (ascii(bytes, 0, "RIFF") && ascii(bytes, 8, "WEBP")) return webpDimensions(bytes);
-  return undefined;
 }
 
 function decodeBase64Prefix(data: string, chars: number): Uint8Array | undefined {
@@ -134,6 +153,12 @@ function decodeBase64Prefix(data: string, chars: number): Uint8Array | undefined
   } catch {
     return undefined;
   }
+}
+
+/** `sniffImageMimeType` for a base64 payload; the signatures fit in 12 bytes. */
+export function sniffBase64ImageMimeType(data: string): string | undefined {
+  const head = decodeBase64Prefix(data, 16);
+  return head ? sniffImageMimeType(head) : undefined;
 }
 
 /** Header-only bytes cover every format except a JPEG with a large EXIF block. */

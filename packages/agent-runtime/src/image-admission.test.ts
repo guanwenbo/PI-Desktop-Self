@@ -19,6 +19,11 @@ const NORMAL = pngBase64(1688, 1514);
 /** HEIC-style header: a real container format, but not one a provider accepts. */
 const HEIC = Buffer.from("000000186674797068656963000000006d69663168656963", "hex")
   .toString("base64");
+/** A baseline JPEG header (SOI + SOF0, 2 x 2): bytes a `.png` name can carry. */
+const JPEG = Buffer.from([
+  0xff, 0xd8, 0xff, 0xc0, 0x00, 0x11, 0x08, 0x00, 0x02, 0x00, 0x02, 0x03,
+  0x01, 0x11, 0x00, 0x02, 0x11, 0x01, 0x03, 0x11, 0x01, 0xff, 0xd9,
+]).toString("base64");
 const NOTICE =
   "[Image omitted: 780x14182 px exceeds the 8000 px longest-edge limit for model input.]";
 const FORMAT_NOTICE =
@@ -73,6 +78,45 @@ describe("omitUndeliverableImages", () => {
       },
     ];
     expect(omitUndeliverableImages(messages)).toBe(messages);
+  });
+
+  it("sends an image with the media type its bytes carry, not the declared one", () => {
+    const messages: Message[] = [{
+      role: "user",
+      content: [
+        { type: "text", text: "shot" },
+        { type: "image", data: JPEG, mimeType: "image/png" },
+        { type: "image", data: NORMAL, mimeType: "image/png" },
+      ],
+      timestamp: 1,
+    }];
+    const [user] = omitUndeliverableImages(messages);
+    expect(user?.content).toEqual([
+      { type: "text", text: "shot" },
+      { type: "image", data: JPEG, mimeType: "image/jpeg" },
+      { type: "image", data: NORMAL, mimeType: "image/png" },
+    ]);
+    // The stored history keeps its record; only the outgoing view changes.
+    expect((messages[0]?.content as Array<{ mimeType?: string }>)[1]?.mimeType).toBe("image/png");
+  });
+
+  it("heals a restored session whose history holds a mislabeled image", () => {
+    const row = {
+      id: "tool-1",
+      role: "tool",
+      content: "",
+      toolName: "read",
+      toolCallId: "call-1",
+      toolStatus: "done",
+      toolResult: {
+        path: "shot.png",
+        text: "Image file shot.png (23 bytes, image/png); the image is attached to this result.",
+        images: [{ data: JPEG, mimeType: "image/png" }],
+      },
+    } as unknown as UiMessage;
+    const [outgoing] = convertToLlm([toolResultFromUi(row, 1)]);
+    const content = outgoing?.content as Array<{ type: string; mimeType?: string }>;
+    expect(content.find((block) => block.type === "image")?.mimeType).toBe("image/jpeg");
   });
 
   it("heals a restored session whose Read result holds an oversized image", () => {

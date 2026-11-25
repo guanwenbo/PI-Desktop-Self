@@ -10,6 +10,10 @@
  * proof. Replacing the block with a notice is deterministic for the same
  * bytes: the request prefix stays stable across turns and prompt caching
  * keeps working.
+ *
+ * A deliverable image travels with the media type its bytes carry: a JPEG
+ * declared `image/png` (a renamed file, older history, a tool result) is
+ * also a provider 400, so the sniffed type replaces the declared one.
  */
 import type { Message } from "@earendil-works/pi-ai";
 import {
@@ -18,6 +22,7 @@ import {
   omittedImageNotice,
   omittedUnrecognizedImageNotice,
   probeBase64ImageDimensions,
+  sniffBase64ImageMimeType,
 } from "@pi-desktop/shared";
 
 type ContentBlock = Exclude<Message["content"], string>[number];
@@ -32,17 +37,24 @@ function admittedBlocks<T extends ContentBlock>(content: T[]): T[] {
       : isUnrecognizedInlineImage(dimensions)
         ? omittedUnrecognizedImageNotice()
         : undefined;
-    if (notice === undefined) return;
+    if (notice !== undefined) {
+      next ??= content.slice();
+      next[index] = { type: "text", text: notice } as T;
+      return;
+    }
+    const mimeType = sniffBase64ImageMimeType(block.data);
+    if (mimeType === undefined || mimeType === block.mimeType) return;
     next ??= content.slice();
-    next[index] = { type: "text", text: notice } as T;
+    next[index] = { ...block, mimeType };
   });
   return next ?? content;
 }
 
 /**
  * Replace every image a provider would reject — known-oversized, or not a
- * readable PNG/JPEG/GIF/WebP at all — with a text notice. Returns the input
- * array when nothing was replaced.
+ * readable PNG/JPEG/GIF/WebP at all — with a text notice, and correct the
+ * media type of the rest to match their bytes. Returns the input array when
+ * nothing changed.
  */
 export function omitUndeliverableImages(messages: Message[]): Message[] {
   let next: Message[] | undefined;

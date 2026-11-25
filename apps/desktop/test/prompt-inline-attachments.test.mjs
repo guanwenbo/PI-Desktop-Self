@@ -86,6 +86,29 @@ test("an image whose bytes are not an accepted format takes the path fallback", 
   assert.ok(appendPromptFallbackPaths("look at this", [prepared]).includes(prepared.fallbackPath));
 });
 
+test("an image whose bytes contradict its .png name travels with the sniffed MIME type", async (t) => {
+  const { data, path } = await fixture(t);
+  // A baseline JPEG (SOI + SOF0, 2 x 2) saved under a .png name and declared
+  // image/png: providers reject a media type that contradicts the bytes.
+  const jpeg = Buffer.from([
+    0xff, 0xd8, 0xff, 0xc0, 0x00, 0x11, 0x08, 0x00, 0x02, 0x00, 0x02, 0x03,
+    0x01, 0x11, 0x00, 0x02, 0x11, 0x01, 0x03, 0x11, 0x01, 0xff, 0xd9,
+  ]);
+  await writeFile(path, jpeg);
+  const attachment = { path, name: "pasted-a.png", kind: "image", mimeType: "image/png" };
+  const [prepared] = await preparePromptAttachments(
+    data,
+    sessionId,
+    undefined,
+    [attachment],
+    true,
+    "look at this",
+  );
+  assert.equal(prepared.message.kind, "image");
+  assert.equal(prepared.message.mimeType, "image/jpeg");
+  assert.equal(prepared.inlineData, jpeg.toString("base64"));
+});
+
 test("an image the prompt does not name inline keeps the trailing position", async (t) => {
   const { data, path } = await fixture(t);
   const attachment = { path, name: "pasted-a.png", kind: "image", mimeType: "image/png" };

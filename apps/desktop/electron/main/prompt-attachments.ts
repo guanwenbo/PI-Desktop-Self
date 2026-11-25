@@ -28,6 +28,7 @@ import {
   isSvgAttachment,
   locateInlinePromptPaths,
   probeImageDimensions,
+  sniffImageMimeType,
   SVG_MIME_TYPE,
   MAX_INLINE_IMAGE_BYTES,
   type AgentPromptAttachment,
@@ -300,6 +301,10 @@ export async function preparePromptAttachments(
       ? read
       : undefined;
     const inline = bytes !== undefined;
+    // The bytes, not the file name or declared type, decide the media type:
+    // a JPEG saved as `.png` sent as `image/png` is a provider 400 that every
+    // later turn replays from history.
+    const imageMimeType = (read ? sniffImageMimeType(read) : undefined) ?? mimeType;
     const ref =
       source.root === "attachment" && attachment.path.trim().startsWith("attachments/")
         ? attachment.path.trim()
@@ -325,7 +330,7 @@ export async function preparePromptAttachments(
         kind: "image",
         name,
         ref,
-        mimeType,
+        mimeType: imageMimeType,
         size,
         ...(inlinePath ? { inlinePath } : {}),
       },
